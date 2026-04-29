@@ -1,12 +1,13 @@
-import { prisma } from "@misael1981/physio-database";
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+import { redirect } from "next/navigation"
 
-export default async function Home() {
-  const patients = await prisma.patient.findMany();
-  console.log(patients);
+export default async function RootPage() {
+  const session = await getServerSession(authOptions)
 
-  return (
-    <>
-      <h1>Leticia Moni</h1>
-    </>
-  );
+  if (session) {
+    redirect("/dashboard")
+  } else {
+    redirect("/login")
+  }
 }
