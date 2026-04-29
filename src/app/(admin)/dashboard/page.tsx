@@ -1,6 +1,7 @@
 import CardsMetrics from "@/components/CardsMetrics"
 import PageHeader from "@/components/PageHeader"
 import { CalendarCheck, ShoppingBasket, UserCheck, Users } from "lucide-react"
+import QuickActions from "./components/QuickActions"
 
 const metrics = [
   {
@@ -55,7 +56,7 @@ export default function DashboardPage() {
         title="Visão Geral"
         description="Resumo de pacientes, tratamentos e uma visão geral do seu estabelecimento."
       />
-      <div className="p-8">
+      <div className="space-y-6 p-8">
         <section className="flex flex-wrap items-center justify-center gap-4">
           {metrics.map((metric) => (
             <CardsMetrics
@@ -65,6 +66,7 @@ export default function DashboardPage() {
             />
           ))}
         </section>
+        <QuickActions />
       </div>
     </div>
   )
