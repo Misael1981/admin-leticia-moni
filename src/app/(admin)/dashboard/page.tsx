@@ -2,12 +2,15 @@ import CardsMetrics from "@/components/CardsMetrics"
 import PageHeader from "@/components/PageHeader"
 import { CalendarCheck, ShoppingBasket, UserCheck, Users } from "lucide-react"
 import QuickActions from "./components/QuickActions"
+import UpcomingAppointments from "./components/UpcomingAppointments"
+import RecentPatients from "./components/RecentPatients"
+import RecentActivity from "./components/RecentActivity"
 
 const metrics = [
   {
     id: 1,
     title: "Total de pacientes",
-    value: 12,
+    value: 85,
     trend: "up",
     trendValue: "10%",
   },
@@ -49,6 +52,60 @@ const getIcon = (id: number) => {
   }
 }
 
+const appointments = [
+  {
+    id: 1,
+    patientName: "Maria Silva",
+    time: "08:00",
+  },
+  {
+    id: 2,
+    patientName: "João Souza",
+    time: "09:30",
+  },
+  {
+    id: 3,
+    patientName: "Ana Costa",
+    time: "11:00",
+  },
+]
+
+const patients = [
+  {
+    id: 1,
+    name: "Maria Silva",
+    createdAt: "2026-04-29",
+  },
+  {
+    id: 2,
+    name: "João Souza",
+    createdAt: "2026-04-28",
+  },
+  {
+    id: 3,
+    name: "Ana Costa",
+    createdAt: "2026-04-27",
+  },
+]
+
+const activities = [
+  {
+    id: 1,
+    description: "Exercício enviado para João",
+    createdAt: "2026-04-29T10:00:00",
+  },
+  {
+    id: 2,
+    description: "Paciente Maria cadastrado",
+    createdAt: "2026-04-29T08:30:00",
+  },
+  {
+    id: 3,
+    description: "Atendimento registrado",
+    createdAt: "2026-04-28T17:00:00",
+  },
+]
+
 export default function DashboardPage() {
   return (
     <div className="w-full space-y-6">
@@ -66,7 +123,14 @@ export default function DashboardPage() {
             />
           ))}
         </section>
+
         <QuickActions />
+
+        <UpcomingAppointments appointments={appointments} />
+
+        <RecentPatients patients={patients} />
+
+        <RecentActivity activities={activities} />
       </div>
     </div>
   )
