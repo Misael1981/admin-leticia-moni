@@ -21,6 +21,7 @@ import { ClinicDTO } from "@/dtos/clinic.dto"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { contactSettingsSchema } from "@/schemas/clinic-settings-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
@@ -30,6 +31,8 @@ type ContactSettingsProps = {
 }
 
 const ContactSettings = ({ clinic }: ContactSettingsProps) => {
+  const [isPending, startTransition] = useTransition()
+
   const {
     register,
     handleSubmit,
@@ -47,14 +50,16 @@ const ContactSettings = ({ clinic }: ContactSettingsProps) => {
 
   async function onSubmit(values: z.infer<typeof contactSettingsSchema>) {
     try {
-      const response = await saveClinicContact(values)
+      startTransition(async () => {
+        const response = await saveClinicContact(values)
 
-      if (response.success) {
-        toast.success("Clínica atualizada com sucesso!")
-      } else {
-        console.error(response.error)
-        toast.error("Erro ao atualizar a clínica")
-      }
+        if (response.success) {
+          toast.success("Clínica atualizada com sucesso!")
+        } else {
+          console.error(response.error)
+          toast.error("Erro ao atualizar a clínica")
+        }
+      })
     } catch (error) {
       console.error("Erro ao processar submit:", error)
     }
@@ -114,8 +119,13 @@ const ContactSettings = ({ clinic }: ContactSettingsProps) => {
           </FieldGroup>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button type="submit" size="lg" className="w-full md:w-auto">
-            Salvar Alterações
+          <Button
+            size="lg"
+            type="submit"
+            disabled={isPending}
+            className="w-full md:w-auto"
+          >
+            {isPending ? "Salvando..." : "Salvar Alterações"}
           </Button>
         </CardFooter>
       </form>

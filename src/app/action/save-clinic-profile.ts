@@ -36,11 +36,6 @@ export async function saveClinicProfile(data: DataProps) {
         avatarImageUrl: avatarUrl,
         coverImageUrl: coverUrl,
         socialMedia: data.socialMedia || {},
-
-        name: "",
-        whatsapp: "",
-        phone: "",
-        email: "",
       },
     })
 

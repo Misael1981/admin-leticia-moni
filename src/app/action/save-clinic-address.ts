@@ -4,13 +4,13 @@ import { db } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 
 type DataProps = {
-  street: string | null
-  number: string | null
-  complement: string | null
-  neighborhood: string | null
-  city: string | null
-  state: string | null
-  zipCode: string | null
+  street?: string | undefined
+  number?: string | undefined
+  complement?: string | undefined
+  neighborhood?: string | undefined
+  city?: string | undefined
+  state?: string | undefined
+  zipCode?: string | undefined
 }
 
 export async function saveClinicAddress(data: DataProps) {
@@ -37,15 +37,6 @@ export async function saveClinicAddress(data: DataProps) {
         city: data.city || null,
         state: data.state || null,
         zipCode: data.zipCode || null,
-
-        name: "",
-        whatsapp: "",
-        phone: "",
-        email: "",
-
-        slogan: "",
-        avatarImageUrl: "",
-        coverImageUrl: "",
       },
     })
 

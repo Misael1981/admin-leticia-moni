@@ -29,10 +29,6 @@ export async function saveClinicContact(data: DataProps) {
         whatsapp: data.whatsapp,
         phone: data.phone,
         email: data.email,
-
-        avatarImageUrl: "",
-        coverImageUrl: "",
-        slogan: "",
       },
     })
 

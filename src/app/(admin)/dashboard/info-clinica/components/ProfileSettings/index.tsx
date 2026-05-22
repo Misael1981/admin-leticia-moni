@@ -22,6 +22,8 @@ import { ClinicDTO } from "@/dtos/clinic.dto"
 import { profileSetttingsSchema } from "@/schemas/clinic-settings-schema"
 import { uploadToCloudinaryClient } from "@/services/image-compresseion.service"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useTransition } from "react"
+import { useFormStatus } from "react-dom"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
@@ -37,13 +39,11 @@ interface SocialMediaJson {
 }
 
 const ProfileSettings = ({ clinic }: ProfileSettingsProps) => {
+  const [isPending, startTransition] = useTransition()
+
   const social = (clinic.socialMedia as SocialMediaJson) || {}
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<z.infer<typeof profileSetttingsSchema>>({
+  const methods = useForm<z.infer<typeof profileSetttingsSchema>>({
     resolver: zodResolver(profileSetttingsSchema),
     defaultValues: {
       avatarImageUrl: clinic.avatarImageUrl || "",
@@ -57,7 +57,11 @@ const ProfileSettings = ({ clinic }: ProfileSettingsProps) => {
     },
   })
 
-  const form = useForm()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = methods
 
   async function onSubmit(values: z.infer<typeof profileSetttingsSchema>) {
     try {
@@ -68,6 +72,7 @@ const ProfileSettings = ({ clinic }: ProfileSettingsProps) => {
         const uploadResult = await uploadToCloudinaryClient(
           values.avatarImageUrl,
         )
+
         finalAvatarUrl = uploadResult.url
       } else if (typeof values.avatarImageUrl === "string") {
         finalAvatarUrl = values.avatarImageUrl
@@ -77,6 +82,7 @@ const ProfileSettings = ({ clinic }: ProfileSettingsProps) => {
         const uploadResult = await uploadToCloudinaryClient(
           values.coverImageUrl,
         )
+
         finalCoverUrl = uploadResult.url
       } else if (typeof values.coverImageUrl === "string") {
         finalCoverUrl = values.coverImageUrl
@@ -88,14 +94,16 @@ const ProfileSettings = ({ clinic }: ProfileSettingsProps) => {
         coverImageUrl: finalCoverUrl,
       }
 
-      const response = await saveClinicProfile(dataToSend)
+      startTransition(async () => {
+        const response = await saveClinicProfile(dataToSend)
 
-      if (response.success) {
-        toast.success("Clínica atualizada com sucesso!")
-      } else {
-        console.error(response.error)
-        toast.error("Erro ao atualizar a clínica")
-      }
+        if (response.success) {
+          toast.success("Clínica atualizada com sucesso!")
+        } else {
+          console.error(response.error)
+          toast.error("Erro ao atualizar a clínica")
+        }
+      })
     } catch (error) {
       console.error("Erro ao processar submit:", error)
     }
@@ -117,7 +125,7 @@ const ProfileSettings = ({ clinic }: ProfileSettingsProps) => {
                 <FieldLabel>Logo do Estabelecimento</FieldLabel>
                 <ImageUpload
                   name="avatarImageUrl"
-                  form={form}
+                  form={methods}
                   initialUrl={clinic.avatarImageUrl}
                 />
               </Field>
@@ -126,7 +134,7 @@ const ProfileSettings = ({ clinic }: ProfileSettingsProps) => {
                 <FieldLabel>Imagem de Capa</FieldLabel>
                 <ImageUpload
                   name="coverImageUrl"
-                  form={form}
+                  form={methods}
                   initialUrl={clinic.coverImageUrl}
                 />
               </Field>
@@ -171,8 +179,13 @@ const ProfileSettings = ({ clinic }: ProfileSettingsProps) => {
           </FieldGroup>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button type="submit" size="lg" className="w-full md:w-auto">
-            Salvar Alterações
+          <Button
+            size="lg"
+            type="submit"
+            disabled={isPending}
+            className="w-full md:w-auto"
+          >
+            {isPending ? "Salvando..." : "Salvar Alterações"}
           </Button>
         </CardFooter>
       </form>

@@ -1,5 +1,6 @@
 "use client"
 
+import { saveClinicAddress } from "@/app/action/save-clinic-address"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -19,7 +20,9 @@ import { Input } from "@/components/ui/input"
 import { ClinicDTO } from "@/dtos/clinic.dto"
 import { addressSchema } from "@/schemas/clinic-settings-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useTransition } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import z from "zod"
 
 type AddressSettingsProps = {
@@ -27,6 +30,8 @@ type AddressSettingsProps = {
 }
 
 const AddressSettings = ({ clinic }: AddressSettingsProps) => {
+  const [isPending, startTransition] = useTransition()
+
   const {
     register,
     handleSubmit,
@@ -45,7 +50,20 @@ const AddressSettings = ({ clinic }: AddressSettingsProps) => {
   })
 
   async function onSubmit(values: z.infer<typeof addressSchema>) {
-    console.log(values)
+    try {
+      startTransition(async () => {
+        const response = await saveClinicAddress(values)
+
+        if (response.success) {
+          toast.success("Clínica atualizada com sucesso!")
+        } else {
+          console.error(response.error)
+          toast.error("Erro ao atualizar a clínica")
+        }
+      })
+    } catch (error) {
+      console.error("Erro ao processar submit:", error)
+    }
   }
 
   return (
@@ -71,7 +89,7 @@ const AddressSettings = ({ clinic }: AddressSettingsProps) => {
             </Field>
             <Field>
               <FieldLabel>Bairro</FieldLabel>
-              <Input {...register("neighborhood")} />
+              <Input {...register("neighborhood")} placeholder="Centro" />
               {errors.neighborhood && (
                 <p className="text-xs text-red-500">
                   {errors.neighborhood.message}
@@ -80,14 +98,14 @@ const AddressSettings = ({ clinic }: AddressSettingsProps) => {
             </Field>
             <Field>
               <FieldLabel>Cidade</FieldLabel>
-              <Input {...register("city")} />
+              <Input {...register("city")} placeholder="Pouso Alegre" />
               {errors.city && (
                 <p className="text-xs text-red-500">{errors.city.message}</p>
               )}
             </Field>
             <Field>
               <FieldLabel>Estado</FieldLabel>
-              <Input {...register("state")} />
+              <Input {...register("state")} placeholder="MG" />
               {errors.state && (
                 <p className="text-xs text-red-500">{errors.state.message}</p>
               )}
@@ -95,8 +113,13 @@ const AddressSettings = ({ clinic }: AddressSettingsProps) => {
           </FieldGroup>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button type="submit" size="lg" className="w-full md:w-auto">
-            Salvar Alterações
+          <Button
+            size="lg"
+            type="submit"
+            disabled={isPending}
+            className="w-full md:w-auto"
+          >
+            {isPending ? "Salvando..." : "Salvar Alterações"}
           </Button>
         </CardFooter>
       </form>
