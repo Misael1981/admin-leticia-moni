@@ -5,8 +5,6 @@ import ClinicForm from "./components/ClinicForm"
 export default async function InfoClinicPage() {
   const dataClinic = await getClinicSettings()
 
-  console.log("Como chega: ", dataClinic)
-
   return (
     <>
       <PageHeader
