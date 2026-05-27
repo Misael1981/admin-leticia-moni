@@ -12,9 +12,8 @@ export default async function TreatmentFormPage({
   params,
 }: TreatmentPageProps) {
   const resolvedParams = await params
-  const routeParam = resolvedParams.id[0] // Pega o primeiro parâmetro ("novo" ou o ID real)
+  const routeParam = resolvedParams.id[0]
 
-  // Se for diferente de "novo", é porque estamos editando um ID do banco
   const isEditMode = routeParam !== "novo"
 
   let treatmentData = null
@@ -22,6 +21,12 @@ export default async function TreatmentFormPage({
   if (isEditMode) {
     treatmentData = await db.treatment.findUnique({
       where: { id: routeParam },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        imageUrl: true,
+      },
     })
   }
 
@@ -31,7 +36,7 @@ export default async function TreatmentFormPage({
         {isEditMode ? "Editar Tratamento" : "Cadastrar Novo Tratamento"}
       </h1>
 
-      <TreatmentForm />
+      <TreatmentForm treatment={treatmentData} />
     </div>
   )
 }

@@ -6,6 +6,11 @@ export async function getTreatments() {
       orderBy: {
         name: "asc",
       },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+      },
     })
 
     return treatments
