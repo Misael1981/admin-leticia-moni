@@ -67,17 +67,17 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
   }, [name, methods])
 
   async function onSubmit(values: z.infer<typeof treatmentSchema>) {
-    try {
-      let finalImageUrl = treatment?.imageUrl || ""
+    startTransition(async () => {
+      try {
+        let finalImageUrl = treatment?.imageUrl || ""
 
-      if (values.imageUrl instanceof File) {
-        const uploadResult = await uploadToCloudinaryClient(values.imageUrl)
-        finalImageUrl = uploadResult.url
-      } else if (typeof values.imageUrl === "string") {
-        finalImageUrl = values.imageUrl
-      }
+        if (values.imageUrl instanceof File) {
+          const uploadResult = await uploadToCloudinaryClient(values.imageUrl)
+          finalImageUrl = uploadResult.url
+        } else if (typeof values.imageUrl === "string") {
+          finalImageUrl = values.imageUrl
+        }
 
-      startTransition(async () => {
         const response = await saveTreatment({
           id: treatment?.id,
           name: values.name,
@@ -93,10 +93,11 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
           console.error(response.error)
           toast.error("Erro ao salvar o tratamento")
         }
-      })
-    } catch (error) {
-      console.error("Erro no fluxo de salvamento:", error)
-    }
+      } catch (error) {
+        console.error("Erro no fluxo de salvamento:", error)
+        toast.error("Ocorreu um erro inesperado.")
+      }
+    })
   }
 
   return (
