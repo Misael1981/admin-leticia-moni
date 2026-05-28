@@ -26,6 +26,7 @@ export default async function TreatmentFormPage({
         name: true,
         description: true,
         imageUrl: true,
+        slug: true,
       },
     })
   }

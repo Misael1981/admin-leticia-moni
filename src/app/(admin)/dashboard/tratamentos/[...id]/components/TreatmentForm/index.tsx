@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { generateSlug } from "@/helpers/generate-slug"
 import { treatmentSchema } from "@/schemas/treatments-schemas"
 import { uploadToCloudinaryClient } from "@/services/image-compresseion.service"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import { useTransition } from "react"
-import { useForm } from "react-hook-form"
+import { useEffect, useTransition } from "react"
+import { useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
 
@@ -28,6 +29,7 @@ type TreatmentFormProps = {
     name: string
     description?: string | null
     imageUrl?: string | null
+    slug: string
   } | null
 }
 
@@ -41,14 +43,28 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
       name: treatment?.name || "",
       description: treatment?.description || "",
       imageUrl: treatment?.imageUrl || "",
+      slug: treatment?.slug || "",
     },
   })
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = methods
+
+  const name = useWatch({
+    control: control,
+    name: "name",
+  })
+
+  useEffect(() => {
+    if (!name) return
+
+    const generatedSlug = generateSlug(name)
+    methods.setValue("slug", generatedSlug, { shouldValidate: true })
+  }, [name, methods])
 
   async function onSubmit(values: z.infer<typeof treatmentSchema>) {
     try {
@@ -67,7 +83,7 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
           name: values.name,
           description: values.description,
           imageUrl: finalImageUrl,
-          price: 0,
+          slug: values.slug,
         })
 
         if (response.success) {
@@ -96,6 +112,16 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
                 {...register("name")}
               />
               <FieldError>{errors.name?.message}</FieldError>
+            </Field>
+
+            {/* Slug */}
+            <Field>
+              <FieldLabel>Slug (Link da página do tratamento)</FieldLabel>
+              <Input
+                placeholder="Ex: fisioterapia-traumato-ortopedica"
+                {...register("slug")}
+              />
+              <FieldError>{errors.slug?.message}</FieldError>
             </Field>
 
             {/* Descrição do Tratamento */}
