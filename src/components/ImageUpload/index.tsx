@@ -24,10 +24,15 @@ const ImageUpload = <TFormValues extends FieldValues>({
     if (file) {
       const previewURL = URL.createObjectURL(file)
       setPreview(previewURL)
+
       form.setValue(
         name,
         file as unknown as PathValue<TFormValues, Path<TFormValues>>,
-        { shouldDirty: true },
+        {
+          shouldDirty: true,
+          shouldTouch: true,
+          shouldValidate: true,
+        },
       )
     }
   }
@@ -35,10 +40,15 @@ const ImageUpload = <TFormValues extends FieldValues>({
   const handleRemoveImage = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     setPreview(null)
+
     form.setValue(
       name,
-      null as unknown as PathValue<TFormValues, Path<TFormValues>>,
-      { shouldDirty: true },
+      "" as unknown as PathValue<TFormValues, Path<TFormValues>>,
+      {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      },
     )
   }
 
