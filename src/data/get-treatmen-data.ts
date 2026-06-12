@@ -1,11 +1,13 @@
 import { db } from "@/lib/prisma"
 
-export async function getTreatments() {
+export async function getTreatmentData({
+  treatmentId,
+}: {
+  treatmentId: string
+}) {
   try {
-    const treatments = await db.treatment.findMany({
-      orderBy: {
-        name: "asc",
-      },
+    const treatment = await db.treatment.findUnique({
+      where: { id: treatmentId },
       select: {
         id: true,
         name: true,
@@ -23,9 +25,9 @@ export async function getTreatments() {
       },
     })
 
-    return treatments
+    return treatment
   } catch (error) {
-    console.error("Erro ao buscar os tratamentos:", error)
-    throw new Error("Não foi possível carregar os tratamentos.")
+    console.error("Erro ao buscar o tratamento:", error)
+    throw new Error("Não foi possível carregar o tratamento.")
   }
 }

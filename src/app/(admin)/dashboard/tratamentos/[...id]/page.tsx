@@ -1,10 +1,9 @@
-// app/dashboard/tratamentos/[...id]/page.tsx
-import { db } from "@/lib/prisma"
 import TreatmentForm from "./components/TreatmentForm"
+import { getTreatmentData } from "@/data/get-treatmen-data"
 
 interface TreatmentPageProps {
   params: Promise<{
-    id: string[] // Agora o Next garante que o array existe se entrou aqui
+    id: string[]
   }>
 }
 
@@ -19,16 +18,7 @@ export default async function TreatmentFormPage({
   let treatmentData = null
 
   if (isEditMode) {
-    treatmentData = await db.treatment.findUnique({
-      where: { id: routeParam },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        imageUrl: true,
-        slug: true,
-      },
-    })
+    treatmentData = await getTreatmentData({ treatmentId: routeParam })
   }
 
   return (

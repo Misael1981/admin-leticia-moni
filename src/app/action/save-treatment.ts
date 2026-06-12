@@ -6,9 +6,19 @@ import { revalidatePath } from "next/cache"
 interface SaveTreatmentInput {
   id?: string
   name: string
-  description?: string
-  imageUrl?: string
   slug: string
+  imageUrl?: string
+
+  description?: string
+  about: string | undefined
+  attendanceInfo: string | undefined
+  benefits: string[]
+
+  durationMinWeeks: number | undefined
+  durationMaxWeeks: number | undefined
+  sessionsPerWeekMin: number | undefined
+  sessionsPerWeekMax: number | undefined
+  sessionDurationMinutes: number | undefined
 }
 
 export async function saveTreatment(data: SaveTreatmentInput) {
@@ -25,6 +35,14 @@ export async function saveTreatment(data: SaveTreatmentInput) {
         imageUrl: data.imageUrl || null,
         clinicId: "main-clinic",
         slug: data.slug,
+        about: data.about || null,
+        attendanceInfo: data.attendanceInfo || null,
+        benefits: data.benefits || null,
+        durationMinWeeks: data.durationMinWeeks || null,
+        durationMaxWeeks: data.durationMaxWeeks || null,
+        sessionsPerWeekMin: data.sessionsPerWeekMin || null,
+        sessionsPerWeekMax: data.sessionsPerWeekMax || null,
+        sessionDurationMinutes: data.sessionDurationMinutes || null,
       },
       create: {
         name: data.name,
@@ -32,6 +50,14 @@ export async function saveTreatment(data: SaveTreatmentInput) {
         imageUrl: data.imageUrl || null,
         clinicId: "main-clinic",
         slug: data.slug,
+        about: data.about || null,
+        attendanceInfo: data.attendanceInfo || null,
+        benefits: data.benefits || null,
+        durationMinWeeks: data.durationMinWeeks || null,
+        durationMaxWeeks: data.durationMaxWeeks || null,
+        sessionsPerWeekMin: data.sessionsPerWeekMin || null,
+        sessionsPerWeekMax: data.sessionsPerWeekMax || null,
+        sessionDurationMinutes: data.sessionDurationMinutes || null,
       },
     })
 
