@@ -15,20 +15,24 @@ type CategoryCardProps = {
   category: CategoryDTO
   selectedCategoryId?: string | null
   onEdit: () => void
+  onselectCategory: (id: string) => void
+  isSelected: boolean
 }
 
 const CategoryCard = ({
   category,
   selectedCategoryId,
   onEdit,
+  onselectCategory,
+  isSelected,
 }: CategoryCardProps) => {
-  const isSelected = category.id === selectedCategoryId
   return (
     <div
+      onClick={() => onselectCategory(category.id)}
       className={`group relative flex h-24 max-w-72 min-w-60 flex-1 cursor-pointer items-center justify-between gap-2 rounded-md border p-2 transition-all ${
         isSelected
           ? "border-primary/20 bg-primary/10"
-          : "border-gray-300 hover:bg-gray-50"
+          : "border-gray-300 hover:bg-gray-300/10"
       } `}
     >
       <div
@@ -49,7 +53,12 @@ const CategoryCard = ({
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={(e) => e.stopPropagation()}
+            >
               <MoreVertical size={14} />
             </Button>
           </DropdownMenuTrigger>

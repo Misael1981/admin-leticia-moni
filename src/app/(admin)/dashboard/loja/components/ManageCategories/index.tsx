@@ -4,6 +4,8 @@ import { CategoryDTO } from "@/dtos/categories.dto"
 import CategoriesMenu from "../CategoriesMenu"
 import { useReducer } from "react"
 import { catalogReducer } from "@/reducers/menuReducer"
+import SelectedCategorieName from "../SelectedCategorieName"
+import ProductsList from "../ProductsList"
 
 type ManageCategoriesProps = {
   categories: CategoryDTO[]
@@ -23,12 +25,22 @@ const ManageCategories = ({ categories }: ManageCategoriesProps) => {
     dispatch({ type: "SELECT_CATEGORY", payload: id })
   }
 
+  const selectedCategory =
+    state.categories.find((c) => c.id === state.selectedCategoryId) ?? null
+
   return (
-    <div>
+    <div className="mx-auto w-full max-w-6xl space-y-6">
       <CategoriesMenu
         categories={state.categories}
         selectedCategoryId={state.selectedCategoryId}
         onselectCategory={handleSelectCategory}
+      />
+
+      <SelectedCategorieName categoryName={selectedCategory?.name ?? ""} />
+
+      <ProductsList
+        categoryName={selectedCategory?.name ?? ""}
+        products={selectedCategory?.products ?? []}
       />
     </div>
   )

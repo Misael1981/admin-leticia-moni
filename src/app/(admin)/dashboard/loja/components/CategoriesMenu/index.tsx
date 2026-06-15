@@ -29,6 +29,7 @@ const CategoriesMenu = ({
   )
   const selectedCategory =
     categories.find((c) => c.id === selectedCategoryId) ?? null
+
   return (
     <Card>
       <CardHeader className="flex justify-between gap-4">
@@ -48,11 +49,13 @@ const CategoriesMenu = ({
               key={category.id}
               category={category}
               onEdit={() => setEditingCategory(category)}
+              onselectCategory={onselectCategory}
+              isSelected={category.id === selectedCategoryId}
             />
           ))}
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="border-t">
         <CategoryForm
           category={editingCategory}
           onDone={() => setEditingCategory(null)}

@@ -12,7 +12,7 @@ export default async function StorePage() {
         description="Gerencie os produtos em tabelas que você disponibilizará na plataforma."
       />
 
-      <div className="p-4 lg:px-8">
+      <div className="flex justify-center p-4 lg:px-8">
         <ManageCategories categories={categories} />
       </div>
     </div>
