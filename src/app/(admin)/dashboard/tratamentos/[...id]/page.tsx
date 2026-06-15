@@ -15,11 +15,9 @@ export default async function TreatmentFormPage({
 
   const isEditMode = routeParam !== "novo"
 
-  let treatmentData = null
-
-  if (isEditMode) {
-    treatmentData = await getTreatmentData({ treatmentId: routeParam })
-  }
+  const treatmentData = isEditMode
+    ? await getTreatmentData({ treatmentId: routeParam })
+    : null
 
   return (
     <div className="container mx-auto p-6">
