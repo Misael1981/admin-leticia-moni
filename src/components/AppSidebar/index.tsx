@@ -13,15 +13,14 @@ import {
 } from "@/components/ui/sidebar"
 import Image from "next/image"
 import LogoutButton from "../LogoutButton"
-import { Hospital, Users } from "lucide-react"
-import { Activity } from "react"
+import { Activity, Hospital, LayoutDashboard, Store, Users } from "lucide-react"
 import Link from "next/link"
 
 const pages = [
   {
     name: "Visão Geral",
     url: "/dashboard",
-    icon: Hospital,
+    icon: LayoutDashboard,
   },
   {
     name: "Informações Gerais da Clínica",
@@ -37,6 +36,11 @@ const pages = [
     name: "Gerenciamento de Tratamentos Disponíveis",
     url: "/dashboard/tratamentos",
     icon: Activity,
+  },
+  {
+    name: "Gerenciamento da loja",
+    url: "/dashboard/loja",
+    icon: Store,
   },
 ]
 
@@ -56,6 +60,7 @@ const AppSidebar = () => {
               <SidebarMenuItem key={page.url}>
                 <SidebarMenuButton asChild>
                   <Link href={page.url}>
+                    <page.icon />
                     <span>{page.name}</span>
                   </Link>
                 </SidebarMenuButton>
