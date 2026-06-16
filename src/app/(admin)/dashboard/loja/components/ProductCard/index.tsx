@@ -1,16 +1,36 @@
 "use client"
 
+import { toggleProductVisibility } from "@/app/action/toggle-product-visibility"
 import { Button } from "@/components/ui/button"
 import { ProductDTO } from "@/dtos/categories.dto"
 import { formatCurrency } from "@/helpers/format-currency"
 import { Edit, Eye, EyeOff, Trash2 } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
+import { toast } from "sonner"
 
 type ProductCardProps = {
   product: ProductDTO
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const [visibilityMap, setVisibilityMap] = useState(product.isActive)
+
+  const handleToggleVisibility = async () => {
+    const newValue = !product.isActive
+
+    setVisibilityMap(newValue)
+
+    const res = await toggleProductVisibility(product.id, newValue)
+
+    if (res.success) {
+      toast.success(res.message)
+    } else {
+      toast.error(res.error)
+      setVisibilityMap(!newValue) // Reverte o estado se der erro no banco
+    }
+  }
+
   return (
     <li className="group bg-card hover:border-primary/50 flex items-center justify-between gap-6 rounded-md border p-3 transition-all">
       <div className="flex w-full items-center justify-between">
@@ -24,8 +44,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
           variant="ghost"
           size="icon"
           className="h-8 w-8 transition-transform hover:scale-110"
+          onClick={handleToggleVisibility}
         >
-          {product.isActive ? <Eye size={14} /> : <EyeOff size={14} />}
+          {visibilityMap ? <Eye size={14} /> : <EyeOff size={14} />}
         </Button>
         <Link href={`/dashboard/loja/${product.id}`}>
           <Button
