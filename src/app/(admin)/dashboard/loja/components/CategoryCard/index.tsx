@@ -1,5 +1,7 @@
 "use client"
 
+import { deleteCategory } from "@/app/action/save-caterory"
+import DialogDeleteItem from "@/components/DialogDeleteItem"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -10,6 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { CategoryDTO } from "@/dtos/categories.dto"
 import { ChevronRight, Edit, Grid, MoreVertical, Trash2 } from "lucide-react"
+import { useState } from "react"
+import { toast } from "sonner"
 
 type CategoryCardProps = {
   category: CategoryDTO
@@ -21,11 +25,33 @@ type CategoryCardProps = {
 
 const CategoryCard = ({
   category,
-  selectedCategoryId,
   onEdit,
   onselectCategory,
   isSelected,
 }: CategoryCardProps) => {
+  const [isOpenModalDelete, setOpenModalDelete] = useState(false)
+
+  const handleOpenModalDelete = () => {
+    setOpenModalDelete(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    try {
+      const success = await deleteCategory(category.id)
+
+      if (success) {
+        setOpenModalDelete(false)
+        toast.success("Categoria deletado com sucesso!")
+      } else {
+        toast.error("Ocorreu um erro ao deletar o categoria.")
+        setOpenModalDelete(false)
+      }
+    } catch (error) {
+      console.error("Erro ao deletar o categoria:", error)
+      setOpenModalDelete(false)
+    }
+  }
+
   return (
     <div
       onClick={() => onselectCategory(category.id)}
@@ -68,13 +94,23 @@ const CategoryCard = ({
               Editar
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600">
+            <DropdownMenuItem
+              className="text-red-600"
+              onClick={handleOpenModalDelete}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Excluir
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <DialogDeleteItem
+        isOpen={isOpenModalDelete}
+        onClose={() => setOpenModalDelete(false)}
+        onConfirm={handleConfirmDelete}
+        label="Deseja realmente deletar essa categoria? Essa ação é irreversível."
+      />
     </div>
   )
 }

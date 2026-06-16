@@ -27,8 +27,6 @@ const CategoriesMenu = ({
   const [editingCategory, setEditingCategory] = useState<CategoryDTO | null>(
     null,
   )
-  const selectedCategory =
-    categories.find((c) => c.id === selectedCategoryId) ?? null
 
   return (
     <Card>
@@ -43,7 +41,7 @@ const CategoriesMenu = ({
         <Badge variant="outline">{categories.length}</Badge>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap justify-center gap-4">
           {categories.map((category) => (
             <CategoryCard
               key={category.id}

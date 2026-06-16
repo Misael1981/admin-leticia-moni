@@ -95,7 +95,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         isOpen={isOpenModalDelete}
         onClose={() => setOpenModalDelete(false)}
         onConfirm={handleConfirmDelete}
-        label="Deseja realmente cancelar o Produto? Essa ação é irreversível."
+        label="Deseja realmente deletar o Produto? Essa ação é irreversível."
       />
     </li>
   )
