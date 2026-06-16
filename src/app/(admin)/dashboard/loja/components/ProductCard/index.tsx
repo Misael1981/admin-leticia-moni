@@ -1,6 +1,8 @@
 "use client"
 
+import { deleteProduct } from "@/app/action/save-product"
 import { toggleProductVisibility } from "@/app/action/toggle-product-visibility"
+import DialogDeleteItem from "@/components/DialogDeleteItem"
 import { Button } from "@/components/ui/button"
 import { ProductDTO } from "@/dtos/categories.dto"
 import { formatCurrency } from "@/helpers/format-currency"
@@ -15,6 +17,7 @@ type ProductCardProps = {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const [visibilityMap, setVisibilityMap] = useState(product.isActive)
+  const [isOpenModalDelete, setOpenModalDelete] = useState(false)
 
   const handleToggleVisibility = async () => {
     const newValue = !product.isActive
@@ -27,7 +30,28 @@ const ProductCard = ({ product }: ProductCardProps) => {
       toast.success(res.message)
     } else {
       toast.error(res.error)
-      setVisibilityMap(!newValue) // Reverte o estado se der erro no banco
+      setVisibilityMap(!newValue)
+    }
+  }
+
+  const handleOpenModalDelete = () => {
+    setOpenModalDelete(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    try {
+      const success = await deleteProduct(product.id)
+
+      if (success) {
+        setOpenModalDelete(false)
+        toast.success("Produto deletado com sucesso!")
+      } else {
+        toast.error("Ocorreu um erro ao deletar o produto.")
+        setOpenModalDelete(false)
+      }
+    } catch (error) {
+      console.error("Erro ao deletar o produto:", error)
+      setOpenModalDelete(false)
     }
   }
 
@@ -61,10 +85,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
           variant="ghost"
           size="icon"
           className="text-destructive hover:bg-destructive/10 h-8 w-8"
+          onClick={handleOpenModalDelete}
         >
           <Trash2 size={14} />
         </Button>
       </div>
+
+      <DialogDeleteItem
+        isOpen={isOpenModalDelete}
+        onClose={() => setOpenModalDelete(false)}
+        onConfirm={handleConfirmDelete}
+        label="Deseja realmente cancelar o Produto? Essa ação é irreversível."
+      />
     </li>
   )
 }
