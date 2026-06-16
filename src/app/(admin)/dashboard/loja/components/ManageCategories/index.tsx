@@ -16,9 +16,6 @@ const ManageCategories = ({ categories }: ManageCategoriesProps) => {
     categories: categories,
     selectedCategoryId: categories[0]?.id ?? null,
     selectedProductId: null,
-    isCreateCategoryModalOpen: false,
-    isEditCategoryModalOpen: false,
-    isDeleteCategoryModalOpen: false,
   })
 
   const handleSelectCategory = (id: string) => {

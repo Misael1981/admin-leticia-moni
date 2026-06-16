@@ -11,9 +11,6 @@ export type AdminStoreState = {
   categories: CategoryWithProducts[]
   selectedCategoryId: string | null
   selectedProductId: string | null
-  isCreateCategoryModalOpen: boolean
-  isEditCategoryModalOpen: boolean
-  isDeleteCategoryModalOpen: boolean
 }
 
 type AdminStoreAction =
@@ -28,9 +25,6 @@ export const initialAdminStoreState: AdminStoreState = {
   categories: [],
   selectedCategoryId: null,
   selectedProductId: null,
-  isCreateCategoryModalOpen: false,
-  isEditCategoryModalOpen: false,
-  isDeleteCategoryModalOpen: false,
 }
 
 export function catalogReducer(
