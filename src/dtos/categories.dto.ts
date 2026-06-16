@@ -14,6 +14,7 @@ export interface ProductDTO {
   sku: string | null
   isActive: boolean
   isFeatured: boolean
+  categoryId?: string
   images: ImageProductDTO[]
 }
 

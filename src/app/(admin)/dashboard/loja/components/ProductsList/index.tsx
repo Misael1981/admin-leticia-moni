@@ -12,9 +12,14 @@ import Link from "next/link"
 type ProductsListProps = {
   products: ProductDTO[]
   categoryName: string
+  selectedCategoryId: string
 }
 
-const ProductsList = ({ products, categoryName }: ProductsListProps) => {
+const ProductsList = ({
+  products,
+  categoryName,
+  selectedCategoryId,
+}: ProductsListProps) => {
   return (
     <Card>
       <CardHeader className="flex w-full flex-col items-center gap-4 border-b lg:flex-row lg:justify-between">
@@ -24,7 +29,7 @@ const ProductsList = ({ products, categoryName }: ProductsListProps) => {
             Adicione, exclua ou edite produtos da tabela.
           </CardDescription>
         </div>
-        <Link href="/dashboard/loja/novo">
+        <Link href={`/dashboard/loja/novo?categoryId=${selectedCategoryId}`}>
           <Button>
             <PlusCircle />
             Adicionar Produto

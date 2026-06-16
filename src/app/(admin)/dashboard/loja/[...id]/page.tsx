@@ -5,15 +5,23 @@ interface ProductFormPageProps {
   params: Promise<{
     id: string[]
   }>
+
+  searchParams: Promise<{
+    categoryId?: string
+  }>
 }
 
 export default async function ProductFormPage({
   params,
+  searchParams,
 }: ProductFormPageProps) {
   const resolvedParams = await params
-  const routeParam = resolvedParams.id[0]
+  const resolvedSearchParams = await searchParams
 
+  const routeParam = resolvedParams.id[0]
   const isEditMode = routeParam !== "novo"
+
+  const queryCategoryId = resolvedSearchParams.categoryId
 
   const product = isEditMode ? await getProductById({ id: routeParam }) : null
 
@@ -23,7 +31,10 @@ export default async function ProductFormPage({
         {isEditMode ? "Editar Produto" : "Cadastrar Novo Produto"}
       </h1>
 
-      <ProductForm product={product} />
+      <ProductForm
+        product={product}
+        defaultCategoryId={isEditMode ? product?.categoryId : queryCategoryId}
+      />
     </div>
   )
 }

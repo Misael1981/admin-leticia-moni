@@ -41,6 +41,7 @@ const ManageCategories = ({ categories }: ManageCategoriesProps) => {
       <ProductsList
         categoryName={selectedCategory?.name ?? ""}
         products={selectedCategory?.products ?? []}
+        selectedCategoryId={state.selectedCategoryId!}
       />
     </div>
   )

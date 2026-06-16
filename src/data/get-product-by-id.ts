@@ -15,6 +15,7 @@ export async function getProductById({ id }: { id: string }) {
         sku: true,
         isActive: true,
         isFeatured: true,
+        categoryId: true,
         images: {
           select: {
             id: true,
@@ -24,9 +25,13 @@ export async function getProductById({ id }: { id: string }) {
       },
     })
 
+    if (!product) {
+      return null
+    }
+
     const sanitizedProduct = {
       ...product,
-      price: product!.price.toNumber(),
+      price: product.price.toNumber(),
     }
 
     return sanitizedProduct

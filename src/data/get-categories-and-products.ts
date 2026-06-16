@@ -17,7 +17,7 @@ export async function getCategoriesAndProducts() {
             description: true,
             indications: true,
             benefits: true,
-            price: true, // Aqui ele vem como Decimal
+            price: true,
             stock: true,
             sku: true,
             isActive: true,
