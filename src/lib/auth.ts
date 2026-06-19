@@ -15,12 +15,10 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user }) {
-      // Verifica se o email existe no banco
       const existingUser = await prisma.user.findUnique({
         where: { email: user.email! },
       })
 
-      // Se não existe, nega o acesso
       if (!existingUser) return false
 
       return true

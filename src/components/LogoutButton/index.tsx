@@ -5,7 +5,10 @@ import { Button } from "../ui/button"
 
 const LogoutButton = () => {
   return (
-    <Button onClick={() => signOut()} variant="destructive">
+    <Button
+      onClick={() => signOut({ callbackUrl: "/login" })}
+      variant="destructive"
+    >
       Sair da conta
     </Button>
   )

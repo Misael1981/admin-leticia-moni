@@ -12,7 +12,7 @@ async function main() {
   })
 
   const user2 = await prisma.user.upsert({
-    where: { email: "leticiamoni.fisioterapia@gmail.com" }, // Coloca o e-mail dela aqui
+    where: { email: "leticiamoni.fisioterapia@gmail.com" },
     update: {},
     create: {
       name: "Letícia Moni",
