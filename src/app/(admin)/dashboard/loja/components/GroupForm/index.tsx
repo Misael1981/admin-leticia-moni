@@ -1,6 +1,6 @@
 "use client"
 
-import { saveCategory } from "@/app/action/save-caterory"
+import { saveGroup } from "@/app/action/save-group"
 import { Button } from "@/components/ui/button"
 import {
   Field,
@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { CategoryDTO } from "@/dtos/categories.dto"
+import { ProductGroupDTO } from "@/dtos/categories.dto"
 import {
-  CategoryFormInputValues,
-  categorySchema,
+  ProductsGroupFormInputValues,
+  productsGroupSchema,
 } from "@/schemas/categories-products-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { PlusCircle } from "lucide-react"
@@ -21,27 +21,28 @@ import { useEffect, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-type CategoryFormProps = {
-  category: CategoryDTO | null
+type GroupFormProps = {
+  group: ProductGroupDTO | null
   onDone: () => void
+  selectedCategoryId: string
 }
 
-const CategoryForm = ({ category, onDone }: CategoryFormProps) => {
+const GroupForm = ({ group, onDone, selectedCategoryId }: GroupFormProps) => {
   const [isPending, startTransition] = useTransition()
 
-  const methods = useForm<CategoryFormInputValues>({
-    resolver: zodResolver(categorySchema),
+  const methods = useForm<ProductsGroupFormInputValues>({
+    resolver: zodResolver(productsGroupSchema),
     defaultValues: { name: "", description: "" },
   })
 
   useEffect(() => {
     methods.reset({
-      name: category?.name ?? "",
-      description: category?.description ?? "",
+      name: group?.name ?? "",
+      description: group?.description ?? "",
     })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category])
+  }, [group])
 
   const {
     register,
@@ -49,21 +50,23 @@ const CategoryForm = ({ category, onDone }: CategoryFormProps) => {
     formState: { errors },
   } = methods
 
-  async function onSubmit(values: CategoryFormInputValues) {
+  async function onSubmit(values: ProductsGroupFormInputValues) {
     startTransition(async () => {
       try {
         const formData = new FormData()
 
-        if (category?.id) {
-          formData.append("id", category.id)
+        if (group?.id) {
+          formData.append("id", group.id)
         }
+
+        formData.append("categoryId", selectedCategoryId)
         formData.append("name", values.name)
         formData.append("description", values.description || "")
 
-        const result = await saveCategory(formData)
+        const result = await saveGroup(formData)
 
         if (result.success) {
-          if (!category?.id) {
+          if (!group?.id) {
             methods.reset({
               name: "",
               description: "",
@@ -71,7 +74,7 @@ const CategoryForm = ({ category, onDone }: CategoryFormProps) => {
           } else {
             methods.reset(values)
           }
-          toast.success("Categoria salva com sucesso!")
+          toast.success("Grupo salvo com sucesso!")
           onDone()
           console.log(result.message)
         } else {
@@ -85,25 +88,26 @@ const CategoryForm = ({ category, onDone }: CategoryFormProps) => {
     })
   }
 
-  const buttonLabel = category?.id ? "Salvar Alterações" : "Cadastrar Categoria"
+  const buttonLabel = group?.id ? "Salvar Alterações" : "Cadastrar Grupo"
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
-      <input type="hidden" value={category?.id || ""} />
+      <input type="hidden" value={group?.id || ""} />
+      <input type="hidden" name="categoryId" value={selectedCategoryId ?? ""} />
       <FieldGroup>
         <Field>
-          <FieldLabel>Nome da Categoria</FieldLabel>
+          <FieldLabel>Nome do Grupo de Produtos</FieldLabel>
           <Input
-            placeholder="Ex: Óleos, Produtos Ortopédicos, etc."
+            placeholder="Ex: Linha Adulta, Linha Infantil..."
             {...register("name")}
           />
           <FieldError>{errors.name?.message}</FieldError>
         </Field>
 
         <Field>
-          <FieldLabel>Descrição da categoria</FieldLabel>
+          <FieldLabel>Descrição do Grupo</FieldLabel>
           <Textarea
-            placeholder="Este campo é opcional."
+            placeholder="Uma pequena descrição sobre o grupo de produtos."
             className="min-h-30 resize-none"
             {...register("description")}
           />
@@ -126,4 +130,4 @@ const CategoryForm = ({ category, onDone }: CategoryFormProps) => {
   )
 }
 
-export default CategoryForm
+export default GroupForm

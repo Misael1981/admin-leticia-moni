@@ -9,7 +9,7 @@ import {
 import { revalidatePath } from "next/cache"
 
 interface SaveProductProps {
-  categoryId?: string
+  groupId?: string | null | undefined
   data: ProductFormInputValues & { id?: string | null }
 }
 
@@ -27,7 +27,7 @@ export async function deleteImages(productId: string) {
   }
 }
 
-export async function saveProduct({ categoryId, data }: SaveProductProps) {
+export async function saveProduct({ groupId, data }: SaveProductProps) {
   try {
     const validatedFields = productSchema.safeParse(data)
 
@@ -83,7 +83,7 @@ export async function saveProduct({ categoryId, data }: SaveProductProps) {
         sku,
         isActive,
         isFeatured,
-        categoryId: categoryId,
+        groupId: groupId,
         images: {
           deleteMany: {},
           create: images.map((img) => ({
@@ -102,7 +102,7 @@ export async function saveProduct({ categoryId, data }: SaveProductProps) {
         sku,
         isActive,
         isFeatured,
-        categoryId: categoryId!,
+        groupId: groupId!,
         clinicId: "main-clinic",
         images: {
           create: images.map((img) => ({

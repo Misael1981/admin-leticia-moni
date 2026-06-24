@@ -5,6 +5,7 @@ import CategoriesMenu from "../CategoriesMenu"
 import { useReducer } from "react"
 import { catalogReducer } from "@/reducers/menuReducer"
 import SelectedCategorieName from "../SelectedCategorieName"
+import ProductsGroupSection from "../ProductsGroupSection"
 import ProductsList from "../ProductsList"
 
 type ManageCategoriesProps = {
@@ -13,8 +14,8 @@ type ManageCategoriesProps = {
 
 const ManageCategories = ({ categories }: ManageCategoriesProps) => {
   const [state, dispatch] = useReducer(catalogReducer, {
-    categories: categories,
     selectedCategoryId: categories[0]?.id ?? null,
+    selectedGroupId: categories[0]?.productsGroup?.[0]?.id ?? null,
     selectedProductId: null,
   })
 
@@ -23,22 +24,37 @@ const ManageCategories = ({ categories }: ManageCategoriesProps) => {
   }
 
   const selectedCategory =
-    state.categories.find((c) => c.id === state.selectedCategoryId) ?? null
+    categories.find((c) => c.id === state.selectedCategoryId) ?? null
+
+  const selectGroup =
+    selectedCategory?.productsGroup.find(
+      (c) => c.id === state.selectedGroupId,
+    ) ?? null
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6">
       <CategoriesMenu
-        categories={state.categories}
+        categories={categories}
         selectedCategoryId={state.selectedCategoryId}
         onselectCategory={handleSelectCategory}
       />
 
-      <SelectedCategorieName categoryName={selectedCategory?.name ?? ""} />
+      <ProductsGroupSection
+        categoryName={selectedCategory?.name ?? ""}
+        selectedCategoryId={state.selectedCategoryId!}
+        productGroup={selectedCategory?.productsGroup ?? []}
+        selectedGroupId={state.selectedGroupId}
+      />
+
+      <SelectedCategorieName
+        categoryName={selectedCategory?.name ?? ""}
+        groupName={selectGroup?.name ?? ""}
+      />
 
       <ProductsList
         categoryName={selectedCategory?.name ?? ""}
-        products={selectedCategory?.products ?? []}
-        selectedCategoryId={state.selectedCategoryId!}
+        products={selectGroup?.products ?? []}
+        groupId={state.selectedGroupId!}
       />
     </div>
   )

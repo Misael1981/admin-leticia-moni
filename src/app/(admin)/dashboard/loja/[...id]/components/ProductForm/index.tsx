@@ -26,10 +26,10 @@ import { toast } from "sonner"
 
 type ProductFormProps = {
   product?: ProductDTO | null
-  defaultCategoryId?: string | undefined
+  defaultGroupId?: string | undefined | null
 }
 
-const ProductForm = ({ product, defaultCategoryId }: ProductFormProps) => {
+const ProductForm = ({ product, defaultGroupId }: ProductFormProps) => {
   const router = useRouter()
 
   const methods = useForm({
@@ -69,7 +69,7 @@ const ProductForm = ({ product, defaultCategoryId }: ProductFormProps) => {
 
       const response = await saveProduct({
         data: dataToSend,
-        categoryId: defaultCategoryId,
+        groupId: defaultGroupId,
       })
 
       if (response.success) {

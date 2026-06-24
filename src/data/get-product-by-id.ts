@@ -10,11 +10,12 @@ export async function getProductById({ id }: { id: string }) {
         description: true,
         indications: true,
         benefits: true,
-        price: true, // Aqui ele vem como Decimal
+        price: true,
         stock: true,
         sku: true,
         isActive: true,
         isFeatured: true,
+        groupId: true,
         categoryId: true,
         images: {
           select: {

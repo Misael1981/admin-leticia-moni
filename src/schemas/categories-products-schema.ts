@@ -10,6 +10,14 @@ export const categorySchema = z.object({
 export type CategoryFormValues = z.infer<typeof categorySchema>
 export type CategoryFormInputValues = z.infer<typeof categorySchema>
 
+export const productsGroupSchema = z.object({
+  name: z.string().min(2, "O nome do grupo deve ter pelo menos 2 caracteres"),
+  description: z.string().optional().or(z.literal("")),
+})
+
+export type ProductsGroupFormValues = z.infer<typeof productsGroupSchema>
+export type ProductsGroupFormInputValues = z.infer<typeof productsGroupSchema>
+
 export const productSchema = z.object({
   name: z
     .string()

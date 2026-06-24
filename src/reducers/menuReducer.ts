@@ -1,29 +1,17 @@
-import { ProductDTO } from "@/dtos/categories.dto"
-
-type CategoryWithProducts = {
-  id: string
-  name: string
-  description: string | null
-  products: ProductDTO[]
-}
-
 export type AdminStoreState = {
-  categories: CategoryWithProducts[]
   selectedCategoryId: string | null
+  selectedGroupId: string | null
   selectedProductId: string | null
 }
 
 type AdminStoreAction =
-  | { type: "SET_CATEGORIES"; payload: CategoryWithProducts[] }
   | { type: "SELECT_CATEGORY"; payload: string }
+  | { type: "SELECT_GROUP"; payload: string }
   | { type: "SELECT_PRODUCT"; payload: string }
-  | { type: "REMOVE_CATEGORY"; payload: string }
-  | { type: "REMOVE_PRODUCT"; payload: string }
-  | { type: "RESET" }
 
 export const initialAdminStoreState: AdminStoreState = {
-  categories: [],
   selectedCategoryId: null,
+  selectedGroupId: null,
   selectedProductId: null,
 }
 
@@ -32,34 +20,26 @@ export function catalogReducer(
   action: AdminStoreAction,
 ): AdminStoreState {
   switch (action.type) {
-    case "SET_CATEGORIES":
-      return {
-        ...state,
-        categories: action.payload,
-        selectedCategoryId: action.payload[0]?.id ?? null,
-      }
-
     case "SELECT_CATEGORY":
       return {
         ...state,
         selectedCategoryId: action.payload,
+        selectedGroupId: null,
+        selectedProductId: null,
       }
 
-    case "RESET":
-      return initialAdminStoreState
-
-    case "REMOVE_CATEGORY": {
-      const filtered = state.categories.filter((c) => c.id !== action.payload)
-
+    case "SELECT_GROUP":
       return {
         ...state,
-        categories: filtered,
-        selectedCategoryId:
-          state.selectedCategoryId === action.payload
-            ? (filtered[0]?.id ?? null)
-            : state.selectedCategoryId,
+        selectedGroupId: action.payload,
+        selectedProductId: null,
       }
-    }
+
+    case "SELECT_PRODUCT":
+      return {
+        ...state,
+        selectedProductId: action.payload,
+      }
 
     default:
       return state

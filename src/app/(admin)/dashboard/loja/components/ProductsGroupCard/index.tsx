@@ -1,6 +1,4 @@
-"use client"
-
-import { deleteCategory } from "@/app/action/save-caterory"
+import { deleteGroup } from "@/app/action/save-group"
 import DialogDeleteItem from "@/components/DialogDeleteItem"
 import { Button } from "@/components/ui/button"
 import {
@@ -10,25 +8,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { CategoryDTO } from "@/dtos/categories.dto"
-import { ChevronRight, Edit, Grid, MoreVertical, Trash2 } from "lucide-react"
+import { ProductGroupDTO } from "@/dtos/categories.dto"
+import { Boxes, ChevronRight, Edit, MoreVertical, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
-type CategoryCardProps = {
-  category: CategoryDTO
-  selectedCategoryId?: string | null
-  onEdit: () => void
-  onselectCategory: (id: string) => void
+type ProductsGroupCardProps = {
+  productGroup: ProductGroupDTO
   isSelected: boolean
+  onEdit: () => void
 }
 
-const CategoryCard = ({
-  category,
-  onEdit,
-  onselectCategory,
+const ProductsGroupCard = ({
+  productGroup,
   isSelected,
-}: CategoryCardProps) => {
+  onEdit,
+}: ProductsGroupCardProps) => {
   const [isOpenModalDelete, setOpenModalDelete] = useState(false)
 
   const handleOpenModalDelete = () => {
@@ -37,24 +32,23 @@ const CategoryCard = ({
 
   const handleConfirmDelete = async () => {
     try {
-      const success = await deleteCategory(category.id)
+      const success = await deleteGroup(productGroup.id)
 
       if (success) {
         setOpenModalDelete(false)
-        toast.success("Categoria deletado com sucesso!")
+        toast.success("Grupo deletado com sucesso!")
       } else {
-        toast.error("Ocorreu um erro ao deletar o categoria.")
+        toast.error("Ocorreu um erro ao deletar o grupo.")
         setOpenModalDelete(false)
       }
     } catch (error) {
-      console.error("Erro ao deletar o categoria:", error)
+      console.error("Erro ao deletar o grupo:", error)
       setOpenModalDelete(false)
     }
   }
 
   return (
     <div
-      onClick={() => onselectCategory(category.id)}
       className={`group relative flex h-24 max-w-72 min-w-60 flex-1 cursor-pointer items-center justify-between gap-2 rounded-md border p-2 transition-all ${
         isSelected
           ? "border-primary/20 bg-primary/10"
@@ -64,14 +58,16 @@ const CategoryCard = ({
       <div
         className={`flex h-8 w-8 items-center justify-center rounded-full ${isSelected ? "bg-primary text-white" : "text-primary bg-gray-100"}`}
       >
-        <Grid size={16} className="dark:text-black" />
+        <Boxes size={16} className="dark:text-black" />
       </div>
+
       <div className="text-center">
-        <p className="font-medium">{category.name}</p>
+        <p className="font-medium">{productGroup.name}</p>
         <p className="text-xs text-gray-500">
-          {category.productsGroup.length} grupos(s)
+          {productGroup.products.length} produto(s)
         </p>
       </div>
+
       <div className="flex items-center gap-2 transition-opacity group-hover:opacity-100 md:opacity-0">
         <ChevronRight
           size={16}
@@ -115,4 +111,4 @@ const CategoryCard = ({
   )
 }
 
-export default CategoryCard
+export default ProductsGroupCard

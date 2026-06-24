@@ -10,22 +10,32 @@ export async function getCategoriesAndProducts() {
         id: true,
         name: true,
         description: true,
-        products: {
+        productsGroup: {
+          orderBy: {
+            position: "asc",
+          },
           select: {
             id: true,
             name: true,
             description: true,
-            indications: true,
-            benefits: true,
-            price: true,
-            stock: true,
-            sku: true,
-            isActive: true,
-            isFeatured: true,
-            images: {
+            products: {
               select: {
                 id: true,
-                url: true,
+                name: true,
+                description: true,
+                indications: true,
+                benefits: true,
+                price: true,
+                stock: true,
+                sku: true,
+                isActive: true,
+                isFeatured: true,
+                images: {
+                  select: {
+                    id: true,
+                    url: true,
+                  },
+                },
               },
             },
           },
@@ -33,15 +43,20 @@ export async function getCategoriesAndProducts() {
       },
     })
 
-    // Tratando os dados antes de entregar para os componentes
-    const sanitizedCategories = categories.map((category) => ({
-      ...category,
-      products: category.products.map((product) => ({
-        ...product,
-        // Converte o objeto Decimal do Prisma para um number puro do JS
-        price: product.price.toNumber(),
-      })),
-    }))
+    const sanitizedCategories = categories.map((category) => {
+      const productsGroup = category.productsGroup.map((group) => ({
+        ...group,
+        products: group.products.map((product) => ({
+          ...product,
+          price: product.price.toNumber(),
+        })),
+      }))
+
+      return {
+        ...category,
+        productsGroup,
+      }
+    })
 
     return sanitizedCategories
   } catch (error) {

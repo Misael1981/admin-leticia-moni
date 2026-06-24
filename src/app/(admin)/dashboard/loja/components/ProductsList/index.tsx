@@ -19,13 +19,13 @@ import ProductCard from "../ProductCard"
 type ProductsListProps = {
   products: ProductDTO[]
   categoryName: string
-  selectedCategoryId: string
+  groupId: string
 }
 
 const ProductsList = ({
   products,
   categoryName,
-  selectedCategoryId,
+  groupId,
 }: ProductsListProps) => {
   const [showList, setShowList] = useState(false)
 
@@ -38,7 +38,7 @@ const ProductsList = ({
             Adicione, exclua ou edite produtos da tabela.
           </CardDescription>
         </div>
-        <Link href={`/dashboard/loja/novo?categoryId=${selectedCategoryId}`}>
+        <Link href={`/dashboard/loja/novo?groupId=${groupId}`}>
           <Button>
             <PlusCircle />
             Adicionar Produto

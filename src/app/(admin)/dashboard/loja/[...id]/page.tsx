@@ -7,7 +7,7 @@ interface ProductFormPageProps {
   }>
 
   searchParams: Promise<{
-    categoryId?: string
+    groupId?: string
   }>
 }
 
@@ -21,8 +21,7 @@ export default async function ProductFormPage({
   const routeParam = resolvedParams.id[0]
   const isEditMode = routeParam !== "novo"
 
-  const queryCategoryId = resolvedSearchParams.categoryId
-
+  const querygroupId = resolvedSearchParams.groupId
   const product = isEditMode ? await getProductById({ id: routeParam }) : null
 
   return (
@@ -33,7 +32,7 @@ export default async function ProductFormPage({
 
       <ProductForm
         product={product}
-        defaultCategoryId={isEditMode ? product?.categoryId : queryCategoryId}
+        defaultGroupId={isEditMode ? product?.groupId : querygroupId}
       />
     </div>
   )
