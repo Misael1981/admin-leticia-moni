@@ -2,7 +2,15 @@ import { db } from "@/lib/prisma"
 
 export async function getClinicSettings() {
   try {
-    const settings = await db.clinic.findFirst()
+    const settings = await db.clinic.findFirst({
+      include: {
+        businessHours: {
+          orderBy: {
+            dayOfWeek: "asc",
+          },
+        },
+      },
+    })
 
     if (!settings) {
       return {
@@ -22,6 +30,7 @@ export async function getClinicSettings() {
         city: "",
         state: "",
         zipCode: "",
+        businessHours: [],
       }
     }
 

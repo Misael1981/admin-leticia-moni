@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@misael1981/physio-database": "^1.1.7",
+    "@misael1981/physio-database": "^1.1.9",
     "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.10.0",

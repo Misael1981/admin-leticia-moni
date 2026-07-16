@@ -11,6 +11,7 @@ export default async function InfoClinicPage() {
         title="Dados Primários da Clínica"
         description="Esses dados/imagens serão a base do que serão mostrados sobre seu estabelecimento na página/app."
       />
+
       <ClinicForm clinic={dataClinic} />
     </>
   )
