@@ -1,7 +1,9 @@
+import PageHeader from "@/components/PageHeader"
+
 export default function UsersPage() {
   return (
-    <>
-      <h1>Página de usuários</h1>
-    </>
+    <div className="space-y-6">
+      <PageHeader title="Gerencie os Usuários do Sistema" />
+    </div>
   )
 }

@@ -13,7 +13,14 @@ import {
 } from "@/components/ui/sidebar"
 import Image from "next/image"
 import LogoutButton from "../LogoutButton"
-import { Activity, Hospital, LayoutDashboard, Store, Users } from "lucide-react"
+import {
+  Activity,
+  FileUser,
+  Hospital,
+  LayoutDashboard,
+  Store,
+  Users,
+} from "lucide-react"
 import Link from "next/link"
 
 const pages = [
@@ -28,7 +35,7 @@ const pages = [
     icon: Hospital,
   },
   {
-    name: "Gerenciamento deUsuários",
+    name: "Gerenciamento de Usuários",
     url: "/dashboard/usuarios",
     icon: Users,
   },
@@ -36,6 +43,11 @@ const pages = [
     name: "Gerenciamento de Tratamentos Disponíveis",
     url: "/dashboard/tratamentos",
     icon: Activity,
+  },
+  {
+    name: "Gerenciamento de Pacientes",
+    url: "/dashboard/pacientes",
+    icon: FileUser,
   },
   {
     name: "Gerenciamento da loja",
