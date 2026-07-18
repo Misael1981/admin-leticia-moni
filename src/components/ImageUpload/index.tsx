@@ -5,8 +5,13 @@ import Image from "next/image"
 import { useState } from "react"
 import { UseFormReturn, FieldValues, Path, PathValue } from "react-hook-form"
 
+type ImageUploadForm<TFormValues extends FieldValues> = Pick<
+  UseFormReturn<TFormValues>,
+  "setValue"
+>
+
 interface ImageUploadProps<TFormValues extends FieldValues> {
-  form: UseFormReturn<TFormValues>
+  form: ImageUploadForm<TFormValues>
   name: Path<TFormValues>
   initialUrl?: string | null
 }

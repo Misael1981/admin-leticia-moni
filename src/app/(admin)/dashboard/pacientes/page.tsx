@@ -1,4 +1,5 @@
 import PageHeader from "@/components/PageHeader"
+import AddPatientButton from "./components/AddPatientButton"
 
 export default async function PatientsPage() {
   return (
@@ -7,6 +8,8 @@ export default async function PatientsPage() {
         title="Página dos Pacientes"
         description="Gerencie o cadastro dos pacientes, acompanhe a evolução dos tratamentos, acesse prontuários e mantenha todas as informações organizadas em um só lugar."
       />
+
+      <AddPatientButton />
     </div>
   )
 }
