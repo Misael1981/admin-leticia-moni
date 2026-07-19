@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -16,7 +14,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { PatientFormValues } from "@/schemas/patients-schemas"
-import { Check } from "lucide-react"
 import Link from "next/link"
 import { useFormContext } from "react-hook-form"
 
@@ -154,13 +151,6 @@ const ContacdAndAddressForm = () => {
           </div>
         </FieldGroup>
       </CardContent>
-
-      <CardFooter className="border-t-2 pt-6 lg:flex lg:justify-end">
-        <Button>
-          <Check />
-          Salvar Informações
-        </Button>
-      </CardFooter>
     </Card>
   )
 }

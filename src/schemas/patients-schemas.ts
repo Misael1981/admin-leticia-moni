@@ -10,6 +10,13 @@ import { formatDateToISO } from "@/helpers/mask-date"
 import { parseOptionalCPF } from "@/helpers/parse-optional-cpf"
 import { z } from "zod"
 
+const referralValues = Object.values(PatientReferralSource) as [
+  string,
+  ...string[],
+]
+
+const isClient = typeof window !== "undefined"
+
 export const patientSchema = z
   .object({
     // --- Identificação ---
@@ -19,7 +26,10 @@ export const patientSchema = z
       .transform((val) => val.trim()),
 
     nickname: emptyToNull,
-    avatarUrl: emptyToNull,
+    avatarUrl: z
+      .union([z.string(), isClient ? z.instanceof(File) : z.any()])
+      .optional()
+      .nullable(),
 
     // --- Documentos ---
     cpf: z
@@ -96,7 +106,12 @@ export const patientSchema = z
       .nullable(),
 
     // --- Cadastro & Situação ---
-    patientSource: z.enum(PatientReferralSource).optional().nullable(),
+    patientSource: z
+      .enum(referralValues)
+      .optional()
+      .nullable()
+      // Trata se o front-end mandar string vazia do Select para virar null legítimo
+      .transform((val) => (val === "" || val === undefined ? null : val)),
     referralProfessional: emptyToNull,
     status: z.enum(PatientStatus).default("ACTIVE"),
 

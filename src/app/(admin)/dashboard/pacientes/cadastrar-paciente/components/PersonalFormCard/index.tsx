@@ -1,10 +1,8 @@
 import ImageUpload from "@/components/ImageUpload"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -25,7 +23,6 @@ import {
 import { BIOLOGICAL_SEX_OPTIONS } from "@/constants/options"
 import { maskDate } from "@/helpers/mask-date"
 import { PatientFormValues } from "@/schemas/patients-schemas"
-import { Check } from "lucide-react"
 import { Controller, useFormContext } from "react-hook-form"
 
 const PersonalFormCard = () => {
@@ -137,13 +134,6 @@ const PersonalFormCard = () => {
           </div>
         </FieldGroup>
       </CardContent>
-
-      <CardFooter className="border-t-2 pt-6 lg:flex lg:justify-end">
-        <Button>
-          <Check />
-          Salvar Informações
-        </Button>
-      </CardFooter>
     </Card>
   )
 }

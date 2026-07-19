@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -27,7 +25,6 @@ import {
 } from "@/constants/options"
 import { maskCPF, maskRG } from "@/helpers/personal-documents"
 import { PatientFormValues } from "@/schemas/patients-schemas"
-import { Check } from "lucide-react"
 import { Controller, useFormContext } from "react-hook-form"
 
 const DocumentationFormCard = () => {
@@ -139,13 +136,6 @@ const DocumentationFormCard = () => {
           </div>
         </FieldGroup>
       </CardContent>
-
-      <CardFooter className="border-t-2 pt-6 lg:flex lg:justify-end">
-        <Button>
-          <Check />
-          Salvar Informações
-        </Button>
-      </CardFooter>
     </Card>
   )
 }
