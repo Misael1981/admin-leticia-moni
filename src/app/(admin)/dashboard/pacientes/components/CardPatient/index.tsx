@@ -25,6 +25,7 @@ import { PatientStatus } from "@/constants/enums"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { generateWhatsAppLink } from "@/helpers/generate-whatsapp-link"
 import { FileText, MoreVertical } from "lucide-react"
+import Link from "next/link"
 import { useState } from "react"
 import { FaWhatsapp } from "react-icons/fa"
 import { toast } from "sonner"
@@ -91,12 +92,22 @@ const CardPatient = ({ patient }: CardPatientProps) => {
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer gap-2">
-              <FileText className="h-4 w-4 text-slate-500" />
-              Ver Prontuário
+            <DropdownMenuItem>
+              <Link
+                href={`/dashboard/pacientes/${patient.id}`}
+                className="flex items-center gap-2"
+              >
+                <FileText className="h-4 w-4 text-slate-500" />
+                Ver Prontuário
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer gap-2">
-              Editar Cadastro
+              <Link
+                href={`/dashboard/pacientes/${patient.id}/editar`}
+                className="flex items-center gap-2"
+              >
+                Editar Cadastro
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
