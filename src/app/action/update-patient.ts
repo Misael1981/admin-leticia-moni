@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/prisma"
 import { patientSchema } from "@/schemas/patients-schemas"
-import { PatientReferralSource } from "@misael1981/physio-database"
+import { PatientReferralSource, Prisma } from "@misael1981/physio-database"
 import { revalidatePath } from "next/cache"
 
 export async function createPatient(formData: unknown) {
@@ -100,5 +100,39 @@ export async function createPatient(formData: unknown) {
       success: false,
       error: "Falha interna ao salvar o paciente. Tente novamente.",
     }
+  }
+}
+
+export async function deletePatient(id: string) {
+  try {
+    if (!id) {
+      return { success: false, error: "ID do paciente não informado." }
+    }
+
+    await db.patient.delete({
+      where: { id },
+    })
+
+    revalidatePath("/dashboard/pacientes")
+
+    return {
+      success: true,
+      message: "Paciente deletado com sucesso!",
+    }
+  } catch (error) {
+    console.error("Erro ao deletar paciente:", error)
+
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2003"
+    ) {
+      return {
+        success: false,
+        error:
+          "Não é possível excluir: este paciente possui consultas ou prontuários vinculados.",
+      }
+    }
+
+    return { success: false, error: "Falha ao deletar paciente no banco." }
   }
 }
