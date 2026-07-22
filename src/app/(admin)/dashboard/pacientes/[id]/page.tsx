@@ -1,15 +1,21 @@
 import PageHeader from "@/components/PageHeader"
+import { getPatientById } from "@/data/patients.queries"
+import { notFound } from "next/navigation"
+import CardHero from "./components/CardHero"
 
 interface MedicalRecordProps {
-  params: Promise<{
-    id: string
-  }>
+  params: Promise<{ id: string }>
 }
 
 export default async function MedicalRecordPage({
   params,
 }: MedicalRecordProps) {
-  const id = await params
+  const { id } = await params
+  const patient = await getPatientById({ id })
+
+  if (!patient) {
+    notFound()
+  }
 
   return (
     <div className="space-y-6">
@@ -17,6 +23,8 @@ export default async function MedicalRecordPage({
         title="Gerenciamento do Prontuário"
         description="Consulte todo o histórico clínico do paciente em um único lugar. Registre evoluções, tratamentos, avaliações, observações e acompanhe a evolução do atendimento de forma organizada, garantindo um acompanhamento completo durante todo o processo de reabilitação"
       />
+
+      <CardHero patient={patient} />
     </div>
   )
 }

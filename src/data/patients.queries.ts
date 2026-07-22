@@ -19,6 +19,10 @@ export type PatientListItem = Prisma.PatientGetPayload<{
   }
 }>
 
+interface GetPatientByIdProps {
+  id: string
+}
+
 export async function getPatients({
   whereClause,
   currentPage,
@@ -64,5 +68,55 @@ export async function getCountPatients({
   } catch (error) {
     console.error("Erro ao buscar quantidade de pacientes:", error)
     throw new Error("Não foi possível carregar quantidade de pacientes.")
+  }
+}
+
+export type PatientDetail = Prisma.PatientGetPayload<{
+  include: {
+    address: {
+      select: {
+        id: true
+        street: true
+        number: true
+        complement: true
+        district: true
+        city: true
+        state: true
+        zipCode: true
+      }
+    }
+  }
+}>
+
+export async function getPatientById({
+  id,
+}: GetPatientByIdProps): Promise<PatientDetail | null> {
+  try {
+    if (!id) {
+      throw new Error("O ID do paciente é obrigatório.")
+    }
+
+    const patient = await db.patient.findUnique({
+      where: { id },
+      include: {
+        address: {
+          select: {
+            id: true,
+            street: true,
+            number: true,
+            complement: true,
+            district: true,
+            city: true,
+            state: true,
+            zipCode: true,
+          },
+        },
+      },
+    })
+
+    return patient
+  } catch (error) {
+    console.error(`Erro ao buscar o paciente com ID ${id}:`, error)
+    throw new Error("Não foi possível carregar as informações do paciente.")
   }
 }
