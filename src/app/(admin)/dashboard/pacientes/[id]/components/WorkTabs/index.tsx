@@ -51,7 +51,7 @@ const WorkTabs = ({ patient, anamnesis }: WorkTabsProps) => {
       </TabsContent>
 
       <TabsContent value="anamnesis" className="flex w-full justify-center">
-        <CardAnamnesis initialData={anamnesis} />
+        <CardAnamnesis initialData={anamnesis} patientId={patient.id} />
       </TabsContent>
 
       <TabsContent value="complete-data" className="flex w-full justify-center">
