@@ -2,7 +2,11 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AnamnesesType, PatientDetail } from "@/data/patients.queries"
+import {
+  AnamnesesType,
+  PatientDetail,
+  PhysicalAssessmentType,
+} from "@/data/patients.queries"
 
 import CardMedicalRecord from "./components/CardMedicalRecord"
 import CardDevelopments from "./components/CardDevelopments"
@@ -12,9 +16,14 @@ import CardCompleteData from "./components/CardCompleteData"
 type WorkTabsProps = {
   patient: PatientDetail
   anamnesis: AnamnesesType | null
+  physicalAssessment: PhysicalAssessmentType | null
 }
 
-const WorkTabs = ({ patient, anamnesis }: WorkTabsProps) => {
+const WorkTabs = ({
+  patient,
+  anamnesis,
+  physicalAssessment,
+}: WorkTabsProps) => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -51,7 +60,11 @@ const WorkTabs = ({ patient, anamnesis }: WorkTabsProps) => {
       </TabsContent>
 
       <TabsContent value="anamnesis" className="flex w-full justify-center">
-        <CardAnamnesis initialData={anamnesis} patientId={patient.id} />
+        <CardAnamnesis
+          initialData={anamnesis}
+          patientId={patient.id}
+          physicalAssessment={physicalAssessment}
+        />
       </TabsContent>
 
       <TabsContent value="complete-data" className="flex w-full justify-center">

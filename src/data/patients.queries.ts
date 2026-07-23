@@ -147,3 +147,26 @@ export async function getAnamnesisByPatientId(patientId: string) {
     return null
   }
 }
+
+export type PhysicalAssessmentType = Prisma.PhysicalAssessmentGetPayload<{
+  select: {
+    id: true
+    createdAt: true
+    updatedAt: true
+    patientId: true
+    content: true
+  }
+}>
+
+export async function getPhysicalAssessmentPatientId(patientId: string) {
+  try {
+    const physicalAssessment = await db.physicalAssessment.findUnique({
+      where: { patientId },
+    })
+
+    return physicalAssessment
+  } catch (error) {
+    console.error("Erro ao buscar avaliação física:", error)
+    return null
+  }
+}

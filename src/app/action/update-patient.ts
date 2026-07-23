@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/lib/prisma"
-import { patientSchema } from "@/schemas/patients-schemas"
+import { AnamnesisFormValues, patientSchema } from "@/schemas/patients-schemas"
 import { PatientReferralSource, Prisma } from "@misael1981/physio-database"
 import { revalidatePath } from "next/cache"
 
@@ -134,5 +134,38 @@ export async function deletePatient(id: string) {
     }
 
     return { success: false, error: "Falha ao deletar paciente no banco." }
+  }
+}
+
+export async function saveAnamnesisAndAssessmentAction(
+  patientId: string,
+  data: AnamnesisFormValues,
+) {
+  const { physicalAssessment, ...anamnesisData } = data
+
+  try {
+    await db.$transaction([
+      db.anamnesis.upsert({
+        where: { patientId },
+        update: anamnesisData,
+        create: { ...anamnesisData, patientId },
+      }),
+
+      db.physicalAssessment.create({
+        data: {
+          patientId,
+          content: physicalAssessment,
+        },
+      }),
+    ])
+
+    revalidatePath(`/dashboard/pacientes/${patientId}`)
+    return {
+      success: true,
+      message: "Anamnese e Avaliação salvas com sucesso!",
+    }
+  } catch (error) {
+    console.error("Erro ao salvar:", error)
+    return { success: false, error: "Falha ao salvar os dados." }
   }
 }

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { AnamnesesType } from "@/data/patients.queries"
+import { AnamnesesType, PhysicalAssessmentType } from "@/data/patients.queries"
 import {
   AnamnesisFormInput,
   AnamnesisFormValues,
@@ -23,14 +23,27 @@ import {
 } from "@/schemas/patients-schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition } from "react"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
+import "react-quill-new/dist/quill.snow.css"
+import dynamic from "next/dynamic"
+import { saveAnamnesisAndAssessmentAction } from "@/app/action/update-patient"
+import { toast } from "sonner"
+
+const ReactQuill = dynamic(() => import("react-quill-new"), {
+  ssr: false,
+})
 
 type CardAnamnesisProps = {
-  patientId: string // Importante passar o ID do paciente para a Server Action de upsert!
+  patientId: string
   initialData: AnamnesesType | null
+  physicalAssessment: PhysicalAssessmentType | null
 }
 
-const CardAnamnesis = ({ patientId, initialData }: CardAnamnesisProps) => {
+const CardAnamnesis = ({
+  patientId,
+  initialData,
+  physicalAssessment,
+}: CardAnamnesisProps) => {
   const [isPending, startTransition] = useTransition()
 
   const methods = useForm<AnamnesisFormInput, unknown, AnamnesisFormValues>({
@@ -47,20 +60,30 @@ const CardAnamnesis = ({ patientId, initialData }: CardAnamnesisProps) => {
       preExistingConditions: initialData?.preExistingConditions ?? "",
       complaintMedications: initialData?.complaintMedications ?? "",
       continuousMedications: initialData?.continuousMedications ?? "",
+      physicalAssessment: physicalAssessment?.content ?? "",
     },
   })
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isDirty },
   } = methods
 
   const onSubmit = async (data: AnamnesisFormValues) => {
     startTransition(async () => {
-      console.log("Dados prontos para o upsert:", { patientId, ...data })
-      // Aqui entra a chamada da Server Action:
-      // const res = await saveAnamnesisAction({ patientId, ...data })
+      try {
+        const response = await saveAnamnesisAndAssessmentAction(patientId, data)
+        if (response.success) {
+          toast.success("Anamnese criada com sucesso!")
+        } else {
+          console.error(response.error)
+          toast.error("Erro ao criar anamnese")
+        }
+      } catch (error) {
+        console.error("Erro ao criar anamnese:", error)
+      }
     })
   }
 
@@ -134,11 +157,20 @@ const CardAnamnesis = ({ patientId, initialData }: CardAnamnesisProps) => {
               </Field>
 
               <Field>
-                <FieldLabel>História da Moléstia Atual (HMA)</FieldLabel>
-                <Textarea
-                  className="min-h-36 resize-y"
-                  placeholder="Descreva detalhadamente o início dos sintomas, evolução, fatores de melhora/piora..."
-                  {...register("hma")}
+                <FieldLabel>Histórico da Queixa (HMA)</FieldLabel>
+                <Controller
+                  name="hma"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="overflow-hidden rounded-lg border">
+                      <ReactQuill
+                        theme="snow"
+                        value={field.value}
+                        onChange={field.onChange}
+                        className="min-h-60"
+                      />
+                    </div>
+                  )}
                 />
                 <FieldError>{errors.hma?.message}</FieldError>
               </Field>
@@ -185,6 +217,32 @@ const CardAnamnesis = ({ patientId, initialData }: CardAnamnesisProps) => {
                   {...register("continuousMedications")}
                 />
                 <FieldError>{errors.continuousMedications?.message}</FieldError>
+              </Field>
+            </div>
+
+            {/* Bloco 4 */}
+            <div className="space-y-4">
+              <h3 className="font-heading text-foreground text-xl">
+                4. Avaliação Física
+              </h3>
+
+              <Field>
+                <FieldLabel>Avaliação Física</FieldLabel>
+                <Controller
+                  name="physicalAssessment"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="overflow-hidden rounded-lg border">
+                      <ReactQuill
+                        theme="snow"
+                        value={field.value}
+                        onChange={field.onChange}
+                        className="min-h-60"
+                      />
+                    </div>
+                  )}
+                />
+                <FieldError>{errors.physicalAssessment?.message}</FieldError>
               </Field>
             </div>
           </FieldGroup>

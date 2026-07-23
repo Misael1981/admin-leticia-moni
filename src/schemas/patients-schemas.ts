@@ -147,11 +147,17 @@ export const anamnesisSchema = z.object({
   medicalDiagnosis: z.string().optional(),
   accompanyingStaff: z.string().optional(),
   complementaryExams: z.string().optional(),
-  hma: z.string().min(1, "A História da Moléstia Atual (HMA) é obrigatória."),
+  hma: z.string().min(1, "O Histórico da Queixa (HMA) é Obrigatório."),
   additionalSymptoms: z.string().optional(),
   preExistingConditions: z.string().optional(),
   complaintMedications: z.string().optional(),
   continuousMedications: z.string().optional(),
+  physicalAssessment: z
+    .string()
+    .refine(
+      (val) => val.replace(/<[^>]*>/g, "").trim().length > 0,
+      "A Avaliação Física é obrigatória.",
+    ),
 })
 
 export type AnamnesisFormInput = z.input<typeof anamnesisSchema>
