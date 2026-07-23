@@ -2,6 +2,7 @@ import PageHeader from "@/components/PageHeader"
 import { getPatientById } from "@/data/patients.queries"
 import { notFound } from "next/navigation"
 import CardHero from "./components/CardHero"
+import WorkTabs from "./components/WorkTabs"
 
 interface MedicalRecordProps {
   params: Promise<{ id: string }>
@@ -25,6 +26,8 @@ export default async function MedicalRecordPage({
       />
 
       <CardHero patient={patient} />
+
+      <WorkTabs patient={patient} />
     </div>
   )
 }

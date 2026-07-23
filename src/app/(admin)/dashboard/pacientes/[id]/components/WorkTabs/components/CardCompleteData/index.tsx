@@ -1,15 +1,12 @@
-"use client"
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet"
 import {
   BIOLOGICAL_SEX_LABELS,
   EDUCATION_LEVEL_LABELS,
@@ -20,14 +17,7 @@ import { PatientDetail } from "@/data/patients.queries"
 import { formatBirthDate, getPatientAge } from "@/helpers/format-birth-date"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { initialsName } from "@/helpers/initials-name"
-
-// TODO: mover para @/constants/labels se já existir algo parecido lá
-
-type SheetCompleteRegistrationProps = {
-  patient: PatientDetail
-  isOpen: boolean
-  onClose: () => void
-}
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 type InfoItemProps = {
   label: string
@@ -57,15 +47,20 @@ const Section = ({ title, children }: SectionProps) => (
   </div>
 )
 
-const SheetCompleteRegistration = ({
-  patient,
-  isOpen,
-  onClose,
-}: SheetCompleteRegistrationProps) => {
+type CardCompleteDataProps = {
+  patient: PatientDetail
+}
+
+const CardCompleteData = ({ patient }: CardCompleteDataProps) => {
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
-        <SheetHeader className="space-y-4">
+    <Card className="w-full max-w-4xl">
+      <CardHeader>
+        <CardTitle className="text-center text-2xl">
+          Cadastro Completo
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6 px-4 py-6">
           <div className="flex items-center gap-4">
             <Avatar className="h-14 w-14 border">
               <AvatarImage
@@ -78,13 +73,13 @@ const SheetCompleteRegistration = ({
             </Avatar>
 
             <div>
-              <SheetTitle>{patient.name}</SheetTitle>
-              <SheetDescription>Ficha de cadastro completa</SheetDescription>
+              <h3 className="text-lg">{patient.name}</h3>
+              <p className="text-muted-foreground text-xs">
+                {patient.nickname}
+              </p>
             </div>
           </div>
-        </SheetHeader>
 
-        <div className="space-y-6 px-4 py-6">
           <Section title="Dados pessoais">
             <InfoItem label="Apelido" value={patient.nickname} />
             <InfoItem
@@ -223,9 +218,9 @@ const SheetCompleteRegistration = ({
             />
           </Section>
         </div>
-      </SheetContent>
-    </Sheet>
+      </CardContent>
+    </Card>
   )
 }
 
-export default SheetCompleteRegistration
+export default CardCompleteData

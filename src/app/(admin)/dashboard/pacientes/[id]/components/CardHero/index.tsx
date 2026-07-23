@@ -10,20 +10,12 @@ import { formatBirthDate, getPatientAge } from "@/helpers/format-birth-date"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { initialsName } from "@/helpers/initials-name"
 import { MessageCircle, Pencil, PlusCircle } from "lucide-react"
-import { useState } from "react"
-import SheetCompleteRegistration from "../SheetCompleteRegistration"
 
 type CardHeroProps = {
   patient: PatientDetail
 }
 
 const CardHero = ({ patient }: CardHeroProps) => {
-  const [isOpenSheet, setIsOpenSheet] = useState(false)
-
-  const handleOpenSheet = () => {
-    setIsOpenSheet(true)
-  }
-
   return (
     <Card className="gap-2 p-4">
       <div className="flex flex-col-reverse justify-center gap-4 lg:flex-row lg:justify-between">
@@ -78,16 +70,6 @@ const CardHero = ({ patient }: CardHeroProps) => {
         <div className="flex justify-end">{GetStatusBadge(patient.status)}</div>
       </div>
 
-      <div className="flex justify-center">
-        <Button
-          variant="link"
-          className="text-blue-500"
-          onClick={handleOpenSheet}
-        >
-          Ver cadastro completo
-        </Button>
-      </div>
-
       <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-4 lg:justify-end">
         <Button
           variant="outline"
@@ -108,12 +90,6 @@ const CardHero = ({ patient }: CardHeroProps) => {
           Nova Evolução
         </Button>
       </div>
-
-      <SheetCompleteRegistration
-        patient={patient}
-        onClose={() => setIsOpenSheet(false)}
-        isOpen={isOpenSheet}
-      />
     </Card>
   )
 }
