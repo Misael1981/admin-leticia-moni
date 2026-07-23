@@ -120,3 +120,30 @@ export async function getPatientById({
     throw new Error("Não foi possível carregar as informações do paciente.")
   }
 }
+
+export type AnamnesesType = Prisma.AnamnesisGetPayload<{
+  select: {
+    id: true
+    mainComplaint: true
+    medicalDiagnosis: true
+    accompanyingStaff: true
+    complementaryExams: true
+    hma: true
+    additionalSymptoms: true
+    preExistingConditions: true
+    complaintMedications: true
+    continuousMedications: true
+  }
+}>
+
+export async function getAnamnesisByPatientId(patientId: string) {
+  try {
+    const anamnesis = await db.anamnesis.findUnique({
+      where: { patientId },
+    })
+    return anamnesis
+  } catch (error) {
+    console.error("Erro ao buscar anamnese:", error)
+    return null
+  }
+}

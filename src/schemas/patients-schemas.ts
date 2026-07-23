@@ -38,8 +38,8 @@ export const patientSchema = z
       .nullable()
       .transform(parseOptionalCPF)
       .refine((val) => {
-        if (!val) return true // Se for vazio/null, passa direto
-        return val.length === 11 // Valida se tem os 11 dígitos numéricos
+        if (!val) return true
+        return val.length === 11
       }, "O CPF deve conter exatamente 11 números"),
 
     rg: emptyToNull,
@@ -72,12 +72,12 @@ export const patientSchema = z
     phone: z
       .string()
       .min(1, "O telefone é obrigatório para contato")
-      .transform((val) => val.replace(/\D/g, "")), // Deixa apenas os números para salvar limpo no banco
+      .transform((val) => val.replace(/\D/g, "")),
 
     email: z
       .string()
       .email("Insira um e-mail válido")
-      .or(z.literal("")) // Aceita e-mail vazio de forma segura
+      .or(z.literal(""))
       .transform((val) => (val === "" ? null : val)),
 
     emergencyContactName: emptyToNull,
@@ -98,7 +98,7 @@ export const patientSchema = z
         street: emptyToNull,
         number: emptyToNull,
         complement: emptyToNull,
-        district: emptyToNull, // Mapeado para o seu campo "district" do Address
+        district: emptyToNull,
         city: emptyToNull,
         state: emptyToNull,
       })
@@ -110,7 +110,6 @@ export const patientSchema = z
       .enum(referralValues)
       .optional()
       .nullable()
-      // Trata se o front-end mandar string vazia do Select para virar null legítimo
       .transform((val) => (val === "" || val === undefined ? null : val)),
     referralProfessional: emptyToNull,
     status: z.enum(PatientStatus).default("ACTIVE"),
@@ -140,6 +139,20 @@ export const patientSchema = z
     }
   })
 
-// Use o tipo de entrada para o formulário (antes das transforms) e o tipo de saída para os valores validados.
 export type PatientFormInput = z.input<typeof patientSchema>
 export type PatientFormValues = z.output<typeof patientSchema>
+
+export const anamnesisSchema = z.object({
+  mainComplaint: z.string().min(1, "A queixa principal é obrigatória."),
+  medicalDiagnosis: z.string().optional(),
+  accompanyingStaff: z.string().optional(),
+  complementaryExams: z.string().optional(),
+  hma: z.string().min(1, "A História da Moléstia Atual (HMA) é obrigatória."),
+  additionalSymptoms: z.string().optional(),
+  preExistingConditions: z.string().optional(),
+  complaintMedications: z.string().optional(),
+  continuousMedications: z.string().optional(),
+})
+
+export type AnamnesisFormInput = z.input<typeof anamnesisSchema>
+export type AnamnesisFormValues = z.output<typeof anamnesisSchema>

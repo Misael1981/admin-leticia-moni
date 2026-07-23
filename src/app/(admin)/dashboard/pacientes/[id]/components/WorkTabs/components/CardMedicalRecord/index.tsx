@@ -12,8 +12,10 @@ const CardMedicalRecord = () => {
       <CardHeader>
         <CardTitle>Prontuário</CardTitle>
         <CardDescription>
-          View your key metrics and recent project activity. Track progress
-          across all your active projects.
+          Acompanhe a visão geral do histórico clínico do paciente em um único
+          lugar. Consulte informações importantes, visualize um resumo do quadro
+          clínico e acesse rapidamente a anamnese, as evoluções do tratamento e
+          demais registros relacionados ao atendimento.
         </CardDescription>
       </CardHeader>
       <CardContent className="text-muted-foreground text-sm">

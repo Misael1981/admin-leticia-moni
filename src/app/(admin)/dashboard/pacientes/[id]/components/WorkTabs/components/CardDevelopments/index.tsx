@@ -12,8 +12,10 @@ const CardDevelopments = () => {
       <CardHeader>
         <CardTitle>Evoluções</CardTitle>
         <CardDescription>
-          View your key metrics and recent project activity. Track progress
-          across all your active projects.
+          Registre a evolução clínica do paciente ao longo do tratamento. Cada
+          evolução representa uma consulta realizada, permitindo documentar a
+          conduta adotada, a resposta ao tratamento, a evolução do quadro
+          clínico e observações relevantes de cada atendimento.
         </CardDescription>
       </CardHeader>
       <CardContent className="text-muted-foreground text-sm">

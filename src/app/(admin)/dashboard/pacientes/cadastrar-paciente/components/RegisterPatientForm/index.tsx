@@ -110,7 +110,6 @@ const RegisterPatientForm = () => {
 
   return (
     <FormProvider {...methods}>
-      {/* Deixe o handleSubmit chamar sua função normalmente */}
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <div className="flex flex-col items-center justify-center gap-6">
           <PersonalFormCard />
