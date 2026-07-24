@@ -1,6 +1,7 @@
 import PageHeader from "@/components/PageHeader"
 import {
   getAnamnesisByPatientId,
+  getEvolutionsByPatientId,
   getPatientById,
   getPhysicalAssessmentPatientId,
 } from "@/data/patients.queries"
@@ -17,11 +18,13 @@ export default async function MedicalRecordPage({
 }: MedicalRecordProps) {
   const { id } = await params
 
-  const [patient, anamnesis, physicalAssessment] = await Promise.all([
-    getPatientById({ id }),
-    getAnamnesisByPatientId(id),
-    getPhysicalAssessmentPatientId(id),
-  ])
+  const [patient, anamnesis, physicalAssessment, evolutions] =
+    await Promise.all([
+      getPatientById({ id }),
+      getAnamnesisByPatientId(id),
+      getPhysicalAssessmentPatientId(id),
+      getEvolutionsByPatientId(id),
+    ])
 
   if (!patient) {
     notFound()
@@ -40,6 +43,7 @@ export default async function MedicalRecordPage({
         patient={patient}
         anamnesis={anamnesis}
         physicalAssessment={physicalAssessment}
+        evolutions={evolutions}
       />
     </div>
   )

@@ -147,7 +147,12 @@ export const anamnesisSchema = z.object({
   medicalDiagnosis: z.string().optional(),
   accompanyingStaff: z.string().optional(),
   complementaryExams: z.string().optional(),
-  hma: z.string().min(1, "O Histórico da Queixa (HMA) é Obrigatório."),
+  hma: z
+    .string()
+    .refine(
+      (val) => val.replace(/<[^>]*>/g, "").trim().length > 0,
+      "O Histórico da Queixa (HMA) é Obrigatório.",
+    ),
   additionalSymptoms: z.string().optional(),
   preExistingConditions: z.string().optional(),
   complaintMedications: z.string().optional(),
@@ -162,3 +167,30 @@ export const anamnesisSchema = z.object({
 
 export type AnamnesisFormInput = z.input<typeof anamnesisSchema>
 export type AnamnesisFormValues = z.output<typeof anamnesisSchema>
+
+export const evolutionSchema = z.object({
+  // Data da sessão
+  sessionDate: z.date({
+    message: "A data da sessão é obrigatória.",
+  }),
+
+  // Escala Visual Analógica de Dor (EVA) - Opcional, de 0 a 10
+  painScore: z.coerce
+    .number()
+    .int("A nota de dor deve ser um número inteiro.")
+    .min(0, "A nota mínima de dor é 0.")
+    .max(10, "A nota máxima de dor é 10.")
+    .nullable()
+    .optional(),
+
+  // Anotações da sessão (SOAP / Texto Livre)
+  notes: z
+    .string()
+    .refine(
+      (val) => val.replace(/<[^>]*>/g, "").trim().length > 0,
+      "As anotações da evolução são obrigatórias.",
+    ),
+})
+
+export type EvolutionFormInput = z.input<typeof evolutionSchema>
+export type EvolutionFormValues = z.output<typeof evolutionSchema>

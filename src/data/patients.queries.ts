@@ -170,3 +170,32 @@ export async function getPhysicalAssessmentPatientId(patientId: string) {
     return null
   }
 }
+
+export type EvolutionType = Prisma.EvolutionGetPayload<{
+  select: {
+    id: true
+    createdAt: true
+    updatedAt: true
+    notes: true
+    patientId: true
+    sessionDate: true
+    sessionNumber: true
+    painScore: true
+  }
+}>
+
+export async function getEvolutionsByPatientId(patientId: string) {
+  try {
+    const evolutions = await db.evolution.findMany({
+      where: { patientId },
+      orderBy: {
+        sessionNumber: "desc", // Traz a sessão mais recente no topo! (Ex: #12, #11, #10...)
+      },
+    })
+
+    return evolutions
+  } catch (error) {
+    console.error("Erro ao buscar Evoluções:", error)
+    return []
+  }
+}

@@ -1,3 +1,12 @@
+"use client"
+
+import "react-quill-new/dist/quill.snow.css"
+import dynamic from "next/dynamic"
+
+const ReactQuill = dynamic(() => import("react-quill-new"), {
+  ssr: false,
+})
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -24,14 +33,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition } from "react"
 import { Controller, useForm } from "react-hook-form"
-import "react-quill-new/dist/quill.snow.css"
-import dynamic from "next/dynamic"
 import { saveAnamnesisAndAssessmentAction } from "@/app/action/update-patient"
 import { toast } from "sonner"
-
-const ReactQuill = dynamic(() => import("react-quill-new"), {
-  ssr: false,
-})
 
 type CardAnamnesisProps = {
   patientId: string
@@ -103,8 +106,8 @@ const CardAnamnesis = ({
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6">
-        <CardContent>
-          <FieldGroup className="space-y-6">
+        <FieldGroup className="space-y-6">
+          <CardContent className="space-y-6">
             {/* Bloco 1 */}
             <div className="space-y-4">
               <h3 className="font-heading text-foreground text-xl">
@@ -245,25 +248,25 @@ const CardAnamnesis = ({
                 <FieldError>{errors.physicalAssessment?.message}</FieldError>
               </Field>
             </div>
-          </FieldGroup>
-        </CardContent>
+          </CardContent>
 
-        <CardFooter className="pt-2">
-          <div className="flex w-full justify-center">
-            <Button
-              className="w-full max-w-xl"
-              type="submit"
-              size="lg"
-              disabled={isPending || !isDirty}
-            >
-              {isPending
-                ? "Salvando Anamnese..."
-                : initialData
-                  ? "Atualizar Anamnese"
-                  : "Salvar Anamnese"}
-            </Button>
-          </div>
-        </CardFooter>
+          <CardFooter className="pt-2">
+            <div className="flex w-full justify-center">
+              <Button
+                className="w-full max-w-xl"
+                type="submit"
+                size="lg"
+                disabled={isPending || !isDirty}
+              >
+                {isPending
+                  ? "Salvando Anamnese..."
+                  : initialData
+                    ? "Atualizar Anamnese"
+                    : "Salvar Anamnese"}
+              </Button>
+            </div>
+          </CardFooter>
+        </FieldGroup>
       </form>
     </Card>
   )

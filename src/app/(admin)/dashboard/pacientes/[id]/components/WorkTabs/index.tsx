@@ -4,25 +4,29 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   AnamnesesType,
+  EvolutionType,
   PatientDetail,
   PhysicalAssessmentType,
 } from "@/data/patients.queries"
 
 import CardMedicalRecord from "./components/CardMedicalRecord"
-import CardDevelopments from "./components/CardDevelopments"
 import CardAnamnesis from "./components/CardAnamnesis"
 import CardCompleteData from "./components/CardCompleteData"
+import CardEvolutions from "./components/CardEvolutions"
+import { id } from "zod/locales"
 
 type WorkTabsProps = {
   patient: PatientDetail
   anamnesis: AnamnesesType | null
   physicalAssessment: PhysicalAssessmentType | null
+  evolutions: EvolutionType[] | null
 }
 
 const WorkTabs = ({
   patient,
   anamnesis,
   physicalAssessment,
+  evolutions,
 }: WorkTabsProps) => {
   const router = useRouter()
   const pathname = usePathname()
@@ -56,7 +60,7 @@ const WorkTabs = ({
       </TabsContent>
 
       <TabsContent value="evolutions" className="flex w-full justify-center">
-        <CardDevelopments />
+        <CardEvolutions evolutions={evolutions} patientId={patient.id} />
       </TabsContent>
 
       <TabsContent value="anamnesis" className="flex w-full justify-center">
