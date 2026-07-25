@@ -44,6 +44,7 @@ export default async function MedicalRecordPage({
         anamnesis={anamnesis}
         physicalAssessment={physicalAssessment}
         evolutions={evolutions}
+        currentPatientStatus={patient.status}
       />
     </div>
   )

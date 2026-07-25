@@ -34,15 +34,26 @@ import { ptBR } from "date-fns/locale"
 import { Badge } from "@/components/ui/badge"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { getPainDescription } from "@/helpers/get-pain-description"
+import { PatientStatus } from "@/constants/enums"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { PATIENT_STATUS_OPTIONS } from "@/constants/options"
 
 type CardEvolutionFormProps = {
   patientId: string
   lastSessionNumber: number
+  currentPatientStatus: PatientStatus
 }
 
 const CardEvolutionForm = ({
   patientId,
   lastSessionNumber,
+  currentPatientStatus,
 }: CardEvolutionFormProps) => {
   const [isPending, startTransition] = useTransition()
   const nextSessionNumber = lastSessionNumber + 1
@@ -53,6 +64,8 @@ const CardEvolutionForm = ({
       sessionDate: new Date(),
       painScore: undefined, // Sem nota de dor selecionada por padrão
       notes: "", // Editor de texto limpo
+
+      patientStatus: currentPatientStatus ?? PatientStatus.ACTIVE,
     },
   })
 
@@ -165,17 +178,32 @@ const CardEvolutionForm = ({
             <FieldError>{errors.painScore?.message}</FieldError>
           </Field>
 
-          <div className="flex min-h-20 w-full items-center justify-center border p-4">
-            <div className="space-y-2 text-center">
-              <h3 className="font-heading text-foreground text-xl">
-                Aqui será um seletor para o status do tratamento
-              </h3>
-
-              <p>
-                Pra dizer se o paciente está em tratamento, em alta ou abandonou
-                o tratamento
-              </p>
-            </div>
+          <div className="flex w-full justify-center">
+            <Field className="w-full max-w-lg">
+              <FieldLabel>Status</FieldLabel>
+              <Controller
+                name="patientStatus"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PATIENT_STATUS_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FieldError>{errors.patientStatus?.message}</FieldError>
+            </Field>
           </div>
 
           <div className="flex min-h-20 w-full items-center justify-center border p-4">

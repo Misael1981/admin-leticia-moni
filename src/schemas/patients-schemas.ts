@@ -190,6 +190,8 @@ export const evolutionSchema = z.object({
       (val) => val.replace(/<[^>]*>/g, "").trim().length > 0,
       "As anotações da evolução são obrigatórias.",
     ),
+
+  patientStatus: z.enum(PatientStatus).default("ACTIVE"),
 })
 
 export type EvolutionFormInput = z.input<typeof evolutionSchema>

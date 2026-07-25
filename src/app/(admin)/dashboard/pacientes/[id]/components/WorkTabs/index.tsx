@@ -13,13 +13,14 @@ import CardMedicalRecord from "./components/CardMedicalRecord"
 import CardAnamnesis from "./components/CardAnamnesis"
 import CardCompleteData from "./components/CardCompleteData"
 import CardEvolutions from "./components/CardEvolutions"
-import { id } from "zod/locales"
+import { PatientStatus } from "@/constants/enums"
 
 type WorkTabsProps = {
   patient: PatientDetail
   anamnesis: AnamnesesType | null
   physicalAssessment: PhysicalAssessmentType | null
   evolutions: EvolutionType[] | null
+  currentPatientStatus: PatientStatus
 }
 
 const WorkTabs = ({
@@ -27,6 +28,7 @@ const WorkTabs = ({
   anamnesis,
   physicalAssessment,
   evolutions,
+  currentPatientStatus,
 }: WorkTabsProps) => {
   const router = useRouter()
   const pathname = usePathname()
@@ -39,6 +41,7 @@ const WorkTabs = ({
     params.set("tab", value)
     router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }
+
   return (
     <Tabs
       value={currentTab}
@@ -60,7 +63,11 @@ const WorkTabs = ({
       </TabsContent>
 
       <TabsContent value="evolutions" className="flex w-full justify-center">
-        <CardEvolutions evolutions={evolutions} patientId={patient.id} />
+        <CardEvolutions
+          evolutions={evolutions}
+          patientId={patient.id}
+          currentPatientStatus={currentPatientStatus}
+        />
       </TabsContent>
 
       <TabsContent value="anamnesis" className="flex w-full justify-center">
