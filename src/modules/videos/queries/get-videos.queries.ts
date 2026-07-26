@@ -33,3 +33,19 @@ export async function getAllVideos() {
     return null
   }
 }
+
+export async function getVideoById(videoId: string) {
+  try {
+    const video = await db.video.findUnique({
+      where: {
+        id: videoId,
+      },
+      select: videoSelect,
+    })
+
+    return video
+  } catch (error) {
+    console.error("Erro ao buscar o vídeo treino:", error)
+    return null
+  }
+}

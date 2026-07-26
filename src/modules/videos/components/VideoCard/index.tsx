@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Clock3, Eye, Pencil, Trash2 } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { VideoType } from "../../queries/get-videos.queries"
 
 type VideoCardProps = {
@@ -53,9 +53,12 @@ export function VideoCard({ video }: VideoCardProps) {
           </Button>
 
           <div className="flex gap-1">
-            <Button size="icon" variant="ghost">
+            <Link
+              href={`/dashboard/videos/${video?.id}`}
+              className={buttonVariants({ variant: "ghost" })}
+            >
               <Pencil className="size-4" />
-            </Button>
+            </Link>
 
             <Button size="icon" variant="ghost">
               <Trash2 className="text-destructive size-4" />

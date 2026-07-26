@@ -35,7 +35,7 @@ import { useRouter } from "next/navigation"
 import { getCloudinaryVideoThumbnail } from "../../helpers/get-cloudinary-video-thumbnail"
 
 type VideoFormProps = {
-  initialData?: VideoType
+  initialData?: VideoType | null
 }
 
 const VideoForm = ({ initialData }: VideoFormProps) => {
