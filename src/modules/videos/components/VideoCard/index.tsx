@@ -1,15 +1,47 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
-import { Clock3, Eye, Pencil, Trash2 } from "lucide-react"
+import { Clock3, Pencil, Trash2, VideoIcon } from "lucide-react"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import { VideoType } from "../../queries/get-videos.queries"
+import { deleteVideoAction } from "../../actions/upsert-video.action"
+import { useState } from "react"
+import { toast } from "sonner"
+import DialogDeleteItem from "@/components/DialogDeleteItem"
 
 type VideoCardProps = {
   video: VideoType | null
 }
 
 export function VideoCard({ video }: VideoCardProps) {
+  const [isOpenModalDelete, setOpenModalDelete] = useState(false)
+
+  const handleOpenModalDelete = () => {
+    setOpenModalDelete(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    try {
+      if (!video) {
+        return console.log("Vídeo não encontrado")
+      }
+      const success = await deleteVideoAction(video.id)
+
+      if (success) {
+        setOpenModalDelete(false)
+        toast.success("Paciente deletado com sucesso!")
+      } else {
+        toast.error("Ocorreu um erro ao deletar o paciente.")
+        setOpenModalDelete(false)
+      }
+    } catch (error) {
+      console.error("Erro ao deletar o paciente:", error)
+      setOpenModalDelete(false)
+    }
+  }
+
   return (
     <article className="group bg-background overflow-hidden rounded-xl border transition hover:shadow-md">
       <Link href={`/videos/${video?.id}`}>
@@ -18,7 +50,7 @@ export function VideoCard({ video }: VideoCardProps) {
             src={video?.thumbnailUrl || "/logo.svg"}
             alt={video?.name || "Capa do Video Treino"}
             fill
-            className="object-contain transition duration-300 group-hover:scale-105"
+            className="object-contain p-2 transition duration-300 group-hover:scale-105"
           />
         </div>
       </Link>
@@ -47,7 +79,7 @@ export function VideoCard({ video }: VideoCardProps) {
         <div className="flex items-center justify-between">
           <Button size="sm" variant="secondary" asChild>
             <Link href={`/videos/${video?.id}`}>
-              <Eye className="mr-2 size-4" />
+              <VideoIcon className="mr-2 size-4" />
               Abrir
             </Link>
           </Button>
@@ -60,12 +92,19 @@ export function VideoCard({ video }: VideoCardProps) {
               <Pencil className="size-4" />
             </Link>
 
-            <Button size="icon" variant="ghost">
+            <Button size="icon" variant="ghost" onClick={handleOpenModalDelete}>
               <Trash2 className="text-destructive size-4" />
             </Button>
           </div>
         </div>
       </div>
+
+      <DialogDeleteItem
+        isOpen={isOpenModalDelete}
+        onClose={() => setOpenModalDelete(false)}
+        onConfirm={handleConfirmDelete}
+        label="Deseja realmente deletar esse vídeo? Essa ação é irreversível."
+      />
     </article>
   )
 }
