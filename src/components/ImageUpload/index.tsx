@@ -61,18 +61,18 @@ const ImageUpload = <TFormValues extends FieldValues>({
 
   return (
     <div>
-      <div className="w-full bg-slate-200">
+      <div className="w-full rounded-xl bg-slate-200">
         <input
           type="file"
           accept="image/*"
           id={inputId}
-          className="hidden"
+          className="hidden py-4"
           onChange={handleLogoChange}
         />
 
         <label
           htmlFor={inputId}
-          className="hover:bg-accent flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed p-6 transition"
+          className="hover:bg-accent flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed px-6 py-10 transition"
         >
           {preview ? (
             <div className="relative flex min-h-40 items-center justify-center">
@@ -87,7 +87,7 @@ const ImageUpload = <TFormValues extends FieldValues>({
               <button
                 type="button"
                 onClick={handleRemoveImage}
-                className="bg-background/80 absolute top-0 right-0 rounded-full p-1 shadow"
+                className="bg-background/80 absolute top-0 right-0 rounded-full px-1 py-2 shadow"
               >
                 <X className="h-4 w-4" />
               </button>

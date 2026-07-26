@@ -20,6 +20,7 @@ import {
   LayoutDashboard,
   Store,
   Users,
+  VideoIcon,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -33,6 +34,11 @@ const pages = [
     name: "Informações Gerais da Clínica",
     url: "/dashboard/info-clinica",
     icon: Hospital,
+  },
+  {
+    name: "Gerenciamento dos Vídeos de Treinos",
+    url: "/dashboard/videos",
+    icon: VideoIcon,
   },
   {
     name: "Gerenciamento de Usuários",

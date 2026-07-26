@@ -160,7 +160,7 @@ export type PhysicalAssessmentType = Prisma.PhysicalAssessmentGetPayload<{
 
 export async function getPhysicalAssessmentPatientId(patientId: string) {
   try {
-    const physicalAssessment = await db.physicalAssessment.findUnique({
+    const physicalAssessment = await db.physicalAssessment.findFirst({
       where: { patientId },
     })
 
