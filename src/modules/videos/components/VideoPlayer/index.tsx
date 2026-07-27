@@ -30,23 +30,45 @@ export function VideoPlayer({
   const [isLoading, setIsLoading] = useState(true)
   const [isOpenDeawer, setOpenDrawer] = useState(false)
 
+  // controla auto play
   useEffect(() => {
     const videoEl = videoRef.current
     if (!videoEl) return
 
+    let isMounted = true
+
     videoEl
       .play()
       .then(() => {
-        setIsPlaying(true)
-        resetControlsTimeout()
-      })
-      .catch(() => {
-        videoEl.muted = true
-        videoEl.play().then(() => {
+        if (isMounted) {
           setIsPlaying(true)
           resetControlsTimeout()
-        })
+        }
       })
+      .catch(() => {
+        if (videoEl) {
+          videoEl.muted = true
+          videoEl
+            .play()
+            .then(() => {
+              if (isMounted) {
+                setIsPlaying(true)
+                resetControlsTimeout()
+              }
+            })
+            .catch((err) =>
+              console.error("Erro ao reproduzir vídeo mutado:", err),
+            )
+        }
+      })
+
+    return () => {
+      isMounted = false
+      if (videoEl) {
+        videoEl.pause()
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleOpenDrawer = () => {
