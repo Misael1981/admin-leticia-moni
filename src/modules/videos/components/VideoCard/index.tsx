@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Clock3, Pencil, Trash2, VideoIcon } from "lucide-react"
+import { Clock3, Pencil, Play, Trash2, VideoIcon } from "lucide-react"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import { VideoType } from "../../queries/get-videos.queries"
@@ -10,6 +10,7 @@ import { deleteVideoAction } from "../../actions/upsert-video.action"
 import { useState } from "react"
 import { toast } from "sonner"
 import DialogDeleteItem from "@/components/DialogDeleteItem"
+import ModalPlayVideo from "../ModalPlayVideo"
 
 type VideoCardProps = {
   video: VideoType | null
@@ -17,9 +18,14 @@ type VideoCardProps = {
 
 export function VideoCard({ video }: VideoCardProps) {
   const [isOpenModalDelete, setOpenModalDelete] = useState(false)
+  const [isOpenModalPlayVideo, setOpenModalPlayVideo] = useState(false)
 
   const handleOpenModalDelete = () => {
     setOpenModalDelete(true)
+  }
+
+  const handleOpenModalPlayVideo = () => {
+    setOpenModalPlayVideo(true)
   }
 
   const handleConfirmDelete = async () => {
@@ -44,16 +50,24 @@ export function VideoCard({ video }: VideoCardProps) {
 
   return (
     <article className="group bg-background overflow-hidden rounded-xl border transition hover:shadow-md">
-      <Link href={`/videos/${video?.id}`}>
-        <div className="aspect relative h-60 w-full overflow-hidden bg-(--color-cream)">
-          <Image
-            src={video?.thumbnailUrl || "/logo.svg"}
-            alt={video?.name || "Capa do Video Treino"}
-            fill
-            className="object-contain p-2 transition duration-300 group-hover:scale-105"
-          />
+      <div
+        className="aspect relative h-60 w-full overflow-hidden bg-(--color-cream)"
+        onClick={handleOpenModalPlayVideo}
+      >
+        <Image
+          src={video?.thumbnailUrl || "/logo.svg"}
+          alt={video?.name || "Capa do Video Treino"}
+          fill
+          className="object-contain p-2 transition duration-300 group-hover:scale-105"
+        />
+
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors duration-300 group-hover/btn:bg-black/40">
+          <div className="text-primary flex h-12 w-12 items-center justify-center rounded-full bg-white/10 shadow-lg transition-transform duration-300 group-hover/btn:scale-110 group-hover/btn:bg-white">
+            {/* Ícone de Play (Lucide React) */}
+            <Play className="ml-1 h-6 w-6 fill-current" />
+          </div>
         </div>
-      </Link>
+      </div>
 
       <div className="space-y-3 p-3">
         <div>
@@ -77,11 +91,13 @@ export function VideoCard({ video }: VideoCardProps) {
         </div>
 
         <div className="flex items-center justify-between">
-          <Button size="sm" variant="secondary" asChild>
-            <Link href={`/videos/${video?.id}`}>
-              <VideoIcon className="mr-2 size-4" />
-              Abrir
-            </Link>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={handleOpenModalPlayVideo}
+          >
+            <VideoIcon className="mr-2 size-4" />
+            Abrir
           </Button>
 
           <div className="flex gap-1">
@@ -104,6 +120,12 @@ export function VideoCard({ video }: VideoCardProps) {
         onClose={() => setOpenModalDelete(false)}
         onConfirm={handleConfirmDelete}
         label="Deseja realmente deletar esse vídeo? Essa ação é irreversível."
+      />
+
+      <ModalPlayVideo
+        video={video}
+        isOpen={isOpenModalPlayVideo}
+        onClose={() => setOpenModalPlayVideo(false)}
       />
     </article>
   )
