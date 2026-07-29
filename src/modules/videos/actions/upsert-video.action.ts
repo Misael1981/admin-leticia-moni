@@ -3,7 +3,6 @@
 import { db } from "@/lib/prisma"
 import { videoSchema, VideoFormValues } from "../schemas/video-schema"
 import { revalidatePath } from "next/cache"
-import cloudinary from "@/lib/cloudinary"
 
 // Tipagem do retorno da Server Action
 type UpsertVideoResponse = {
@@ -77,41 +76,6 @@ export async function upsertVideoAction(
         "Falha ao salvar o vídeo treino. Verifique os dados e tente novamente.",
       error:
         "Falha ao salvar o vídeo treino. Verifique os dados e tente novamente.",
-    }
-  }
-}
-
-export async function deleteVideoAction(videoId: string) {
-  try {
-    const video = await db.video.findUnique({
-      where: { id: videoId },
-    })
-
-    if (!video) {
-      return { success: false, error: "Vídeo não encontrado." }
-    }
-
-    if (video.cloudinaryPublicId) {
-      await cloudinary.uploader.destroy(video.cloudinaryPublicId, {
-        resource_type: "video",
-      })
-    }
-
-    await db.video.delete({
-      where: { id: videoId },
-    })
-
-    revalidatePath("/dashboard/videos")
-
-    return {
-      success: true,
-      message: "Vídeo excluído com sucesso!",
-    }
-  } catch (error) {
-    console.error("❌ Erro ao deletar vídeo:", error)
-    return {
-      success: false,
-      error: "Falha ao excluir o vídeo. Tente novamente.",
     }
   }
 }

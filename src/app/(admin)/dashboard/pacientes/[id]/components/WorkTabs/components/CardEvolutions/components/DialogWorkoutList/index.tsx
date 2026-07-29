@@ -32,16 +32,15 @@ const DialogWorkoutList = ({
     useState<string[]>(initialSelectedIds)
   const [searchTerm, setSearchTerm] = useState("")
 
-  const videoList = videos ?? []
-
-  // 🔍 Filtra os vídeos em tempo real pelo nome (case insensitive)
   const filteredVideos = useMemo(() => {
-    if (!searchTerm.trim()) return videoList
+    const list = videos ?? []
 
-    return videoList.filter((video) =>
+    if (!searchTerm.trim()) return list
+
+    return list.filter((video) =>
       video.name.toLowerCase().includes(searchTerm.toLowerCase()),
     )
-  }, [videoList, searchTerm])
+  }, [videos, searchTerm])
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

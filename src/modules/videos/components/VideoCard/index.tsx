@@ -6,11 +6,11 @@ import { Clock3, Pencil, Play, Trash2, VideoIcon } from "lucide-react"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import { VideoType } from "../../queries/get-videos.queries"
-import { deleteVideoAction } from "../../actions/upsert-video.action"
 import { useState } from "react"
 import { toast } from "sonner"
 import DialogDeleteItem from "@/components/DialogDeleteItem"
 import ModalPlayVideo from "../ModalPlayVideo"
+import { deleteVideoAction } from "../../actions/delete-video"
 
 type VideoCardProps = {
   video: VideoType | null
@@ -29,27 +29,30 @@ export function VideoCard({ video }: VideoCardProps) {
   }
 
   const handleConfirmDelete = async () => {
-    try {
-      if (!video) {
-        return console.log("Vídeo não encontrado")
-      }
-      const success = await deleteVideoAction(video.id)
+    if (!video) {
+      console.log("Vídeo não encontrado")
+      return
+    }
 
-      if (success) {
+    try {
+      const result = await deleteVideoAction(video.id)
+
+      if (result.success) {
         setOpenModalDelete(false)
-        toast.success("Paciente deletado com sucesso!")
+        toast.success(result.message ?? "Vídeo deletado com sucesso!")
       } else {
-        toast.error("Ocorreu um erro ao deletar o paciente.")
+        toast.error(result.error ?? "Ocorreu um erro ao deletar o vídeo.")
         setOpenModalDelete(false)
       }
     } catch (error) {
-      console.error("Erro ao deletar o paciente:", error)
+      console.error("Erro ao deletar o vídeo:", error)
+      toast.error("Ocorreu um erro ao deletar o vídeo.")
       setOpenModalDelete(false)
     }
   }
 
   return (
-    <article className="group bg-background overflow-hidden rounded-xl border transition hover:shadow-md">
+    <article className="group bg-background w-75 max-w-[95%] overflow-hidden rounded-xl border transition hover:shadow-md">
       <div
         className="aspect relative h-60 w-full overflow-hidden bg-(--color-cream)"
         onClick={handleOpenModalPlayVideo}
