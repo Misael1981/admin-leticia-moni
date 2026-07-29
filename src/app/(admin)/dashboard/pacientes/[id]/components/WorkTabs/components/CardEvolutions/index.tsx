@@ -9,17 +9,20 @@ import { EvolutionType } from "@/data/patients.queries"
 import CardEvolutionForm from "./components/CardEvolutionForm"
 import EvolutionTimelineCard from "./components/EvolutionTimelineCard"
 import { PatientStatus } from "@/constants/enums"
+import { VideoType } from "@/modules/videos/queries/get-videos.queries"
 
 type CardEvolutionsProps = {
   patientId: string
   evolutions: EvolutionType[] | null
   currentPatientStatus: PatientStatus
+  videos: VideoType[] | null
 }
 
 const CardEvolutions = ({
   patientId,
   evolutions,
   currentPatientStatus,
+  videos,
 }: CardEvolutionsProps) => {
   const lastSessionNumber = evolutions?.[0]?.sessionNumber ?? 0
 
@@ -39,6 +42,7 @@ const CardEvolutions = ({
           patientId={patientId}
           lastSessionNumber={lastSessionNumber}
           currentPatientStatus={currentPatientStatus}
+          videos={videos}
         />
 
         {evolutions && (

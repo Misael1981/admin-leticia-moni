@@ -15,17 +15,20 @@ import { NotebookPen } from "lucide-react"
 import SessionEvolutionData from "../SessionEvolutionData"
 import SessionNotes from "../SessionNotes"
 import SessionWorkoutSelector from "../SessionWorkoutSelector"
+import { VideoType } from "@/modules/videos/queries/get-videos.queries"
 
 type CardEvolutionFormProps = {
   patientId: string
   lastSessionNumber: number
   currentPatientStatus: PatientStatus
+  videos: VideoType[] | null
 }
 
 const CardEvolutionForm = ({
   patientId,
   lastSessionNumber,
   currentPatientStatus,
+  videos,
 }: CardEvolutionFormProps) => {
   const [isPending, startTransition] = useTransition()
   const nextSessionNumber = lastSessionNumber + 1
@@ -38,6 +41,8 @@ const CardEvolutionForm = ({
       notes: "",
 
       patientStatus: currentPatientStatus ?? PatientStatus.ACTIVE,
+
+      exerciseVideos: [],
     },
   })
 
@@ -75,7 +80,7 @@ const CardEvolutionForm = ({
         <div className="space-y-4">
           <SessionEvolutionData />
 
-          <SessionWorkoutSelector />
+          <SessionWorkoutSelector videos={videos} />
 
           <SessionNotes />
         </div>

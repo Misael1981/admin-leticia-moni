@@ -168,13 +168,33 @@ export const anamnesisSchema = z.object({
 export type AnamnesisFormInput = z.input<typeof anamnesisSchema>
 export type AnamnesisFormValues = z.output<typeof anamnesisSchema>
 
+export const exercisePrescriptionItemSchema = z.object({
+  videoId: z.string({
+    message: "O vídeo é obrigatório.",
+  }),
+  // Nome e a thumbnail no objeto local do formulário APENAS para renderizar fácil na UI!
+  videoName: z.string().optional(),
+  thumbnailUrl: z.string().optional(),
+
+  // Parâmetros da prescrição
+  order: z.number().default(0),
+  sets: z.coerce.number().int().min(1, "Mínimo 1 série").nullable().optional(),
+  reps: z.coerce
+    .number()
+    .int()
+    .min(1, "Mínimo 1 repetição")
+    .nullable()
+    .optional(),
+  holdTimeSec: z.coerce.number().int().min(0).nullable().optional(),
+  frequency: z.string().default("1x ao dia").optional(),
+  notes: z.string().optional(),
+})
+
 export const evolutionSchema = z.object({
-  // Data da sessão
   sessionDate: z.date({
     message: "A data da sessão é obrigatória.",
   }),
 
-  // Escala Visual Analógica de Dor (EVA) - Opcional, de 0 a 10
   painScore: z.coerce
     .number()
     .int("A nota de dor deve ser um número inteiro.")
@@ -183,7 +203,6 @@ export const evolutionSchema = z.object({
     .nullable()
     .optional(),
 
-  // Anotações da sessão (SOAP / Texto Livre)
   notes: z
     .string()
     .refine(
@@ -192,7 +211,12 @@ export const evolutionSchema = z.object({
     ),
 
   patientStatus: z.enum(PatientStatus).default("ACTIVE"),
+
+  exerciseVideos: z.array(exercisePrescriptionItemSchema).default([]),
 })
 
 export type EvolutionFormInput = z.input<typeof evolutionSchema>
 export type EvolutionFormValues = z.output<typeof evolutionSchema>
+export type ExercisePrescriptionItem = z.infer<
+  typeof exercisePrescriptionItemSchema
+>
