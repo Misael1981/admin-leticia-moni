@@ -23,22 +23,18 @@ const SessionWorkoutSelector = ({ videos }: SessionWorkoutSelectorProps) => {
     formState: { errors },
   } = useFormContext<EvolutionFormValues>()
 
-  // 1. O hook do RHF para gerenciar a array dinâmica
   const { fields, append, remove } = useFieldArray({
     control,
     name: "exerciseVideos",
   })
 
-  // 2. Callback para quando a pessoa escolhe os vídeos no Dialog
   const handleConfirmSelection = (selectedVideoIds: string[]) => {
-    // Pegamos os IDs que já estão na tela pra não duplicar
     const existingVideoIds = fields.map((field) => field.videoId)
 
     selectedVideoIds.forEach((id) => {
       if (!existingVideoIds.includes(id)) {
         const videoData = videos?.find((v) => v.id === id)
 
-        // Adiciona um novo objeto com os valores default
         append({
           videoId: id,
           videoName: videoData?.name || "Exercício sem nome",
@@ -48,12 +44,10 @@ const SessionWorkoutSelector = ({ videos }: SessionWorkoutSelectorProps) => {
           reps: 10,
           holdTimeSec: 0,
           frequency: "1x ao dia",
-          notes: "",
         })
       }
     })
 
-    // Remove os vídeos que a pessoa desmarcou no Dialog
     fields.forEach((field, index) => {
       if (!selectedVideoIds.includes(field.videoId)) {
         remove(index)

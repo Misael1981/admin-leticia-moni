@@ -187,7 +187,6 @@ export const exercisePrescriptionItemSchema = z.object({
     .optional(),
   holdTimeSec: z.coerce.number().int().min(0).nullable().optional(),
   frequency: z.string().default("1x ao dia").optional(),
-  notes: z.string().optional(),
 })
 
 export const evolutionSchema = z.object({

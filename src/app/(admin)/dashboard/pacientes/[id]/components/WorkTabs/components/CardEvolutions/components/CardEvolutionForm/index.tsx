@@ -16,6 +16,8 @@ import SessionEvolutionData from "../SessionEvolutionData"
 import SessionNotes from "../SessionNotes"
 import SessionWorkoutSelector from "../SessionWorkoutSelector"
 import { VideoType } from "@/modules/videos/queries/get-videos.queries"
+import { createEvolutionAction } from "@/app/action/create-evolution.action"
+import { toast } from "sonner"
 
 type CardEvolutionFormProps = {
   patientId: string
@@ -55,17 +57,17 @@ const CardEvolutionForm = ({
     startTransition(async () => {
       try {
         console.log(data, patientId)
-        // const response = await createEvolutionAction({
-        //   patientId,
-        //   nextSessionNumber,
-        //   data,
-        // })
-        // if (response.success) {
-        //   toast.success(response.message)
-        //   methods.reset()
-        // } else {
-        //   toast.error(response.error)
-        // }
+        const response = await createEvolutionAction({
+          patientId,
+          nextSessionNumber,
+          data,
+        })
+        if (response.success) {
+          toast.success(response.message)
+          methods.reset()
+        } else {
+          toast.error(response.error)
+        }
       } catch (error) {
         console.error("Erro ao criar sessão:", error)
       }

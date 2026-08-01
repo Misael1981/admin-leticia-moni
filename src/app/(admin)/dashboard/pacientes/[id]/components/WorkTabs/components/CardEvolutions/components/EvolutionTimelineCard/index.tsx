@@ -17,7 +17,7 @@ const EvolutionTimelineCard = ({ evolution }: EvolutionTimelineCardProps) => {
   })
 
   return (
-    <div className="space-y-6 rounded-xl border p-6 shadow-sm">
+    <div className="space-y-6 rounded-xl shadow-sm md:border md:p-4">
       <div className="flex items-center justify-between gap-4 border-b pb-4">
         <h3 className="font-heading text-foreground text-xl">
           Detalhes da Sessão
@@ -78,7 +78,7 @@ const EvolutionTimelineCard = ({ evolution }: EvolutionTimelineCardProps) => {
         </div>
       </div>
 
-      <div className="bg-card space-y-4 rounded-xl border p-4 shadow-sm">
+      <div className="bg-card space-y-4 rounded-xl border p-2 shadow-sm md:p-4">
         <div className="flex items-center justify-between border-b pb-3">
           <div className="flex items-center gap-2">
             <Dumbbell className="text-primary h-5 w-5" />
