@@ -10,7 +10,6 @@ import CardEvolutionForm from "./components/CardEvolutionForm"
 import EvolutionTimelineCard from "./components/EvolutionTimelineCard"
 import { PatientStatus } from "@/constants/enums"
 import { VideoType } from "@/modules/videos/queries/get-videos.queries"
-import { evolutionMock } from "@/constants/mocks"
 import {
   Accordion,
   AccordionContent,
@@ -55,44 +54,38 @@ const CardEvolutions = ({
         </CardContent>
       </Card>
 
-      <Card className="w-full max-w-4xl">
-        <CardHeader>
-          <CardTitle>Histórico de Sessões</CardTitle>
-          <CardDescription>
-            Histórico de sessões do paciente, incluindo informações sobre as
-            consultas realizadas, a conduta adotada, a resposta ao tratamento, a
-            evolução do quadro clínico e observações relevantes de cada
-            atendimento.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <Accordion type="single" collapsible className="space-y-4">
-            {evolutionMock.map((item) => (
-              <AccordionItem
-                key={item.id}
-                value={item.id}
-                className="rounded-xl border px-6"
-              >
-                <AccordionTrigger className="hover:no-underline">
-                  Sessão {item.sessionNumber}
-                </AccordionTrigger>
-
-                <AccordionContent>
-                  <EvolutionTimelineCard evolution={item} />
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-
-          {/* {evolutions && (
-            <div className="space-y-4">
+      {evolutions && (
+        <Card className="w-full max-w-4xl">
+          <CardHeader>
+            <CardTitle>Histórico de Sessões</CardTitle>
+            <CardDescription>
+              Histórico de sessões do paciente, incluindo informações sobre as
+              consultas realizadas, a conduta adotada, a resposta ao tratamento,
+              a evolução do quadro clínico e observações relevantes de cada
+              atendimento.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Accordion type="single" collapsible className="space-y-4">
               {evolutions.map((item) => (
-                <EvolutionTimelineCard key={item.id} evolution={item} />
+                <AccordionItem
+                  key={item.id}
+                  value={item.id}
+                  className="rounded-xl border px-6"
+                >
+                  <AccordionTrigger className="hover:no-underline">
+                    Sessão {item.sessionNumber}
+                  </AccordionTrigger>
+
+                  <AccordionContent>
+                    <EvolutionTimelineCard evolution={item} />
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
-          )} */}
-        </CardContent>
-      </Card>
+            </Accordion>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

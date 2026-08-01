@@ -171,25 +171,51 @@ export async function getPhysicalAssessmentPatientId(patientId: string) {
   }
 }
 
-export type EvolutionType = Prisma.EvolutionGetPayload<{
-  select: {
-    id: true
-    createdAt: true
-    updatedAt: true
-    notes: true
-    patientId: true
-    sessionDate: true
-    sessionNumber: true
-    painScore: true
-  }
-}>
+export type EvolutionType = NonNullable<
+  Prisma.EvolutionGetPayload<{
+    select: {
+      id: true
+      patientId: true
+      notes: true
+      sessionDate: true
+      sessionNumber: true
+      painScore: true
+      createdAt: true
+      updatedAt: true
+      prescriptions: {
+        select: {
+          id: true
+          order: true
+          sets: true
+          reps: true
+          frequency: true
+          holdTimeSec: true
+          video: {
+            select: {
+              id: true
+              name: true
+              thumbnailUrl: true
+            }
+          }
+        }
+      }
+    }
+  }>
+>
 
 export async function getEvolutionsByPatientId(patientId: string) {
   try {
     const evolutions = await db.evolution.findMany({
       where: { patientId },
       orderBy: {
-        sessionNumber: "desc", // Traz a sessão mais recente no topo! (Ex: #12, #11, #10...)
+        sessionNumber: "desc",
+      },
+      include: {
+        prescriptions: {
+          include: {
+            video: true,
+          },
+        },
       },
     })
 

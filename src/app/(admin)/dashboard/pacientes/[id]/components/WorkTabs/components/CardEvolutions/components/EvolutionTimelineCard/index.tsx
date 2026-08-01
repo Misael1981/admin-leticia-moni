@@ -5,16 +5,17 @@ import { NotebookPen, Calendar1Icon, Dumbbell, Info } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { getPainDescription } from "@/helpers/get-pain-description"
-import { EvolutionMockType } from "@/constants/mocks"
+import { EvolutionType } from "@/data/patients.queries"
 
 type EvolutionTimelineCardProps = {
-  evolution: EvolutionMockType
+  evolution: EvolutionType
 }
 
 const EvolutionTimelineCard = ({ evolution }: EvolutionTimelineCardProps) => {
   const formattedDatemock = format(evolution.sessionDate, "dd/MM/yyyy", {
     locale: ptBR,
   })
+  const painScore = evolution.painScore ?? -1
 
   return (
     <div className="space-y-6 rounded-xl shadow-sm md:border md:p-4">
@@ -52,8 +53,8 @@ const EvolutionTimelineCard = ({ evolution }: EvolutionTimelineCardProps) => {
           <div className="flex justify-center">
             <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-md border p-1">
               {Array.from({ length: 11 }, (_, i) => {
-                const isActive = i === evolution.painScore
-                const isBefore = i < evolution.painScore
+                const isActive = i === painScore
+                const isBefore = i < painScore
                 return (
                   <div
                     key={i}
@@ -113,7 +114,7 @@ const EvolutionTimelineCard = ({ evolution }: EvolutionTimelineCardProps) => {
                       Exercício #{prescription.order}
                     </span>
                     <h4 className="line-clamp-2 text-sm leading-snug font-medium">
-                      {prescription.videoName}
+                      {prescription.video.name}
                     </h4>
                   </div>
                 </div>
@@ -178,7 +179,7 @@ const EvolutionTimelineCard = ({ evolution }: EvolutionTimelineCardProps) => {
             </span>
           </div>
           <div
-            className="prose prose-sm text-foreground prose-headings:font-heading prose-p:my-3 max-w-none p-6 leading-relaxed"
+            className="prose prose-sm text-foreground prose-headings:font-heading prose-p:my-2 dark:prose-invert max-w-none p-4 leading-relaxed wrap-break-word [word-break:break-word]"
             dangerouslySetInnerHTML={{ __html: evolution.notes }}
           />
         </div>
