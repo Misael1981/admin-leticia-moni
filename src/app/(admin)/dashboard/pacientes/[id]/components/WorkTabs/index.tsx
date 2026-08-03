@@ -62,7 +62,7 @@ const WorkTabs = ({
         value="medical-record"
         className="flex w-full justify-center"
       >
-        <CardMedicalRecord />
+        <CardMedicalRecord status={patient.status} evolutions={evolutions} />
       </TabsContent>
 
       <TabsContent value="evolutions" className="flex w-full justify-center">

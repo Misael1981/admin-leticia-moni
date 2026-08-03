@@ -2,6 +2,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -12,12 +13,19 @@ import {
   CheckCircle2,
   Clock,
   FileText,
+  HeartPulse,
   Paperclip,
   Target,
   TrendingDown,
   Video,
   Zap,
 } from "lucide-react"
+import MetricCard from "./components/MetricCard"
+import { PatientStatus } from "@/constants/enums"
+import { PATIENT_STATUS_LABELS } from "@/constants/labels"
+import { EvolutionType } from "@/data/patients.queries"
+import { formatDate } from "@/helpers/format-date"
+import { Button } from "@/components/ui/button"
 
 const MOCK_PATIENT_SUMMARY = {
   status: "Em Tratamento",
@@ -101,11 +109,16 @@ const MOCK_PATIENT_SUMMARY = {
   ],
 }
 
-const CardMedicalRecord = () => {
+type CardMedicalRecordProps = {
+  status: PatientStatus
+  evolutions: EvolutionType[] | null
+}
+
+const CardMedicalRecord = ({ status, evolutions }: CardMedicalRecordProps) => {
   const data = MOCK_PATIENT_SUMMARY
-  const progressPercent = Math.round(
-    (data.sessoesRealizadas / data.sessoesTotais) * 100,
-  )
+
+  const latestEvolution = evolutions?.[0]
+  const firstEvolution = evolutions?.[evolutions.length - 1]
 
   return (
     <Card className="w-full max-w-4xl">
@@ -118,256 +131,246 @@ const CardMedicalRecord = () => {
           demais registros relacionados ao atendimento.
         </CardDescription>
       </CardHeader>
-      <CardContent className="text-muted-foreground text-sm">
-        You have 12 active projects and 3 pending tasks.
-      </CardContent>
+      <CardContent>
+        <div className="mx-auto w-full max-w-6xl space-y-6 p-4 text-slate-800">
+          {/* 1. KPIs / Métricas Rápidas */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            {/* Status */}
+            <MetricCard
+              title="Status"
+              icon={
+                <Activity className="h-8 w-8 text-emerald-500 opacity-80" />
+              }
+              content={
+                <span className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+                  {PATIENT_STATUS_LABELS[status]}
+                </span>
+              }
+            />
 
-      <div className="mx-auto w-full max-w-6xl space-y-6 p-4 text-slate-800">
-        {/* 1. KPIs / Métricas Rápidas */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-          {/* Status */}
-          <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div>
-              <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
-                Status
-              </p>
-              <span className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-                {data.status}
-              </span>
-            </div>
-            <Activity className="h-8 w-8 text-emerald-500 opacity-80" />
-          </div>
-
-          {/* Sessões */}
-          <div className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
-                  Sessões
-                </p>
-                <h4 className="mt-0.5 text-xl font-bold text-slate-900">
-                  {data.sessoesRealizadas}{" "}
-                  <span className="text-sm font-normal text-slate-400">
-                    / {data.sessoesTotais}
+            {/* Sessões */}
+            <MetricCard
+              title="Sessões"
+              icon={<Clock className="h-8 w-8 text-blue-500 opacity-80" />}
+              content={
+                <h4 className="text-primary mt-0.5 text-xl font-bold">
+                  {evolutions?.length || 0}{" "}
+                  <span className="text-primary/60 text-sm font-normal">
+                    / 10
                   </span>
                 </h4>
+              }
+            />
+
+            {/* Dor Atual */}
+            <MetricCard
+              title="Dor Atual (EVA)"
+              icon={
+                <HeartPulse className="h-8 w-8 text-amber-500 opacity-80" />
+              }
+              content={
+                <div className="mt-1 flex items-baseline gap-2">
+                  <h4 className="text-primary mt-0.5 text-xl font-bold">
+                    {latestEvolution?.painScore ?? 0}
+                    <span className="text-primary/60 text-sm font-normal">
+                      / 10
+                    </span>
+                  </h4>
+
+                  <span className="flex items-center gap-0.5 text-xs font-medium text-emerald-600">
+                    <TrendingDown className="h-3 w-3" />
+                    era {firstEvolution?.painScore ?? 0}
+                  </span>
+                </div>
+              }
+            />
+
+            {/* Última Sessão */}
+            <MetricCard
+              title="Última Sessão"
+              icon={<Calendar className="h-8 w-8 text-indigo-500 opacity-80" />}
+              content={
+                <h4 className="text-primary mt-1 text-base font-bold">
+                  {formatDate(latestEvolution?.createdAt) || "N/A"}
+                </h4>
+              }
+            />
+          </div>
+
+          {/* 2. Grid Clínico: Diagnóstico, Objetivos, Plano & Alertas */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* Diagnóstico & Plano */}
+            <div className="space-y-6">
+              <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900">
+                  <FileText className="h-4 w-4 text-blue-600" />
+                  Diagnóstico Cinesiuncional
+                </h3>
+                <p className="rounded-lg border border-slate-100 bg-slate-50 p-3 text-sm leading-relaxed text-slate-600">
+                  {data.diagnostico}
+                </p>
               </div>
-              <Clock className="h-6 w-6 text-blue-500" />
-            </div>
-            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-100">
-              <div
-                className="h-2 rounded-full bg-blue-600 transition-all"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-          </div>
 
-          {/* Dor Atual */}
-          <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div>
-              <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
-                Dor Atual (EVA)
-              </p>
-              <div className="mt-1 flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-slate-900">
-                  {data.dorAtual}/10
-                </span>
-                <span className="flex items-center gap-0.5 text-xs font-medium text-emerald-600">
-                  <TrendingDown className="h-3 w-3" />
-                  era {data.dorInicial}
-                </span>
+              <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900">
+                  <Zap className="h-4 w-4 text-amber-600" />
+                  Plano Terapêutico
+                </h3>
+                <p className="text-sm leading-relaxed text-slate-600">
+                  {data.planoTerapêutico}
+                </p>
               </div>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-200 bg-amber-50 text-base font-bold text-amber-600">
-              {data.dorAtual}
+
+            {/* Objetivos & Alertas */}
+            <div className="space-y-6">
+              <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900">
+                  <Target className="h-4 w-4 text-emerald-600" />
+                  Objetivos do Tratamento
+                </h3>
+                <ul className="space-y-2">
+                  {data.objetivos.map((obj, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-start gap-2 text-sm text-slate-600"
+                    >
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                      <span>{obj}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-xl border border-amber-200 bg-white p-5 shadow-sm">
+                <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-amber-900">
+                  <AlertTriangle className="h-4 w-4 text-amber-600" />
+                  Alertas & Cuidados
+                </h3>
+                <ul className="space-y-2">
+                  {data.alertas.map((alerta, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-center gap-2 rounded-md border border-amber-200/50 bg-amber-100/60 px-3 py-1.5 text-xs font-medium text-amber-800"
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-600" />
+                      {alerta}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
 
-          {/* Última Sessão */}
-          <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div>
-              <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
-                Última Sessão
-              </p>
-              <h4 className="mt-1 text-lg font-bold text-slate-900">
-                {data.ultimaSessao}
-              </h4>
-              <p className="text-xs text-slate-400">Há 1 dia atrás</p>
+          {/* 3. Linha do Tempo das Sessões */}
+          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-900">
+              <Clock className="h-4 w-4 text-indigo-600" />
+              Linha do Tempo de Tratamento
+            </h3>
+            <div className="relative my-2 space-y-6 border-l-2 border-slate-100 pl-6">
+              {data.timelineEvents.map((evt) => (
+                <div key={evt.id} className="relative">
+                  <div
+                    className={`absolute top-0 -left-7.75 h-4 w-4 rounded-full border-2 bg-white ${
+                      evt.status === "completed"
+                        ? "border-emerald-500 bg-emerald-500"
+                        : "border-slate-300"
+                    }`}
+                  />
+                  <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
+                    <span className="text-sm font-medium text-slate-800">
+                      {evt.title}
+                    </span>
+                    <span className="font-mono text-xs text-slate-400">
+                      {evt.date}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
-            <Calendar className="h-8 w-8 text-indigo-500 opacity-80" />
           </div>
-        </div>
 
-        {/* 2. Grid Clínico: Diagnóstico, Objetivos, Plano & Alertas */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Diagnóstico & Plano */}
-          <div className="space-y-6">
-            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900">
+          {/* 4. Última Evolução Registrar */}
+          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
                 <FileText className="h-4 w-4 text-blue-600" />
-                Diagnóstico Cinesiuncional
+                Última Evolução Clínica
               </h3>
-              <p className="rounded-lg border border-slate-100 bg-slate-50 p-3 text-sm leading-relaxed text-slate-600">
-                {data.diagnostico}
-              </p>
+              <span className="text-xs text-slate-400">
+                {data.ultimaEvolucao.data} • {data.ultimaEvolucao.profissional}
+              </span>
             </div>
-
-            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <Zap className="h-4 w-4 text-amber-600" />
-                Plano Terapêutico
-              </h3>
-              <p className="text-sm leading-relaxed text-slate-600">
-                {data.planoTerapêutico}
-              </p>
-            </div>
+            <p className="rounded-lg border border-slate-100 bg-slate-50 p-4 text-sm leading-relaxed text-slate-600 italic">
+              {data.ultimaEvolucao.relato}
+            </p>
           </div>
 
-          {/* Objetivos & Alertas */}
-          <div className="space-y-6">
+          {/* 5. Grid Inferior: Vídeos Prescritos & Arquivos Anexos */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* Vídeos Prescritos */}
             <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
               <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900">
-                <Target className="h-4 w-4 text-emerald-600" />
-                Objetivos do Tratamento
+                <Video className="h-4 w-4 text-purple-600" />
+                Exercícios / Vídeos Prescritos
               </h3>
-              <ul className="space-y-2">
-                {data.objetivos.map((obj, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-start gap-2 text-sm text-slate-600"
+              <div className="space-y-2">
+                {data.videosPrescritos.map((v) => (
+                  <div
+                    key={v.id}
+                    className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3"
                   >
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                    <span>{obj}</span>
-                  </li>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-800">
+                        {v.title}
+                      </p>
+                      <p className="text-[11px] text-slate-400">
+                        {v.duracao} • {v.frequencia}
+                      </p>
+                    </div>
+                    <span className="rounded border border-purple-100 bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700">
+                      Prescrito
+                    </span>
+                  </div>
                 ))}
-              </ul>
-            </div>
-
-            <div className="rounded-xl border border-amber-200 bg-amber-50/30 bg-white p-5 shadow-sm">
-              <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-amber-900">
-                <AlertTriangle className="h-4 w-4 text-amber-600" />
-                Alertas & Cuidados
-              </h3>
-              <ul className="space-y-2">
-                {data.alertas.map((alerta, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-center gap-2 rounded-md border border-amber-200/50 bg-amber-100/60 px-3 py-1.5 text-xs font-medium text-amber-800"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-amber-600" />
-                    {alerta}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* 3. Linha do Tempo das Sessões */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-900">
-            <Clock className="h-4 w-4 text-indigo-600" />
-            Linha do Tempo de Tratamento
-          </h3>
-          <div className="relative my-2 space-y-6 border-l-2 border-slate-100 pl-6">
-            {data.timelineEvents.map((evt) => (
-              <div key={evt.id} className="relative">
-                <div
-                  className={`absolute top-0 -left-[31px] h-4 w-4 rounded-full border-2 bg-white ${
-                    evt.status === "completed"
-                      ? "border-emerald-500 bg-emerald-500"
-                      : "border-slate-300"
-                  }`}
-                />
-                <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
-                  <span className="text-sm font-medium text-slate-800">
-                    {evt.title}
-                  </span>
-                  <span className="font-mono text-xs text-slate-400">
-                    {evt.date}
-                  </span>
-                </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 4. Última Evolução Registrar */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-              <FileText className="h-4 w-4 text-blue-600" />
-              Última Evolução Clínica
-            </h3>
-            <span className="text-xs text-slate-400">
-              {data.ultimaEvolucao.data} • {data.ultimaEvolucao.profissional}
-            </span>
-          </div>
-          <p className="rounded-lg border border-slate-100 bg-slate-50 p-4 text-sm leading-relaxed text-slate-600 italic">
-            {data.ultimaEvolucao.relato}
-          </p>
-        </div>
-
-        {/* 5. Grid Inferior: Vídeos Prescritos & Arquivos Anexos */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Vídeos Prescritos */}
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900">
-              <Video className="h-4 w-4 text-purple-600" />
-              Exercícios / Vídeos Prescritos
-            </h3>
-            <div className="space-y-2">
-              {data.videosPrescritos.map((v) => (
-                <div
-                  key={v.id}
-                  className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3"
-                >
-                  <div>
-                    <p className="text-xs font-semibold text-slate-800">
-                      {v.title}
-                    </p>
-                    <p className="text-[11px] text-slate-400">
-                      {v.duracao} • {v.frequencia}
-                    </p>
-                  </div>
-                  <span className="rounded border border-purple-100 bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700">
-                    Prescrito
-                  </span>
-                </div>
-              ))}
             </div>
-          </div>
 
-          {/* Arquivos & Exames */}
-          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900">
-              <Paperclip className="h-4 w-4 text-slate-600" />
-              Exames & Anexos
-            </h3>
-            <div className="space-y-2">
-              {data.arquivos.map((arq) => (
-                <div
-                  key={arq.id}
-                  className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3"
-                >
-                  <div className="truncate pr-2">
-                    <p className="truncate text-xs font-semibold text-slate-800">
-                      {arq.name}
-                    </p>
-                    <p className="text-[11px] text-slate-400">
-                      {arq.type} • {arq.size}
-                    </p>
+            {/* Arquivos & Exames */}
+            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-900">
+                <Paperclip className="h-4 w-4 text-slate-600" />
+                Exames & Anexos
+              </h3>
+              <div className="space-y-2">
+                {data.arquivos.map((arq) => (
+                  <div
+                    key={arq.id}
+                    className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 p-3"
+                  >
+                    <div className="truncate pr-2">
+                      <p className="truncate text-xs font-semibold text-slate-800">
+                        {arq.name}
+                      </p>
+                      <p className="text-[11px] text-slate-400">
+                        {arq.type} • {arq.size}
+                      </p>
+                    </div>
+                    <button className="shrink-0 text-xs font-medium text-blue-600 hover:underline">
+                      Baixar
+                    </button>
                   </div>
-                  <button className="shrink-0 text-xs font-medium text-blue-600 hover:underline">
-                    Baixar
-                  </button>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </CardContent>
+      <CardFooter className="flex justify-end">
+        <Button>Imprimir Pruntuário</Button>
+      </CardFooter>
     </Card>
   )
 }
