@@ -1,123 +1,81 @@
-export type EvolutionMockType = {
-  id: string
-  sessionDate: Date
-  sessionNumber: number
-  painScore: number
-  notes: string
-  prescriptions: {
-    id: string
-    order: number
-    videoName: string
-    sets: number
-    reps: number | null
-    holdTimeSec: number | null
-    frequency: string
-  }[]
+export const MOCK_PATIENT_SUMMARY = {
+  status: "Em Tratamento",
+  sessoesRealizadas: 6,
+  sessoesTotais: 10,
+  dorAtual: 3, // escala de 0 a 10
+  dorInicial: 8,
+  ultimaSessao: "30/07/2026",
+  diagnostico:
+    "Tendinopatia do Supraespinhal à direita com limitação de ADM (Amplitude de Movimento) para abdução e rotação externa.",
+  objetivos: [
+    "Reduzir a dor em repouso para grau 0 em até 2 semanas",
+    "Restabelecer ADM completa de abdução de ombro (180°)",
+    "Fortalecimento da musculatura do manguito rotador",
+  ],
+  planoTerapêutico:
+    "Eletroterapia analgésica (TENS) + Cinesioterapia progressiva (ganho de ADM e fortalecimento) 2x por semana.",
+  alertas: [
+    "Paciente relata sensibilidade aumentada no frio",
+    "Histórico de hipertensão arterial controlada",
+  ],
+  timelineEvents: [
+    {
+      id: 1,
+      date: "15/07/2026",
+      title: "Avaliação Inicial & Anamnese",
+      status: "completed",
+    },
+    {
+      id: 2,
+      date: "22/07/2026",
+      title: "Ganho de ADM + Cinesioterapia Leve",
+      status: "completed",
+    },
+    {
+      id: 3,
+      date: "30/07/2026",
+      title: "Início de Fortalecimento com Carga Leve",
+      status: "completed",
+    },
+    {
+      id: 4,
+      date: "05/08/2026",
+      title: "Reavaliação de Amplitude e Dor",
+      status: "upcoming",
+    },
+  ],
+  ultimaEvolucao: {
+    data: "30/07/2026",
+    profissional: "Dr. Misael",
+    relato:
+      "Paciente relata diminuição substancial da dor matinal (EVA 3). Realizado protocolo de TENS por 20min + mobilização articular glenoumeral grau III + exercícios com theraband amarela. Boa tolerância sem dores agudas.",
+  },
+  videosPrescritos: [
+    {
+      id: 1,
+      title: "Mobilização Passiva de Ombro com Bastão",
+      duracao: "3 min",
+      frequencia: "2x ao dia",
+    },
+    {
+      id: 2,
+      title: "Isometria de Manguito Rotador com Elástico",
+      duracao: "5 min",
+      frequencia: "1x ao dia",
+    },
+  ],
+  arquivos: [
+    {
+      id: 1,
+      name: "Ressonancia_Magnetica_Ombro_Dir.pdf",
+      size: "2.4 MB",
+      type: "Exame de Imagem",
+    },
+    {
+      id: 2,
+      name: "Encaminhamento_Ortopedista.pdf",
+      size: "1.1 MB",
+      type: "Laudo Médico",
+    },
+  ],
 }
-
-export const evolutionMock = [
-  {
-    id: "session-1",
-    sessionDate: new Date("2026-07-10T09:00:00"),
-    sessionNumber: 1,
-    painScore: 8,
-    notes: `
-      <p>Paciente iniciou tratamento relatando dor intensa na região lombar, principalmente durante flexão do tronco. Apresenta limitação de mobilidade e desconforto ao permanecer sentado por longos períodos.</p>
-
-      <p>Realizada terapia manual, alongamentos leves e orientações posturais. Boa aceitação ao tratamento.</p>
-    `,
-    prescriptions: [
-      {
-        id: "video-1",
-        order: 1,
-        videoName: "Alongamento da Cadeia Posterior",
-        sets: 3,
-        reps: 10,
-        holdTimeSec: 30,
-        frequency: "2x ao dia",
-      },
-      {
-        id: "video-2",
-        order: 2,
-        videoName: "Mobilização Lombar",
-        sets: 2,
-        reps: 15,
-        holdTimeSec: null,
-        frequency: "1x ao dia",
-      },
-    ],
-  },
-
-  {
-    id: "session-2",
-    sessionDate: new Date("2026-07-15T09:00:00"),
-    sessionNumber: 2,
-    painScore: 5,
-    notes: `
-      <p>Paciente relata melhora significativa da dor desde a última sessão. Mantém leve desconforto ao permanecer muito tempo em pé.</p>
-
-      <p>Iniciados exercícios de fortalecimento do core e progressão dos exercícios domiciliares.</p>
-    `,
-    prescriptions: [
-      {
-        id: "video-3",
-        order: 1,
-        videoName: "Ponte para Fortalecimento do Core",
-        sets: 3,
-        reps: 12,
-        holdTimeSec: 5,
-        frequency: "2x ao dia",
-      },
-      {
-        id: "video-4",
-        order: 2,
-        videoName: "Prancha Isométrica",
-        sets: 3,
-        reps: null,
-        holdTimeSec: 20,
-        frequency: "1x ao dia",
-      },
-    ],
-  },
-
-  {
-    id: "session-3",
-    sessionDate: new Date("2026-07-22T09:00:00"),
-    sessionNumber: 3,
-    painScore: 2,
-    notes: `
-      <p>Paciente apresenta excelente evolução clínica. Dor mínima apenas após esforços intensos. Amplitude de movimento praticamente normal.</p>
-
-      <p>Mantidos exercícios de fortalecimento e iniciado treino funcional para retorno gradual às atividades habituais.</p>
-    `,
-    prescriptions: [
-      {
-        id: "video-5",
-        order: 1,
-        videoName: "Agachamento Assistido",
-        sets: 3,
-        reps: 15,
-        holdTimeSec: null,
-        frequency: "1x ao dia",
-      },
-      {
-        id: "video-6",
-        order: 2,
-        videoName: "Equilíbrio Unipodal",
-        sets: 3,
-        reps: 10,
-        holdTimeSec: 15,
-        frequency: "1x ao dia",
-      },
-      {
-        id: "video-7",
-        order: 3,
-        videoName: "Alongamento de Flexores do Quadril",
-        sets: 2,
-        reps: 8,
-        holdTimeSec: 30,
-        frequency: "2x ao dia",
-      },
-    ],
-  },
-]
