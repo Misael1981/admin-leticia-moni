@@ -25,11 +25,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { AnamnesesType, PhysicalAssessmentType } from "@/data/patients.queries"
-import {
-  AnamnesisFormInput,
-  AnamnesisFormValues,
-  anamnesisSchema,
-} from "@/schemas/patients-schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
@@ -40,6 +35,12 @@ import { MultiSelect } from "./components/MultiSelect"
 import MultiImageUpload from "@/components/MultiImageUpload"
 import { uploadMultipleImages } from "@/services/image-compresseion.service"
 import { saveAnamnesisAndAssessmentAction } from "@/app/action/save-anamnesis"
+import {
+  AnamnesisFormInput,
+  anamnesisFormSchema,
+  AnamnesisFormValues,
+  anamnesisSchema,
+} from "@/schemas/anamnesis-schemas"
 
 type CardAnamnesisProps = {
   patientId: string
@@ -78,7 +79,7 @@ const CardAnamnesis = ({
   const [isPending, startTransition] = useTransition()
 
   const methods = useForm<AnamnesisFormInput, unknown, AnamnesisFormValues>({
-    resolver: zodResolver(anamnesisSchema),
+    resolver: zodResolver(anamnesisFormSchema),
     defaultValues: {
       mainComplaint: initialData?.mainComplaint ?? "",
       medicalDiagnosis: initialData?.medicalDiagnosis ?? "",
@@ -119,21 +120,17 @@ const CardAnamnesis = ({
   const onSubmit = async (data: AnamnesisFormValues) => {
     startTransition(async () => {
       try {
-        // 1. Pega os arquivos File/Strings e faz o upload primeiro!
-        // data.examUrls aqui contém uma mistura de [File, "http..."]
         const { urls, publicIds } = await uploadMultipleImages(
           data.examUrls || [],
           data.examPublicIds || [],
         )
 
-        // 2. Agora sim! Substituímos o array de Files por um array puramente de Strings (urls)
         const dataToSave = anamnesisSchema.parse({
           ...data,
-          examUrls: urls, // 👈 Agora é string[] puro!
+          examUrls: urls,
           examPublicIds: publicIds,
         })
 
-        // 3. Envia para a Action
         const response = await saveAnamnesisAndAssessmentAction(
           patientId,
           dataToSave,

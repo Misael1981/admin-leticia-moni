@@ -2,13 +2,16 @@
 
 import { ImageUp, X, FileText } from "lucide-react"
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { UseFormReturn, FieldValues, Path, PathValue } from "react-hook-form"
+import { toast } from "sonner"
 
 interface MultiImageUploadProps<TFormValues extends FieldValues> {
   form: UseFormReturn<TFormValues>
   name: Path<TFormValues>
-  initialUrls?: string[]
+  initialUrls?: (string | File)[]
+  maxFiles?: number
+  maxSizeMb?: number
 }
 
 interface PreviewItem {
@@ -17,19 +20,47 @@ interface PreviewItem {
   file?: File
 }
 
+const ALLOWED_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "application/pdf",
+]
+const DEFAULT_MAX_FILES = 10
+const DEFAULT_MAX_SIZE_MB = 10
+
 const MultiImageUpload = <TFormValues extends FieldValues>({
   form,
   name,
   initialUrls = [],
+  maxFiles = DEFAULT_MAX_FILES,
+  maxSizeMb = DEFAULT_MAX_SIZE_MB,
 }: MultiImageUploadProps<TFormValues>) => {
   const [previews, setPreviews] = useState<PreviewItem[]>(() => {
-    return initialUrls.map((url, index) => ({
-      id: `initial-${index}-${url}`,
-      url,
-    }))
+    return initialUrls.map((item) => {
+      const isFile = item instanceof File
+      const url = isFile ? URL.createObjectURL(item) : item
+
+      return {
+        id: crypto.randomUUID(),
+        url,
+        file: isFile ? item : undefined,
+      }
+    })
   })
 
-  // Helper para sincronizar com o React Hook Form
+  // Cleanup: revoga todos os blobs ainda "vivos" quando o componente desmonta
+  useEffect(() => {
+    return () => {
+      previews.forEach((p) => {
+        if (p.url.startsWith("blob:")) {
+          URL.revokeObjectURL(p.url)
+        }
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const syncWithForm = (updatedPreviews: PreviewItem[]) => {
     const filesOrUrls = updatedPreviews.map((p) => p.file || p.url)
     form.setValue(
@@ -39,11 +70,55 @@ const MultiImageUpload = <TFormValues extends FieldValues>({
     )
   }
 
+  const validateFiles = (files: File[]): File[] => {
+    const valid: File[] = []
+    const remainingSlots = maxFiles - previews.length
+
+    if (remainingSlots <= 0) {
+      toast.error(`Você já atingiu o limite de ${maxFiles} arquivos.`)
+      return []
+    }
+
+    for (const file of files) {
+      if (valid.length >= remainingSlots) {
+        toast.error(
+          `Limite de ${maxFiles} arquivos atingido. Alguns arquivos não foram adicionados.`,
+        )
+        break
+      }
+
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        toast.error(
+          `"${file.name}" não é um tipo de arquivo permitido (use PNG, JPG, WEBP ou PDF).`,
+        )
+        continue
+      }
+
+      if (file.size > maxSizeMb * 1024 * 1024) {
+        toast.error(`"${file.name}" excede o limite de ${maxSizeMb}MB.`)
+        continue
+      }
+
+      valid.push(file)
+    }
+
+    return valid
+  }
+
   const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if (files && files.length > 0) {
-      const filesArray = Array.from(files)
-      const newPreviews = filesArray.map((file) => ({
+    if (!files || files.length === 0) return
+
+    const filesArray = Array.from(files)
+    const validFiles = validateFiles(filesArray)
+
+    if (validFiles.length === 0) {
+      e.target.value = ""
+      return
+    }
+
+    try {
+      const newPreviews = validFiles.map((file) => ({
         id: crypto.randomUUID(),
         url: URL.createObjectURL(file),
         file,
@@ -52,9 +127,12 @@ const MultiImageUpload = <TFormValues extends FieldValues>({
       const updated = [...previews, ...newPreviews]
       setPreviews(updated)
       syncWithForm(updated)
-
-      e.target.value = "" // Permite re-selecionar o mesmo arquivo se necessário
+    } catch (error) {
+      console.error("Erro ao gerar preview dos arquivos:", error)
+      toast.error("Não foi possível processar um ou mais arquivos.")
     }
+
+    e.target.value = "" // Permite re-selecionar o mesmo arquivo se necessário
   }
 
   const handleRemoveImage = (
@@ -74,6 +152,7 @@ const MultiImageUpload = <TFormValues extends FieldValues>({
   }
 
   const inputId = `file-upload-${name}`
+  const isAtLimit = previews.length >= maxFiles
 
   return (
     <div className="w-full space-y-4">
@@ -83,18 +162,28 @@ const MultiImageUpload = <TFormValues extends FieldValues>({
         id={inputId}
         className="hidden"
         multiple
+        disabled={isAtLimit}
         onChange={handleImagesChange}
       />
 
       <label
         htmlFor={inputId}
-        className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white p-6 transition hover:bg-slate-50"
+        className={`flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white p-6 transition ${
+          isAtLimit
+            ? "cursor-not-allowed opacity-50"
+            : "cursor-pointer hover:bg-slate-50"
+        }`}
       >
         <ImageUp className="text-muted-foreground mb-2 h-8 w-8" />
         <span className="text-sm font-medium text-slate-700">
-          Clique para anexar imagens ou laudos dos exames
+          {isAtLimit
+            ? `Limite de ${maxFiles} arquivos atingido`
+            : "Clique para anexar imagens ou laudos dos exames"}
         </span>
-        <span className="text-xs text-slate-400">(PNG, JPG, WEBP ou PDF)</span>
+        <span className="text-xs text-slate-400">
+          (PNG, JPG, WEBP ou PDF · máx. {maxSizeMb}MB cada · até {maxFiles}{" "}
+          arquivos)
+        </span>
       </label>
 
       {previews.length > 0 && (

@@ -142,43 +142,6 @@ export const patientSchema = z
 export type PatientFormInput = z.input<typeof patientSchema>
 export type PatientFormValues = z.output<typeof patientSchema>
 
-export const anamnesisSchema = z.object({
-  mainComplaint: z.string().min(1, "A queixa principal é obrigatória."),
-  medicalDiagnosis: z.string().optional(),
-  accompanyingStaff: z.string().optional(),
-
-  // Exames
-  complementaryExams: z.string().optional(),
-  examUrls: z
-    .array(z.string().url("URL de exame inválida."))
-    .optional()
-    .default([]),
-  examPublicIds: z.array(z.string()).optional().default([]),
-
-  hma: z
-    .string()
-    .refine(
-      (val) => val.replace(/<[^>]*>/g, "").trim().length > 0,
-      "O Histórico da Queixa (HMA) é Obrigatório.",
-    ),
-  additionalSymptoms: z.string().optional(),
-  preExistingConditions: z.string().optional(),
-  complaintMedications: z.string().optional(),
-  continuousMedications: z.string().optional(),
-  physicalAssessment: z
-    .string()
-    .refine(
-      (val) => val.replace(/<[^>]*>/g, "").trim().length > 0,
-      "A Avaliação Física é obrigatória.",
-    ),
-  treatmentIds: z
-    .array(z.string())
-    .min(1, "Selecione ao menos um plano de tratamento."),
-})
-
-export type AnamnesisFormInput = z.input<typeof anamnesisSchema>
-export type AnamnesisFormValues = z.output<typeof anamnesisSchema>
-
 export const exercisePrescriptionItemSchema = z.object({
   videoId: z.string({
     message: "O vídeo é obrigatório.",
