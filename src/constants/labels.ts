@@ -4,6 +4,7 @@ import {
   MaritalStatus,
   PatientReferralSource,
   PatientStatus,
+  PatientTreatmentStatus,
 } from "./enums"
 
 export const PATIENT_STATUS_LABELS: Record<PatientStatus, string> = {
@@ -56,4 +57,14 @@ export const PATIENT_REFERRAL_SOURCE_LABEL: Record<
   RADIO: "Publicidade em rua",
   TV: "Publicidade na TV",
   OTHER: "Outros",
+}
+
+export const PATIENT_TREATMENT_STATUS_LABELS: Record<
+  PatientTreatmentStatus,
+  string
+> = {
+  ACTIVE: "Ativo",
+  COMPLETED: "Concluído",
+  PAUSED: "Pausado",
+  DISCONTINUED: "Descontinuado",
 }

@@ -35,3 +35,42 @@ export const uploadToCloudinaryClient = async (file: File) => {
     throw error
   }
 }
+
+export interface UploadedMediaResult {
+  urls: string[]
+  publicIds: string[]
+}
+
+export const uploadMultipleImages = async (
+  items: (File | string)[],
+  existingPublicIds: string[] = [],
+): Promise<UploadedMediaResult> => {
+  try {
+    // 1. O que já é URL antiga que veio do banco
+    const existingUrls = items.filter(
+      (item): item is string => typeof item === "string",
+    )
+
+    // 2. Os novos arquivos que precisam de upload
+    const newFiles = items.filter((item): item is File => item instanceof File)
+
+    // 3. Faz o upload em paralelo dos novos arquivos
+    const uploadPromises = newFiles.map((file) =>
+      uploadToCloudinaryClient(file),
+    )
+    const uploadedImagesResults = await Promise.all(uploadPromises)
+
+    // 4. Extrai as novas URLs e os novos Public IDs
+    const newUrls = uploadedImagesResults.map((img) => img.url)
+    const newPublicIds = uploadedImagesResults.map((img) => img.publicId)
+
+    return {
+      urls: [...existingUrls, ...newUrls],
+      // Mantém os publicIds existentes (se passados) + os novos gerados
+      publicIds: [...existingPublicIds, ...newPublicIds],
+    }
+  } catch (error) {
+    console.error("Erro no upload em lote das imagens do exame:", error)
+    throw new Error("Falha ao processar e enviar as imagens dos exames.")
+  }
+}

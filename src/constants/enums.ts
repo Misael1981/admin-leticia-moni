@@ -58,3 +58,13 @@ export const PatientReferralSource = {
 
 export type PatientReferralSource =
   (typeof PatientReferralSource)[keyof typeof PatientReferralSource]
+
+export const PatientTreatmentStatus = {
+  ACTIVE: "ACTIVE",
+  COMPLETED: "COMPLETED",
+  PAUSED: "PAUSED",
+  DISCONTINUED: "DISCONTINUED",
+} as const
+
+export type PatientTreatmentStatus =
+  (typeof PatientTreatmentStatus)[keyof typeof PatientTreatmentStatus]

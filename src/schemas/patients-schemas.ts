@@ -146,7 +146,15 @@ export const anamnesisSchema = z.object({
   mainComplaint: z.string().min(1, "A queixa principal é obrigatória."),
   medicalDiagnosis: z.string().optional(),
   accompanyingStaff: z.string().optional(),
+
+  // Exames
   complementaryExams: z.string().optional(),
+  examUrls: z
+    .array(z.string().url("URL de exame inválida."))
+    .optional()
+    .default([]),
+  examPublicIds: z.array(z.string()).optional().default([]),
+
   hma: z
     .string()
     .refine(
@@ -163,6 +171,9 @@ export const anamnesisSchema = z.object({
       (val) => val.replace(/<[^>]*>/g, "").trim().length > 0,
       "A Avaliação Física é obrigatória.",
     ),
+  treatmentIds: z
+    .array(z.string())
+    .min(1, "Selecione ao menos um plano de tratamento."),
 })
 
 export type AnamnesisFormInput = z.input<typeof anamnesisSchema>

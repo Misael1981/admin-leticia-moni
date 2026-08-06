@@ -15,6 +15,7 @@ import CardCompleteData from "./components/CardCompleteData"
 import CardEvolutions from "./components/CardEvolutions"
 import { PatientStatus } from "@/constants/enums"
 import { VideoType } from "@/modules/videos/queries/get-videos.queries"
+import { TreatmentForAnamnesisType } from "@/data/get-treatments"
 
 type WorkTabsProps = {
   patient: PatientDetail
@@ -23,6 +24,7 @@ type WorkTabsProps = {
   evolutions: EvolutionType[] | null
   currentPatientStatus: PatientStatus
   videos: VideoType[] | null
+  treatments: TreatmentForAnamnesisType[]
 }
 
 const WorkTabs = ({
@@ -32,6 +34,7 @@ const WorkTabs = ({
   evolutions,
   currentPatientStatus,
   videos,
+  treatments,
 }: WorkTabsProps) => {
   const router = useRouter()
   const pathname = usePathname()
@@ -79,6 +82,8 @@ const WorkTabs = ({
           initialData={anamnesis}
           patientId={patient.id}
           physicalAssessment={physicalAssessment}
+          patientTreatment={patient.treatments}
+          treatments={treatments}
         />
       </TabsContent>
 

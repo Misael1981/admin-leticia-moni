@@ -4,6 +4,7 @@ import {
   MaritalStatus,
   PatientReferralSource,
   PatientStatus,
+  PatientTreatmentStatus,
 } from "./enums"
 import {
   BIOLOGICAL_SEX_LABELS,
@@ -11,6 +12,7 @@ import {
   MARITAL_STATUS_LABELS,
   PATIENT_REFERRAL_SOURCE_LABEL,
   PATIENT_STATUS_LABELS,
+  PATIENT_TREATMENT_STATUS_LABELS,
 } from "./labels"
 
 export const PATIENT_STATUS_OPTIONS = [
@@ -164,5 +166,24 @@ export const PATIENT_REFERRAL_SOURCE_OPTION = [
   {
     value: PatientReferralSource.YOUTUBE,
     label: PATIENT_REFERRAL_SOURCE_LABEL[PatientReferralSource.YOUTUBE],
+  },
+]
+
+export const PATIENT_TREATMENT_STATUS_OPTIONS = [
+  {
+    value: PatientTreatmentStatus.ACTIVE,
+    label: PATIENT_TREATMENT_STATUS_LABELS[PatientTreatmentStatus.ACTIVE],
+  },
+  {
+    value: PatientTreatmentStatus.COMPLETED,
+    label: PATIENT_TREATMENT_STATUS_LABELS[PatientTreatmentStatus.COMPLETED],
+  },
+  {
+    value: PatientTreatmentStatus.PAUSED,
+    label: PATIENT_TREATMENT_STATUS_LABELS[PatientTreatmentStatus.PAUSED],
+  },
+  {
+    value: PatientTreatmentStatus.DISCONTINUED,
+    label: PATIENT_TREATMENT_STATUS_LABELS[PatientTreatmentStatus.DISCONTINUED],
   },
 ]

@@ -32,20 +32,48 @@ import {
 } from "@/schemas/patients-schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition } from "react"
-import { Controller, useForm } from "react-hook-form"
-import { saveAnamnesisAndAssessmentAction } from "@/app/action/update-patient"
+import { Controller, useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
+import { PatientTreatmentStatus } from "@/constants/enums"
+import { TreatmentForAnamnesisType } from "@/data/get-treatments"
+import { MultiSelect } from "./components/MultiSelect"
+import MultiImageUpload from "@/components/MultiImageUpload"
+import { uploadMultipleImages } from "@/services/image-compresseion.service"
+import { saveAnamnesisAndAssessmentAction } from "@/app/action/save-anamnesis"
 
 type CardAnamnesisProps = {
   patientId: string
   initialData: AnamnesesType | null
   physicalAssessment: PhysicalAssessmentType | null
+  patientTreatment: ({
+    treatment: {
+      id: string
+      name: string
+      slug: string
+      durationMinWeeks: number | null
+      durationMaxWeeks: number | null
+      sessionDurationMinutes: number | null
+    }
+  } & {
+    id: string
+    createdAt: Date
+    updatedAt: Date
+    patientId: string
+    status: PatientTreatmentStatus
+    notes: string | null
+    treatmentId: string
+    startDate: Date
+    endDate: Date | null
+  })[]
+  treatments: TreatmentForAnamnesisType[]
 }
 
 const CardAnamnesis = ({
   patientId,
   initialData,
   physicalAssessment,
+  patientTreatment,
+  treatments,
 }: CardAnamnesisProps) => {
   const [isPending, startTransition] = useTransition()
 
@@ -57,6 +85,9 @@ const CardAnamnesis = ({
       accompanyingStaff: initialData?.accompanyingStaff ?? "",
 
       complementaryExams: initialData?.complementaryExams ?? "",
+      examUrls: initialData?.examUrls ?? [],
+      examPublicIds: initialData?.examPublicIds ?? [],
+
       hma: initialData?.hma ?? "",
       additionalSymptoms: initialData?.additionalSymptoms ?? "",
 
@@ -64,6 +95,8 @@ const CardAnamnesis = ({
       complaintMedications: initialData?.complaintMedications ?? "",
       continuousMedications: initialData?.continuousMedications ?? "",
       physicalAssessment: physicalAssessment?.content ?? "",
+
+      treatmentIds: patientTreatment.map((pt) => pt.treatment.id) ?? [],
     },
   })
 
@@ -74,18 +107,46 @@ const CardAnamnesis = ({
     formState: { errors, isDirty },
   } = methods
 
+  const complementaryExamsValue = useWatch({
+    control,
+    name: "complementaryExams",
+  })
+
+  const hasExamText = Boolean(
+    complementaryExamsValue && complementaryExamsValue.trim().length > 0,
+  )
+
   const onSubmit = async (data: AnamnesisFormValues) => {
     startTransition(async () => {
       try {
-        const response = await saveAnamnesisAndAssessmentAction(patientId, data)
+        // 1. Pega os arquivos File/Strings e faz o upload primeiro!
+        // data.examUrls aqui contém uma mistura de [File, "http..."]
+        const { urls, publicIds } = await uploadMultipleImages(
+          data.examUrls || [],
+          data.examPublicIds || [],
+        )
+
+        // 2. Agora sim! Substituímos o array de Files por um array puramente de Strings (urls)
+        const dataToSave = anamnesisSchema.parse({
+          ...data,
+          examUrls: urls, // 👈 Agora é string[] puro!
+          examPublicIds: publicIds,
+        })
+
+        // 3. Envia para a Action
+        const response = await saveAnamnesisAndAssessmentAction(
+          patientId,
+          dataToSave,
+        )
+
         if (response.success) {
-          toast.success("Anamnese criada com sucesso!")
+          toast.success("Anamnese salva com sucesso!")
         } else {
-          console.error(response.error)
-          toast.error("Erro ao criar anamnese")
+          toast.error(response.error)
         }
       } catch (error) {
-        console.error("Erro ao criar anamnese:", error)
+        console.error("Erro no envio:", error)
+        toast.error("Falha ao validar os campos do formulário.")
       }
     })
   }
@@ -150,14 +211,41 @@ const CardAnamnesis = ({
                 2. Exames e Histórico
               </h3>
 
-              <Field>
-                <FieldLabel>Exames complementares</FieldLabel>
-                <Input
-                  placeholder="Ex: Raio-X de coluna, Ressonância Magnética joelho D..."
-                  {...register("complementaryExams")}
-                />
-                <FieldError>{errors.complementaryExams?.message}</FieldError>
-              </Field>
+              <div className="space-y-4">
+                <Field>
+                  <FieldLabel>Exames Complementares</FieldLabel>
+                  <Input
+                    placeholder="Ex: Raio-X de coluna, Ressonância Magnética joelho D..."
+                    {...register("complementaryExams")}
+                  />
+                  <FieldError>{errors.complementaryExams?.message}</FieldError>
+                </Field>
+
+                {/* Só renderiza o upload se tiver preenchido o texto acima ou se já existirem imagens salvas */}
+                {hasExamText && (
+                  <Field className="animate-in fade-in-50 duration-300">
+                    <FieldLabel>Anexar Imagens/Laudos dos Exames</FieldLabel>
+                    <Controller
+                      name="examUrls"
+                      control={control}
+                      render={({ field, fieldState }) => (
+                        <>
+                          <MultiImageUpload
+                            form={methods}
+                            name="examUrls"
+                            initialUrls={field.value || []}
+                          />
+                          {fieldState.error && (
+                            <span className="mt-1 text-xs font-medium text-red-500">
+                              {fieldState.error.message}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    />
+                  </Field>
+                )}
+              </div>
 
               <Field>
                 <FieldLabel>Histórico da Queixa (HMA)</FieldLabel>
@@ -248,9 +336,22 @@ const CardAnamnesis = ({
                 <FieldError>{errors.physicalAssessment?.message}</FieldError>
               </Field>
             </div>
+
+            {/* Bloco 5 */}
+            <div className="space-y-4">
+              <h3 className="font-heading text-foreground text-xl">
+                5. Plano Terapêutico
+              </h3>
+
+              <MultiSelect
+                control={control}
+                name="treatmentIds"
+                options={treatments}
+              />
+            </div>
           </CardContent>
 
-          <CardFooter className="pt-2">
+          <CardFooter className="">
             <div className="flex w-full justify-center">
               <Button
                 className="w-full max-w-xl"

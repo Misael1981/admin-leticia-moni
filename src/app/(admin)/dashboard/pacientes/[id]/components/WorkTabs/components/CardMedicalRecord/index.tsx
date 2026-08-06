@@ -10,7 +10,6 @@ import {
   Activity,
   AlertTriangle,
   Calendar,
-  CheckCircle2,
   Clock,
   Dot,
   FileText,
@@ -19,7 +18,6 @@ import {
   Target,
   TrendingDown,
   Video,
-  Zap,
 } from "lucide-react"
 import MetricCard from "./components/MetricCard"
 import { PatientStatus } from "@/constants/enums"
@@ -126,27 +124,24 @@ const CardMedicalRecord = ({ status, evolutions }: CardMedicalRecordProps) => {
             {/* Diagnóstico & Plano */}
             <div className="space-y-6">
               <MedicalRecordCard
-                title="Diagnóstico Cinesiuncional"
+                title="Diagnóstico Cinesiuncional (Médico)"
                 icon={<FileText className="h-4 w-4 text-blue-600" />}
                 content={data.diagnostico}
               />
 
               <MedicalRecordCard
-                title="Plano Terapêutico"
-                icon={<Zap className="h-4 w-4 text-amber-600" />}
-                content={data.planoTerapêutico}
+                title="Plano de Tratamento Ativo"
+                icon={<Activity className="h-4 w-4 text-amber-600" />}
+                content="Aqui será o nome do tratamento"
               />
             </div>
 
             {/* Objetivos & Alertas */}
             <div className="space-y-6">
-              <ListCard
-                title="Objetivos do Tratamento"
+              <MedicalRecordCard
+                title="Queixa principal (HMA)"
                 icon={<Target className="h-4 w-4 text-emerald-600" />}
-                list={data.objetivos}
-                iconItem={
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                }
+                content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum odio sapien, pellentesque et fringilla efficitur, viverra id tellus. Integer vehicula posuere odio sagittis scelerisque. Mauris massa diam, lobortis id tristique ac, tempus eu tellus. Ut ultricies sed eros eget maximus. Nunc quis metus ut arcu euismod iaculis. Nulla at semper arcu, id porttitor ligula. Sed in tortor nisl. Suspendisse ipsum felis, iaculis vel interdum eu, ornare nec ligula. Donec rutrum nibh ac ante lobortis, nec aliquet enim ultricies. Donec non ipsum ac tellus feugiat mattis et in velit."
               />
 
               <ListCard

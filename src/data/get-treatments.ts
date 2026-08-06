@@ -1,4 +1,5 @@
 import { db } from "@/lib/prisma"
+import { Prisma } from "@misael1981/physio-database"
 
 export async function getTreatments() {
   try {
@@ -20,6 +21,32 @@ export async function getTreatments() {
         sessionsPerWeekMax: true,
         sessionDurationMinutes: true,
         benefits: true,
+      },
+    })
+
+    return treatments
+  } catch (error) {
+    console.error("Erro ao buscar os tratamentos:", error)
+    throw new Error("Não foi possível carregar os tratamentos.")
+  }
+}
+
+export type TreatmentForAnamnesisType = Prisma.TreatmentGetPayload<{
+  select: {
+    id: true
+    name: true
+  }
+}>
+
+export async function getTreatmentForAnamnesis() {
+  try {
+    const treatments = await db.treatment.findMany({
+      orderBy: {
+        name: "asc",
+      },
+      select: {
+        id: true,
+        name: true,
       },
     })
 

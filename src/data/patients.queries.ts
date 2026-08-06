@@ -85,6 +85,20 @@ export type PatientDetail = Prisma.PatientGetPayload<{
         zipCode: true
       }
     }
+    treatments: {
+      include: {
+        treatment: {
+          select: {
+            id: true
+            name: true
+            slug: true
+            durationMinWeeks: true
+            durationMaxWeeks: true
+            sessionDurationMinutes: true
+          }
+        }
+      }
+    }
   }
 }>
 
@@ -111,6 +125,24 @@ export async function getPatientById({
             zipCode: true,
           },
         },
+
+        treatments: {
+          include: {
+            treatment: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                sessionDurationMinutes: true,
+                durationMinWeeks: true,
+                durationMaxWeeks: true,
+              },
+            },
+          },
+          orderBy: {
+            startDate: "desc",
+          },
+        },
       },
     })
 
@@ -133,6 +165,8 @@ export type AnamnesesType = Prisma.AnamnesisGetPayload<{
     preExistingConditions: true
     complaintMedications: true
     continuousMedications: true
+    examUrls: true
+    examPublicIds: true
   }
 }>
 
