@@ -43,3 +43,5 @@ export const anamnesisFormSchema = anamnesisSchema.extend({
 
 export type AnamnesisFormInput = z.input<typeof anamnesisFormSchema>
 export type AnamnesisFormValues = z.output<typeof anamnesisFormSchema>
+
+export type AnamnesisData = z.output<typeof anamnesisSchema>

@@ -1,12 +1,12 @@
 "use server"
 
 import { db } from "@/lib/prisma"
-import { AnamnesisFormInput } from "@/schemas/patients-schemas"
+import { AnamnesisData } from "@/schemas/anamnesis-schemas"
 import { revalidatePath } from "next/cache"
 
 export async function saveAnamnesisAndAssessmentAction(
   patientId: string,
-  data: AnamnesisFormInput,
+  data: AnamnesisData,
 ) {
   // 1. Separamos o physicalAssessment E os treatmentIds da anamnesisData
   const { physicalAssessment, treatmentIds, ...anamnesisData } = data

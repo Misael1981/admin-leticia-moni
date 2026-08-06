@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/lib/prisma"
-import { AnamnesisFormValues, patientSchema } from "@/schemas/patients-schemas"
+import { patientSchema } from "@/schemas/patients-schemas"
 import { PatientReferralSource, Prisma } from "@misael1981/physio-database"
 import { revalidatePath } from "next/cache"
 
