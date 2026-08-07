@@ -103,7 +103,7 @@ const CardPatient = ({ patient }: CardPatientProps) => {
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer gap-2">
               <Link
-                href={`/dashboard/pacientes/${patient.id}/editar`}
+                href={`/dashboard/pacientes/${patient.id}/editar-cadastro`}
                 className="flex items-center gap-2"
               >
                 Editar Cadastro

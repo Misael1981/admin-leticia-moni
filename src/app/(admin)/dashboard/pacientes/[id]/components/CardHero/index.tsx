@@ -2,7 +2,7 @@
 
 import GetStatusBadge from "@/components/GetStatusBadge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { BIOLOGICAL_SEX_LABELS } from "@/constants/labels"
 import { PatientDetail } from "@/data/patients.queries"
@@ -10,6 +10,7 @@ import { formatBirthDate, getPatientAge } from "@/helpers/format-birth-date"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { initialsName } from "@/helpers/initials-name"
 import { MessageCircle, Pencil, PlusCircle } from "lucide-react"
+import Link from "next/link"
 
 type CardHeroProps = {
   patient: PatientDetail
@@ -80,10 +81,13 @@ const CardHero = ({ patient }: CardHeroProps) => {
           WhatsApp
         </Button>
 
-        <Button variant="outline" size="sm" className="gap-2">
+        <Link
+          href={`/dashboard/pacientes/${patient.id}/editar-cadastro`}
+          className={buttonVariants({ variant: "outline" })}
+        >
           <Pencil className="h-4 w-4" />
-          Editar
-        </Button>
+          Editar Cadastro
+        </Link>
 
         <Button size="sm" className="gap-2">
           <PlusCircle className="h-4 w-4" />

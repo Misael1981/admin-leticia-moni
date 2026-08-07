@@ -136,3 +136,79 @@ export async function deletePatient(id: string) {
     return { success: false, error: "Falha ao deletar paciente no banco." }
   }
 }
+
+export async function updatePatient(id: string, formData: unknown) {
+  try {
+    const validatedData = patientSchema.parse(formData)
+
+    const { address, ...patientData } = validatedData
+
+    const patientUpdateData: Prisma.PatientUpdateInput = {
+      ...patientData,
+      patientSource: patientData.patientSource
+        ? (patientData.patientSource as PatientReferralSource)
+        : null,
+    }
+
+    const updatedPatient = await db.patient.update({
+      where: { id },
+      data: {
+        ...patientUpdateData,
+        ...(address && {
+          address: {
+            upsert: {
+              create: {
+                zipCode: address.zipCode,
+                street: address.street,
+                number: address.number,
+                complement: address.complement,
+                district: address.district,
+                city: address.city,
+                state: address.state,
+              },
+              update: {
+                zipCode: address.zipCode,
+                street: address.street,
+                number: address.number,
+                complement: address.complement,
+                district: address.district,
+                city: address.city,
+                state: address.state,
+              },
+            },
+          },
+        }),
+      },
+    })
+
+    revalidatePath(`/dashboard/pacientes`)
+    revalidatePath(`/dashboard/pacientes/${id}`)
+
+    return {
+      success: true,
+      message: "Paciente atualizado com sucesso!",
+      data: updatedPatient,
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar paciente:", error)
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return {
+          success: false,
+          error: "O CPF informado já está em uso por outro paciente.",
+        }
+      }
+
+      if (error.code === "P2003") {
+        return {
+          success: false,
+          error:
+            "Não é possível editar: este paciente possui consultas ou prontuários vinculados.",
+        }
+      }
+    }
+
+    return { success: false, error: "Falha ao editar paciente no banco." }
+  }
+}
