@@ -174,6 +174,7 @@ export async function getAnamnesisByPatientId(patientId: string) {
   try {
     const anamnesis = await db.anamnesis.findUnique({
       where: { patientId },
+      include: {},
     })
     return anamnesis
   } catch (error) {

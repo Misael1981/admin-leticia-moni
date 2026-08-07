@@ -56,3 +56,44 @@ export async function getTreatmentForAnamnesis() {
     throw new Error("Não foi possível carregar os tratamentos.")
   }
 }
+
+export type PatientTreatmentType = Prisma.PatientTreatmentGetPayload<{
+  select: {
+    id: true
+    status: true
+    treatment: {
+      select: {
+        id: true
+        name: true
+      }
+    }
+  }
+}>
+
+export async function getTreatmentsByPatientId(patientId: string) {
+  try {
+    const treatments = await db.patientTreatment.findMany({
+      where: {
+        patientId,
+      },
+      select: {
+        id: true,
+        status: true,
+        treatment: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+
+    return treatments
+  } catch (error) {
+    console.error("Erro ao buscar os tratamentos do paciente:", error)
+    return []
+  }
+}

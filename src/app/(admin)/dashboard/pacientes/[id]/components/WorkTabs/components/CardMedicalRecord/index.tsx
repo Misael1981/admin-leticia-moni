@@ -14,7 +14,7 @@ import {
   Dot,
   FileText,
   HeartPulse,
-  Paperclip,
+  SportShoe,
   Target,
   TrendingDown,
   Video,
@@ -22,24 +22,42 @@ import {
 import MetricCard from "./components/MetricCard"
 import { PatientStatus } from "@/constants/enums"
 import { PATIENT_STATUS_LABELS } from "@/constants/labels"
-import { EvolutionType } from "@/data/patients.queries"
+import {
+  AnamnesesType,
+  EvolutionType,
+  PhysicalAssessmentType,
+} from "@/data/patients.queries"
 import { formatDate } from "@/helpers/format-date"
 import { Button } from "@/components/ui/button"
 import MedicalRecordCard from "./components/MedicalRecordCard"
 import ListCard from "./components/ListCard"
-import { MOCK_PATIENT_SUMMARY } from "@/constants/mocks"
 import ActionCard from "./components/ActionCard"
+import { PatientTreatmentType } from "@/data/get-treatments"
+import ExamRecordCard from "./components/ExamRecordCard"
 
 type CardMedicalRecordProps = {
   status: PatientStatus
   evolutions: EvolutionType[] | null
+  anamnesis: AnamnesesType | null
+  patientTreatments: PatientTreatmentType[] | null
+  physicalAssessment: PhysicalAssessmentType | null
 }
 
-const CardMedicalRecord = ({ status, evolutions }: CardMedicalRecordProps) => {
-  const data = MOCK_PATIENT_SUMMARY
-
+const CardMedicalRecord = ({
+  status,
+  evolutions,
+  anamnesis,
+  patientTreatments,
+  physicalAssessment,
+}: CardMedicalRecordProps) => {
   const latestEvolution = evolutions?.[0]
   const firstEvolution = evolutions?.[evolutions.length - 1]
+
+  const alertsList = [
+    anamnesis?.preExistingConditions,
+    anamnesis?.complaintMedications,
+    anamnesis?.continuousMedications,
+  ]
 
   return (
     <Card className="w-full max-w-4xl">
@@ -53,7 +71,7 @@ const CardMedicalRecord = ({ status, evolutions }: CardMedicalRecordProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="mx-auto w-full max-w-6xl space-y-6 p-4">
+        <div className="mx-auto w-full max-w-6xl space-y-6">
           {/* 1. KPIs / Métricas Rápidas */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {/* Status */}
@@ -126,13 +144,22 @@ const CardMedicalRecord = ({ status, evolutions }: CardMedicalRecordProps) => {
               <MedicalRecordCard
                 title="Diagnóstico Cinesiuncional (Médico)"
                 icon={<FileText className="h-4 w-4 text-blue-600" />}
-                content={data.diagnostico}
+                content={anamnesis?.medicalDiagnosis || "Não informado"}
+              />
+
+              <ListCard
+                title="Plano de Tratamento Ativo"
+                icon={<Activity className="h-4 w-4 text-amber-600" />}
+                list={patientTreatments?.map((t) => t.treatment.name) || []}
+                iconItem={
+                  <Dot className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                }
               />
 
               <MedicalRecordCard
-                title="Plano de Tratamento Ativo"
-                icon={<Activity className="h-4 w-4 text-amber-600" />}
-                content="Aqui será o nome do tratamento"
+                title="Avaliação Física"
+                icon={<SportShoe className="h-4 w-4 text-emerald-500" />}
+                content={physicalAssessment?.content || "Não informado"}
               />
             </div>
 
@@ -141,13 +168,13 @@ const CardMedicalRecord = ({ status, evolutions }: CardMedicalRecordProps) => {
               <MedicalRecordCard
                 title="Queixa principal (HMA)"
                 icon={<Target className="h-4 w-4 text-emerald-600" />}
-                content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum odio sapien, pellentesque et fringilla efficitur, viverra id tellus. Integer vehicula posuere odio sagittis scelerisque. Mauris massa diam, lobortis id tristique ac, tempus eu tellus. Ut ultricies sed eros eget maximus. Nunc quis metus ut arcu euismod iaculis. Nulla at semper arcu, id porttitor ligula. Sed in tortor nisl. Suspendisse ipsum felis, iaculis vel interdum eu, ornare nec ligula. Donec rutrum nibh ac ante lobortis, nec aliquet enim ultricies. Donec non ipsum ac tellus feugiat mattis et in velit."
+                content={anamnesis?.hma || "Não informado"}
               />
 
               <ListCard
                 title=" Alertas & Cuidados"
                 icon={<AlertTriangle className="h-4 w-4 text-amber-600" />}
-                list={data.alertas}
+                list={alertsList}
                 iconItem={
                   <Dot className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                 }
@@ -156,62 +183,36 @@ const CardMedicalRecord = ({ status, evolutions }: CardMedicalRecordProps) => {
             </div>
           </div>
 
-          {/* 3. Linha do Tempo das Sessões */}
-          <div className="rounded-xl border p-5 shadow-sm">
-            <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
-              <Clock className="h-4 w-4 text-indigo-600" />
-              Linha do Tempo de Tratamento
-            </h3>
-            <div className="relative my-2 space-y-6 border-l-2 pl-6">
-              {data.timelineEvents.map((evt) => (
-                <div key={evt.id} className="relative">
-                  <div
-                    className={`absolute top-0 -left-7.75 h-4 w-4 rounded-full border-2 bg-white ${
-                      evt.status === "completed"
-                        ? "border-emerald-500 bg-emerald-500"
-                        : "border-slate-300"
-                    }`}
-                  />
-                  <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
-                    <span className="text-sm font-medium">{evt.title}</span>
-                    <span className="font-mono text-xs text-slate-400">
-                      {evt.date}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 4. Última Evolução Registrar */}
+          {/* 3. Última Evolução Registrar */}
           <MedicalRecordCard
             title="Última Evolução Clínica"
             icon={<FileText className="h-4 w-4 text-blue-600" />}
-            content={data.ultimaEvolucao.relato}
+            content={evolutions?.[0]?.notes || "Não há notas registradas"}
             description={
               <span className="text-muted-foreground text-xs">
-                {data.ultimaEvolucao.data} • {data.ultimaEvolucao.profissional}
+                {formatDate(evolutions?.[0]?.createdAt) || "N/A"} • Dra Letícia
               </span>
             }
           />
 
-          {/* 5. Grid Inferior: Vídeos Prescritos & Arquivos Anexos */}
+          {/* 4. Grid Inferior: Vídeos Prescritos & Arquivos Anexos */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Vídeos Prescritos */}
             <ActionCard
               title="Exercícios / Vídeos Prescritos"
               icon={<Video className="h-4 w-4 text-purple-600" />}
-              items={data.videosPrescritos}
-              renderItem={(video) => (
+              items={evolutions?.[0]?.prescriptions || []}
+              renderItem={(pres) => (
                 <div
-                  key={video.id}
+                  key={pres.id}
                   className="flex items-center justify-between"
                 >
                   <div>
-                    <p className="text-xs font-semibold">{video.title}</p>
+                    <p className="text-xs font-semibold">{pres.video.name}</p>
 
                     <p className="text-muted-foreground text-[11px]">
-                      {video.duracao} • {video.frequencia}
+                      {pres.reps} • {pres.sets} • {pres.frequency} •{" "}
+                      {pres.holdTimeSec}
                     </p>
                   </div>
 
@@ -223,30 +224,9 @@ const CardMedicalRecord = ({ status, evolutions }: CardMedicalRecordProps) => {
             />
 
             {/* Arquivos & Exames */}
-            <ActionCard
-              title="Exames & Anexos"
-              icon={<Paperclip className="h-4 w-4 text-slate-600" />}
-              items={data.arquivos}
-              renderItem={(arquivo) => (
-                <div
-                  key={arquivo.id}
-                  className="flex items-center justify-between"
-                >
-                  <div className="truncate pr-2">
-                    <p className="truncate text-xs font-semibold">
-                      {arquivo.name}
-                    </p>
-
-                    <p className="text-muted-foreground text-[11px]">
-                      {arquivo.type} • {arquivo.size}
-                    </p>
-                  </div>
-
-                  <button className="shrink-0 text-xs font-medium text-blue-600 hover:underline">
-                    Baixar
-                  </button>
-                </div>
-              )}
+            <ExamRecordCard
+              complementaryExams={anamnesis?.complementaryExams}
+              examUrls={anamnesis?.examUrls}
             />
           </div>
         </div>

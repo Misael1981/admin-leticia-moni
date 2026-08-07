@@ -7,7 +7,7 @@ export function maskDate(value: string) {
   return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4)}`
 }
 
-export function formatDateToISO(value: string): string | null {
+export function formatDateToISO(value: string): string | null | undefined {
   const numbers = value.replace(/\D/g, "")
 
   if (numbers.length !== 8) return null

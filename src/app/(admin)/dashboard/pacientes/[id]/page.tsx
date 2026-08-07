@@ -9,7 +9,10 @@ import { notFound } from "next/navigation"
 import CardHero from "./components/CardHero"
 import WorkTabs from "./components/WorkTabs"
 import { getAllVideos } from "@/modules/videos/queries/get-videos.queries"
-import { getTreatmentForAnamnesis } from "@/data/get-treatments"
+import {
+  getTreatmentForAnamnesis,
+  getTreatmentsByPatientId,
+} from "@/data/get-treatments"
 
 interface MedicalRecordProps {
   params: Promise<{ id: string }>
@@ -27,6 +30,7 @@ export default async function MedicalRecordPage({
     evolutions,
     videos,
     treatments,
+    patientTreatments,
   ] = await Promise.all([
     getPatientById({ id }),
     getAnamnesisByPatientId(id),
@@ -34,6 +38,7 @@ export default async function MedicalRecordPage({
     getEvolutionsByPatientId(id),
     getAllVideos(),
     getTreatmentForAnamnesis(),
+    getTreatmentsByPatientId(id),
   ])
 
   if (!patient) {
@@ -57,6 +62,7 @@ export default async function MedicalRecordPage({
         currentPatientStatus={patient.status}
         videos={videos}
         treatments={treatments}
+        patientTreatments={patientTreatments}
       />
     </div>
   )
