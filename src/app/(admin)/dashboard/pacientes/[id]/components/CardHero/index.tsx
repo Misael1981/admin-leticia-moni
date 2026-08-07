@@ -72,14 +72,15 @@ const CardHero = ({ patient }: CardHeroProps) => {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-4 lg:justify-end">
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-2 border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+        <Link
+          href={`https://wa.me/${patient.phone?.replace(/\D/g, "")}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`gap-2 ${buttonVariants({ variant: "outline" })} border-emerald-200 text-emerald-600 hover:text-emerald-400`}
         >
           <MessageCircle className="h-4 w-4" />
           WhatsApp
-        </Button>
+        </Link>
 
         <Link
           href={`/dashboard/pacientes/${patient.id}/editar-cadastro`}
@@ -89,10 +90,13 @@ const CardHero = ({ patient }: CardHeroProps) => {
           Editar Cadastro
         </Link>
 
-        <Button size="sm" className="gap-2">
+        <Link
+          href={`/dashboard/pacientes/${patient.id}?tab=evolutions`}
+          className={buttonVariants({ variant: "default" })}
+        >
           <PlusCircle className="h-4 w-4" />
           Nova Evolução
-        </Button>
+        </Link>
       </div>
     </Card>
   )
