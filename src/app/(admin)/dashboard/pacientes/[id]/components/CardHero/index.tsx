@@ -2,7 +2,7 @@
 
 import GetStatusBadge from "@/components/GetStatusBadge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { BIOLOGICAL_SEX_LABELS } from "@/constants/labels"
 import { PatientDetail } from "@/data/patients.queries"

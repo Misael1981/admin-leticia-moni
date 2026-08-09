@@ -76,6 +76,7 @@ const WorkTabs = ({
           anamnesis={anamnesis}
           patientTreatments={patientTreatments}
           physicalAssessment={physicalAssessment}
+          patient={patient}
         />
       </TabsContent>
 

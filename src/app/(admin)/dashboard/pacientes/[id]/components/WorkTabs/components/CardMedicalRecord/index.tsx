@@ -25,15 +25,18 @@ import { PATIENT_STATUS_LABELS } from "@/constants/labels"
 import {
   AnamnesesType,
   EvolutionType,
+  PatientDetail,
   PhysicalAssessmentType,
 } from "@/data/patients.queries"
 import { formatDate } from "@/helpers/format-date"
-import { Button } from "@/components/ui/button"
 import MedicalRecordCard from "./components/MedicalRecordCard"
 import ListCard from "./components/ListCard"
 import ActionCard from "./components/ActionCard"
 import { PatientTreatmentType } from "@/data/get-treatments"
 import ExamRecordCard from "./components/ExamRecordCard"
+import PrintButton from "./components/PrintButton"
+import { useRef } from "react"
+import PrintableRecord from "./components/PrintableRecord"
 
 type CardMedicalRecordProps = {
   status: PatientStatus
@@ -41,6 +44,7 @@ type CardMedicalRecordProps = {
   anamnesis: AnamnesesType | null
   patientTreatments: PatientTreatmentType[] | null
   physicalAssessment: PhysicalAssessmentType | null
+  patient: PatientDetail
 }
 
 const CardMedicalRecord = ({
@@ -49,6 +53,7 @@ const CardMedicalRecord = ({
   anamnesis,
   patientTreatments,
   physicalAssessment,
+  patient,
 }: CardMedicalRecordProps) => {
   const latestEvolution = evolutions?.[0]
   const firstEvolution = evolutions?.[evolutions.length - 1]
@@ -58,6 +63,8 @@ const CardMedicalRecord = ({
     anamnesis?.complaintMedications,
     anamnesis?.continuousMedications,
   ]
+
+  const printRef = useRef<HTMLDivElement>(null)
 
   return (
     <Card className="w-full max-w-4xl">
@@ -232,7 +239,20 @@ const CardMedicalRecord = ({
         </div>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button>Imprimir Pruntuário</Button>
+        <PrintButton contentRef={printRef} />
+
+        <div className="hidden">
+          <div ref={printRef}>
+            <PrintableRecord
+              status={patient.status}
+              evolutions={evolutions}
+              anamnesis={anamnesis}
+              patientTreatments={patientTreatments}
+              physicalAssessment={physicalAssessment}
+              patient={patient}
+            />
+          </div>
+        </div>
       </CardFooter>
     </Card>
   )
