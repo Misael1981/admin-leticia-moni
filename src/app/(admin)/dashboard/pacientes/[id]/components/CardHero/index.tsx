@@ -5,18 +5,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { buttonVariants } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { BIOLOGICAL_SEX_LABELS } from "@/constants/labels"
-import { PatientDetail } from "@/data/patients.queries"
+import { PatientAuthType, PatientDetail } from "@/data/patients.queries"
 import { formatBirthDate, getPatientAge } from "@/helpers/format-birth-date"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { initialsName } from "@/helpers/initials-name"
 import { MessageCircle, Pencil, PlusCircle } from "lucide-react"
 import Link from "next/link"
+import ButtonAppAccess from "../ButtonAppAccess"
 
 type CardHeroProps = {
   patient: PatientDetail
+  patientAuth: PatientAuthType | null
 }
 
-const CardHero = ({ patient }: CardHeroProps) => {
+const CardHero = ({ patient, patientAuth }: CardHeroProps) => {
   return (
     <Card className="gap-2 p-4">
       <div className="flex flex-col-reverse justify-center gap-4 lg:flex-row lg:justify-between">
@@ -72,6 +74,8 @@ const CardHero = ({ patient }: CardHeroProps) => {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-4 lg:justify-end">
+        <ButtonAppAccess patientId={patient.id} patientAuth={patientAuth} />
+
         <Link
           href={`https://wa.me/${patient.phone?.replace(/\D/g, "")}`}
           target="_blank"

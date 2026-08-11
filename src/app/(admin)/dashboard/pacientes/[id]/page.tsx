@@ -2,6 +2,7 @@ import PageHeader from "@/components/PageHeader"
 import {
   getAnamnesisByPatientId,
   getEvolutionsByPatientId,
+  getPatientAuth,
   getPatientById,
   getPhysicalAssessmentPatientId,
 } from "@/data/patients.queries"
@@ -31,6 +32,7 @@ export default async function MedicalRecordPage({
     videos,
     treatments,
     patientTreatments,
+    patientAuth,
   ] = await Promise.all([
     getPatientById({ id }),
     getAnamnesisByPatientId(id),
@@ -39,6 +41,7 @@ export default async function MedicalRecordPage({
     getAllVideos(),
     getTreatmentForAnamnesis(),
     getTreatmentsByPatientId(id),
+    getPatientAuth(id),
   ])
 
   if (!patient) {
@@ -52,7 +55,7 @@ export default async function MedicalRecordPage({
         description="Consulte todo o histórico clínico do paciente em um único lugar. Registre evoluções, tratamentos, avaliações, observações e acompanhe a evolução do atendimento de forma organizada, garantindo um acompanhamento completo durante todo o processo de reabilitação"
       />
 
-      <CardHero patient={patient} />
+      <CardHero patient={patient} patientAuth={patientAuth} />
 
       <WorkTabs
         patient={patient}

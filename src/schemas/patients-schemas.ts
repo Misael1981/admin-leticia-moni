@@ -193,3 +193,13 @@ export type EvolutionFormValues = z.output<typeof evolutionSchema>
 export type ExercisePrescriptionItem = z.infer<
   typeof exercisePrescriptionItemSchema
 >
+
+export const patientAccessSchema = z.object({
+  pin: z
+    .string()
+    .length(6, "O PIN deve ter 6 dígitos")
+    .regex(/^\d{6}$/, "O PIN deve conter apenas números"),
+})
+
+export type PatientAccessInput = z.input<typeof patientAccessSchema>
+export type PatientAccessValues = z.output<typeof patientAccessSchema>

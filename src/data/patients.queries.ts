@@ -260,3 +260,30 @@ export async function getEvolutionsByPatientId(patientId: string) {
     return []
   }
 }
+
+export type PatientAuthType = Prisma.PatientAuthGetPayload<{
+  select: {
+    id: true
+    createdAt: true
+    patientId: true
+    pinHash: true
+    mustChangePin: true
+    failedAttempts: true
+    lockedUntil: true
+    lastLoginAt: true
+    createdBy: true
+  }
+}>
+
+export async function getPatientAuth(patientId: string) {
+  try {
+    const patientAuth = db.patientAuth.findUnique({
+      where: { patientId },
+    })
+
+    return patientAuth
+  } catch (error) {
+    console.error("Erro ao buscar patientAuth:", error)
+    return null
+  }
+}

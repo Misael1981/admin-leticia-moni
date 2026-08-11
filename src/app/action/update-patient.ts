@@ -1,9 +1,12 @@
 "use server"
 
+import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/prisma"
 import { patientSchema } from "@/schemas/patients-schemas"
 import { PatientReferralSource, Prisma } from "@misael1981/physio-database"
 import { revalidatePath } from "next/cache"
+import { getServerSession } from "next-auth"
+import bcrypt from "bcrypt"
 
 export async function createPatient(formData: unknown) {
   const result = patientSchema.safeParse(formData)
@@ -210,5 +213,42 @@ export async function updatePatient(id: string, formData: unknown) {
     }
 
     return { success: false, error: "Falha ao editar paciente no banco." }
+  }
+}
+
+export async function createPatientAccessAction({
+  patientId,
+  pin,
+}: {
+  patientId: string
+  pin: string
+}) {
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user?.id) {
+    throw new Error("Usuário não autenticado")
+  }
+
+  const pinHash = await bcrypt.hash(pin, 10)
+  try {
+    await db.patientAuth.upsert({
+      where: { patientId },
+      create: {
+        patientId,
+        pinHash,
+        createdBy: session.user.id,
+      },
+      update: {
+        pinHash,
+        failedAttempts: 0,
+        lockedUntil: null,
+      },
+    })
+
+    revalidatePath(`/dashboard/pacientes/${patientId}`)
+    return { success: true }
+  } catch (error) {
+    console.error(error)
+    return { success: false, error: "Erro ao criar acesso do paciente ao app" }
   }
 }
