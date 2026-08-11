@@ -67,7 +67,7 @@ const CardMedicalRecord = ({
   const printRef = useRef<HTMLDivElement>(null)
 
   return (
-    <Card className="w-full max-w-4xl">
+    <Card className="w-full max-w-6xl">
       <CardHeader>
         <CardTitle>Prontuário</CardTitle>
         <CardDescription>

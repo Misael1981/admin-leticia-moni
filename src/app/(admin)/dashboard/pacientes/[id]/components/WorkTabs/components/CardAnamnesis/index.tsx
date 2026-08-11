@@ -153,7 +153,7 @@ const CardAnamnesis = ({
   }
 
   return (
-    <Card className="w-full max-w-4xl">
+    <Card className="w-full max-w-6xl">
       <CardHeader>
         <CardTitle>Anamnese</CardTitle>
         <CardDescription>

@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   AnamnesesType,
   EvolutionType,
-  PatientAuthType,
   PatientDetail,
   PhysicalAssessmentType,
 } from "@/data/patients.queries"

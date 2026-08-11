@@ -47,7 +47,7 @@ type CardCompleteDataProps = {
 
 const CardCompleteData = ({ patient }: CardCompleteDataProps) => {
   return (
-    <Card className="w-full max-w-4xl">
+    <Card className="w-full max-w-6xl">
       <CardHeader>
         <CardTitle className="text-center text-2xl">
           Cadastro Completo

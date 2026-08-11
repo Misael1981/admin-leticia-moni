@@ -33,8 +33,8 @@ const CardEvolutions = ({
   const lastSessionNumber = evolutions?.[0]?.sessionNumber ?? 0
 
   return (
-    <div className="flex w-full max-w-4xl flex-col gap-6">
-      <Card className="w-full max-w-4xl">
+    <div className="flex w-full max-w-6xl flex-col gap-6">
+      <Card className="w-full max-w-6xl">
         <CardHeader>
           <CardTitle>Evoluções</CardTitle>
           <CardDescription>
@@ -55,7 +55,7 @@ const CardEvolutions = ({
       </Card>
 
       {evolutions && (
-        <Card className="w-full max-w-4xl">
+        <Card className="w-full max-w-6xl">
           <CardHeader>
             <CardTitle>Histórico de Sessões</CardTitle>
             <CardDescription>

@@ -73,14 +73,14 @@ const CardHero = ({ patient, patientAuth }: CardHeroProps) => {
         <div className="flex justify-end">{GetStatusBadge(patient.status)}</div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-4 lg:justify-end">
+      <div className="flex flex-col items-center justify-center gap-4 border-t pt-4 md:flex-row lg:justify-end">
         <ButtonAppAccess patientId={patient.id} patientAuth={patientAuth} />
 
         <Link
           href={`https://wa.me/${patient.phone?.replace(/\D/g, "")}`}
           target="_blank"
           rel="noopener noreferrer"
-          className={`gap-2 ${buttonVariants({ variant: "outline" })} border-emerald-200 text-emerald-600 hover:text-emerald-400`}
+          className={`gap-2 ${buttonVariants({ variant: "outline" })} w-full border-emerald-200 text-emerald-600 hover:text-emerald-400 md:w-fit`}
         >
           <MessageCircle className="h-4 w-4" />
           WhatsApp
@@ -88,7 +88,7 @@ const CardHero = ({ patient, patientAuth }: CardHeroProps) => {
 
         <Link
           href={`/dashboard/pacientes/${patient.id}/editar-cadastro`}
-          className={buttonVariants({ variant: "outline" })}
+          className={`${buttonVariants({ variant: "outline" })} w-full md:w-fit`}
         >
           <Pencil className="h-4 w-4" />
           Editar Cadastro
@@ -96,7 +96,7 @@ const CardHero = ({ patient, patientAuth }: CardHeroProps) => {
 
         <Link
           href={`/dashboard/pacientes/${patient.id}?tab=evolutions`}
-          className={buttonVariants({ variant: "default" })}
+          className={`${buttonVariants({ variant: "outline" })} w-full md:w-fit`}
         >
           <PlusCircle className="h-4 w-4" />
           Nova Evolução

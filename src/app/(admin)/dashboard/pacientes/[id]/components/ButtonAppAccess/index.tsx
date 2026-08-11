@@ -14,7 +14,7 @@ const ButtonAppAccess = ({ patientId, patientAuth }: ButtonAppAccessProps) => {
   return (
     <Link
       href={`/dashboard/pacientes/${patientId}/app-acesso`}
-      className={`gap-2 ${buttonVariants({ variant: "outline" })} border-amber-200 text-amber-600 hover:text-amber-400`}
+      className={`gap-2 ${buttonVariants({ variant: "outline" })} w-full border-amber-200 text-amber-600 hover:text-amber-400 md:w-fit`}
     >
       <TabletSmartphone className="h-4 w-4" />
       {editPin ? "Editar Acesso ao App" : "Liberar Acesso ao App"}
