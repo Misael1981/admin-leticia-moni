@@ -237,11 +237,13 @@ export async function createPatientAccessAction({
         patientId,
         pinHash,
         createdBy: session.user.id,
+        tokenVersion: 0,
       },
       update: {
         pinHash,
         failedAttempts: 0,
         lockedUntil: null,
+        tokenVersion: { increment: 1 },
       },
     })
 
