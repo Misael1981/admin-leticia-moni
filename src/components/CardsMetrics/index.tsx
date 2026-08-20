@@ -5,11 +5,23 @@ type CardsMetricsProps = {
     id: number
     title: string
     value: number | string
-    trend?: "up" | "down" | undefined
+    trend: "up" | "down" | "neutral"
     trendValue?: string | number | undefined
   }
   icon?: React.ReactNode
 }
+
+const trendStyles = {
+  up: "text-green-500",
+  down: "text-red-500",
+  neutral: "text-blue-500",
+} as const
+
+const trendIcons = {
+  up: "↑ ",
+  down: "↓ ",
+  neutral: "",
+} as const
 
 const CardsMetrics = ({ metric, icon }: CardsMetricsProps) => {
   return (
@@ -27,12 +39,9 @@ const CardsMetrics = ({ metric, icon }: CardsMetricsProps) => {
 
         <div>
           {metric.trendValue && (
-            <p
-              className={`mt-1 text-xs ${
-                metric.trend === "up" ? "text-green-500" : "text-red-500"
-              }`}
-            >
-              {metric.trend === "up" ? "↑" : "↓"} {metric.trendValue}
+            <p className={`mt-1 text-xs ${trendStyles[metric.trend]}`}>
+              {trendIcons[metric.trend]}
+              {metric.trendValue}
             </p>
           )}
         </div>
