@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, Inter } from "next/font/google"
 import "./globals.css"
 import { cn } from "@/lib/utils"
@@ -19,9 +19,40 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Letícia Moni Fisioterapia",
+  title: "Admin Moni Fisio",
+  applicationName: "Moni Fisio App do Paciente",
   description:
-    "Fisioterapia Especializada em Reabilitação de Face, Cabeça e Pescoço",
+    "Fisioterapia Especializada em Reabilitação de Face, Cabeça e Pescoço.",
+  creator: "Letícia Moni Fisioterapia",
+  authors: [{ name: "Letícia Moni Fisioterapia" }],
+  category: "health",
+  manifest: "/site.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Moni Paciente",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/favicon.ico", type: "image/x-icon" },
+      { url: "/icons/favicon.svg", type: "image/svg+xml" },
+      { url: "/icons/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: ["/icons/favicon-96x96.png"],
+    other: [{ rel: "mask-icon", url: "/logo.svg", color: "#ebe5cc" }],
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: "#1b3d54",
+  colorScheme: "light",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({
@@ -42,6 +73,9 @@ export default function RootLayout({
         inter.variable,
       )}
     >
+      <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+      </head>
       <body className="flex min-h-full flex-col">
         <AuthProvider>
           <TooltipProvider>{children}</TooltipProvider>

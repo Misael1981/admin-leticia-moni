@@ -74,7 +74,7 @@ export function VideoCard({ video }: VideoCardProps) {
 
       <div className="space-y-3 p-3">
         <div>
-          <h3 className="line-clamp-2 font-medium">{video?.name}</h3>
+          <h3 className="truncate font-medium">{video?.name}</h3>
 
           <div className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
             {video?.category && <span>{video?.category}</span>}

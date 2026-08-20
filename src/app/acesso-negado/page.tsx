@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 // app/acesso-negado/page.tsx
 export default function AcessoNegadoPage() {
   return (
@@ -6,6 +8,10 @@ export default function AcessoNegadoPage() {
       <p className="text-muted-foreground">
         Você não tem permissão para acessar esta área.
       </p>
+
+      <Link href="/login" className="text-blue-600 hover:text-blue-700">
+        Voltar para página de login
+      </Link>
     </div>
   )
 }
