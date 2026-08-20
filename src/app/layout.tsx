@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     siteName: "Admin Moni Fisio",
     images: [
       {
-        url: "/icons/icon-512.png",
+        url: "/apple-touch-icon.png",
         width: 512,
         height: 512,
         alt: "Logo Admin Moni Fisio",
