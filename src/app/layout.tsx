@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Admin Moni Fisio",
-  applicationName: "Moni Fisio App do Paciente",
+  applicationName: "Admin Moni Fisio",
   description:
     "Fisioterapia Especializada em Reabilitação de Face, Cabeça e Pescoço.",
   creator: "Letícia Moni Fisioterapia",
@@ -30,7 +30,26 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Moni Paciente",
+    title: "Admin Moni Fisio",
+  },
+  metadataBase: new URL("https://admin-leticia-moni.vercel.app"),
+
+  openGraph: {
+    title: "Admin Moni Fisio",
+    description:
+      "Fisioterapia Especializada em Reabilitação de Face, Cabeça e Pescoço.",
+    url: "https://admin-leticia-moni.vercel.app",
+    siteName: "Admin Moni Fisio",
+    images: [
+      {
+        url: "/icons/icon-512.png",
+        width: 512,
+        height: 512,
+        alt: "Logo Admin Moni Fisio",
+      },
+    ],
+    locale: "pt_BR",
+    type: "website",
   },
   icons: {
     icon: [
