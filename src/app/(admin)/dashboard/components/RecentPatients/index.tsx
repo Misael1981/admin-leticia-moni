@@ -1,11 +1,13 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatDate } from "@/helpers/format-date"
+import { formatSessionTime } from "@/helpers/format-date"
+import Link from "next/link"
 
 type Patient = {
   id: number
   name: string
+  nickname: string
   createdAt: string
 }
 
@@ -19,7 +21,7 @@ const RecentPatients = ({ patients }: RecentPatientsProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Últimos pacientes cadastrados</CardTitle>
+        <CardTitle className="text-lg">Últimos pacientes atendidos</CardTitle>
       </CardHeader>
 
       <CardContent>
@@ -30,20 +32,22 @@ const RecentPatients = ({ patients }: RecentPatientsProps) => {
         ) : (
           <ul className="space-y-3">
             {recentPatients.map((patient) => (
-              <li
-                key={patient.id}
-                className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-3 transition-all"
-              >
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">{patient.name}</span>
-                  <span className="text-muted-foreground text-xs">
-                    Novo cadastro
-                  </span>
-                </div>
+              <li key={patient.id}>
+                <Link
+                  href={`/dashboard/pacientes/${patient.id}?tab=evolutions`}
+                  className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-3 transition-all"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">{patient.name}</span>
+                    <span className="text-muted-foreground text-xs">
+                      {patient.nickname}
+                    </span>
+                  </div>
 
-                <span className="text-muted-foreground text-xs">
-                  {formatDate(patient.createdAt)}
-                </span>
+                  <span className="text-muted-foreground text-xs">
+                    {formatSessionTime(patient.createdAt)}
+                  </span>
+                </Link>
               </li>
             ))}
           </ul>

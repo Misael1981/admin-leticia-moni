@@ -109,3 +109,48 @@ export async function getMetricsOverview() {
     throw new Error("Não foi possível carregar as métricas.")
   }
 }
+
+export async function getRecentPatientsFromEvolutions() {
+  try {
+    // Busca as últimas evoluções trazidas com os dados do paciente
+    const evolutions = await db.evolution.findMany({
+      take: 20, // Pega uma margem maior para garantir 5 pacientes distintos
+      orderBy: {
+        sessionDate: "desc",
+      },
+      select: {
+        id: true,
+        sessionDate: true,
+        patient: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+          },
+        },
+      },
+    })
+
+    // Map auxiliar para guardar apenas a evolução mais recente por paciente (deduplicação)
+    const uniquePatientsMap = new Map()
+
+    for (const evo of evolutions) {
+      if (!uniquePatientsMap.has(evo.patient.id)) {
+        uniquePatientsMap.set(evo.patient.id, {
+          id: evo.patient.id,
+          name: evo.patient.name,
+          nickname: evo.patient.nickname ?? "",
+          createdAt: evo.sessionDate.toISOString(), // Usa a data da última sessão atendida
+        })
+      }
+
+      // Se já achou 5 pacientes únicos, interrompe a busca
+      if (uniquePatientsMap.size === 5) break
+    }
+
+    return Array.from(uniquePatientsMap.values())
+  } catch (error) {
+    console.error("Erro ao buscar últimos pacientes atendidos:", error)
+    return []
+  }
+}
