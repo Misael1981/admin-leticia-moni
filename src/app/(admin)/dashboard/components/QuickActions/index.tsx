@@ -1,8 +1,9 @@
 "use client"
 
+import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { UserPlus, Send, ClipboardPlus } from "lucide-react"
+import { UserPlus, ClipboardPlus, VideoIcon } from "lucide-react"
 
 type Action = {
   label: string
@@ -15,18 +16,22 @@ type QuickActionsProps = {
   actions?: Action[]
 }
 
+// Mantenha os textos 100% iguais em acentuação
 const defaultActions: Action[] = [
   {
     label: "Cadastrar paciente",
     icon: <UserPlus size={18} />,
+    href: "/dashboard/pacientes/cadastrar-paciente",
   },
   {
-    label: "Enviar exercício",
-    icon: <Send size={18} />,
+    label: "Novo vídeo treino",
+    icon: <VideoIcon size={18} />,
+    href: "/dashboard/videos/new",
   },
   {
-    label: "Registrar atendimento",
+    label: "Registrar novo tratamento",
     icon: <ClipboardPlus size={18} />,
+    href: "/dashboard/tratamentos/novo",
   },
 ]
 
@@ -39,27 +44,38 @@ const QuickActions = ({ actions = defaultActions }: QuickActionsProps) => {
 
       <CardContent>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {actions.map((action, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className="flex h-20 flex-col items-center justify-center gap-2 text-center transition-all hover:scale-[1.02]"
-              onClick={action.onClick}
-              asChild={!!action.href}
-            >
-              {action.href ? (
-                <a href={action.href}>
-                  {action.icon}
-                  <span className="text-sm font-medium">{action.label}</span>
-                </a>
-              ) : (
-                <>
-                  {action.icon}
-                  <span className="text-sm font-medium">{action.label}</span>
-                </>
-              )}
-            </Button>
-          ))}
+          {actions.map((action, index) => {
+            const content = (
+              <>
+                {action.icon}
+                <span className="text-sm font-medium">{action.label}</span>
+              </>
+            )
+
+            if (action.href) {
+              return (
+                <Button
+                  key={index}
+                  variant="outline"
+                  className="flex h-20 flex-col items-center justify-center gap-2 text-center transition-all hover:scale-[1.02]"
+                  asChild
+                >
+                  <Link href={action.href}>{content}</Link>
+                </Button>
+              )
+            }
+
+            return (
+              <Button
+                key={index}
+                variant="outline"
+                className="flex h-20 flex-col items-center justify-center gap-2 text-center transition-all hover:scale-[1.02]"
+                onClick={action.onClick}
+              >
+                {content}
+              </Button>
+            )
+          })}
         </div>
       </CardContent>
     </Card>
