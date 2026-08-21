@@ -154,3 +154,74 @@ export async function getRecentPatientsFromEvolutions() {
     return []
   }
 }
+
+export type BirthdayPatient = {
+  id: string
+  name: string
+  nickname: string | null
+  phone: string | null
+  birthDate: string
+  isToday: boolean
+  age: number
+}
+
+export async function getMonthBirthdayPatients(): Promise<BirthdayPatient[]> {
+  try {
+    const today = new Date()
+    const currentMonth = today.getMonth()
+    const currentDay = today.getDate()
+
+    const patients = await db.patient.findMany({
+      where: {
+        birthDate: {
+          not: null,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        nickname: true,
+        phone: true,
+        birthDate: true,
+      },
+    })
+
+    const monthBirthdays = patients
+      .filter((patient) => {
+        if (!patient.birthDate) return false
+        const bdate = new Date(patient.birthDate)
+        return bdate.getMonth() === currentMonth
+      })
+      .map((patient) => {
+        const bdate = new Date(patient.birthDate!)
+        const isToday =
+          bdate.getDate() === currentDay && bdate.getMonth() === currentMonth
+
+        const age = today.getFullYear() - bdate.getFullYear()
+
+        return {
+          id: patient.id,
+          name: patient.name,
+          nickname: patient.nickname,
+          phone: patient.phone,
+          birthDate: patient.birthDate!.toISOString(),
+          isToday,
+          age,
+        }
+      })
+
+    monthBirthdays.sort((a, b) => {
+      if (a.isToday && !b.isToday) return -1
+      if (!a.isToday && b.isToday) return 1
+
+      const dayA = new Date(a.birthDate).getDate()
+      const dayB = new Date(b.birthDate).getDate()
+      return dayA - dayB
+    })
+
+    return monthBirthdays
+  } catch (error) {
+    console.error("Erro ao buscar aniversariantes do mês:", error)
+    return []
+  }
+}
