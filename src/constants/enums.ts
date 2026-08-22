@@ -6,6 +6,17 @@ export const PatientStatus = {
 
 export type PatientStatus = (typeof PatientStatus)[keyof typeof PatientStatus]
 
+export const UserRole = {
+  OWNER: "OWNER",
+  ADMIN: "ADMIN",
+  USER: "USER",
+  RECEPTIONIST: "RECEPTIONIST",
+  PHYSIOTHERAPIST: "PHYSIOTHERAPIST",
+  PATIENT: "PATIENT",
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
 export const BiologicalSex = {
   MALE: "MALE",
   FEMALE: "FEMALE",

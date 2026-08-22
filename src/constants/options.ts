@@ -5,6 +5,7 @@ import {
   PatientReferralSource,
   PatientStatus,
   PatientTreatmentStatus,
+  UserRole,
 } from "./enums"
 import {
   BIOLOGICAL_SEX_LABELS,
@@ -13,6 +14,7 @@ import {
   PATIENT_REFERRAL_SOURCE_LABEL,
   PATIENT_STATUS_LABELS,
   PATIENT_TREATMENT_STATUS_LABELS,
+  USER_ROLE_LABELS,
 } from "./labels"
 
 export const PATIENT_STATUS_OPTIONS = [
@@ -29,6 +31,33 @@ export const PATIENT_STATUS_OPTIONS = [
     label: PATIENT_STATUS_LABELS[PatientStatus.INACTIVE],
   },
 ] as const
+
+export const USER_ROLE_OPTIONS = [
+  {
+    value: UserRole.ADMIN,
+    label: USER_ROLE_LABELS[UserRole.ADMIN],
+  },
+  {
+    value: UserRole.OWNER,
+    label: USER_ROLE_LABELS[UserRole.OWNER],
+  },
+  {
+    value: UserRole.PATIENT,
+    label: USER_ROLE_LABELS[UserRole.PATIENT],
+  },
+  {
+    value: UserRole.PHYSIOTHERAPIST,
+    label: USER_ROLE_LABELS[UserRole.PHYSIOTHERAPIST],
+  },
+  {
+    value: UserRole.RECEPTIONIST,
+    label: USER_ROLE_LABELS[UserRole.RECEPTIONIST],
+  },
+  {
+    value: UserRole.USER,
+    label: USER_ROLE_LABELS[UserRole.USER],
+  },
+]
 
 export const BIOLOGICAL_SEX_OPTIONS = [
   {

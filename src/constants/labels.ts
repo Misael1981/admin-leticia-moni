@@ -5,12 +5,22 @@ import {
   PatientReferralSource,
   PatientStatus,
   PatientTreatmentStatus,
+  UserRole,
 } from "./enums"
 
 export const PATIENT_STATUS_LABELS: Record<PatientStatus, string> = {
   ACTIVE: "Em Tratamento",
   DISCHARGED: "Alta",
   INACTIVE: "Inativo",
+}
+
+export const USER_ROLE_LABELS: Record<UserRole, string> = {
+  OWNER: "Proprietário",
+  ADMIN: "Administrativo",
+  USER: "Usuário",
+  RECEPTIONIST: "Recepcionista",
+  PHYSIOTHERAPIST: "Fisioterapeuta",
+  PATIENT: "Paciente",
 }
 
 export const BIOLOGICAL_SEX_LABELS: Record<BiologicalSex, string> = {
