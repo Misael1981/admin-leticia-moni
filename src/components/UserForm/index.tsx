@@ -1,6 +1,5 @@
 "use client"
 
-import { CreateUserValues } from "@/schemas/users-schemas"
 import {
   Field,
   FieldDescription,
@@ -20,9 +19,10 @@ import {
 } from "../ui/select"
 import { USER_ROLE_OPTIONS } from "@/constants/options"
 import ImageUpload from "../ImageUpload"
+import { UserFormValues } from "@/schemas/users-schemas"
 
 const UserForm = () => {
-  const form = useFormContext<CreateUserValues>()
+  const form = useFormContext<UserFormValues>()
   const {
     register,
     formState: { errors },
