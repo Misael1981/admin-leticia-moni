@@ -61,7 +61,7 @@ const ImageUpload = <TFormValues extends FieldValues>({
 
   return (
     <div>
-      <div className="w-full rounded-xl bg-slate-200">
+      <div className="relative w-full rounded-xl bg-slate-200">
         <input
           type="file"
           accept="image/*"
@@ -83,14 +83,6 @@ const ImageUpload = <TFormValues extends FieldValues>({
                 height={128}
                 className="object-contain"
               />
-
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                className="bg-background/80 absolute top-0 right-0 rounded-full px-1 py-2 shadow"
-              >
-                <X className="h-4 w-4" />
-              </button>
             </div>
           ) : (
             <>
@@ -101,6 +93,16 @@ const ImageUpload = <TFormValues extends FieldValues>({
             </>
           )}
         </label>
+
+        {preview && (
+          <button
+            type="button"
+            onClick={handleRemoveImage}
+            className="bg-background/80 absolute top-0 right-0 rounded-full px-1 py-2 shadow"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
     </div>
   )

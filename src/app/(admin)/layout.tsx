@@ -26,7 +26,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div suppressHydrationWarning>
+    <div>
       <SidebarProvider>
         <ThemeProvider
           attribute="class"
