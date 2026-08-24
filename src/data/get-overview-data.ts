@@ -161,22 +161,42 @@ export type BirthdayPatient = {
   nickname: string | null
   phone: string | null
   birthDate: string
+  dayMonth: string // <--- Adicione este campo
   isToday: boolean
   age: number
 }
 
 export async function getMonthBirthdayPatients(): Promise<BirthdayPatient[]> {
   try {
-    const today = new Date()
-    const currentMonth = today.getMonth()
-    const currentDay = today.getDate()
+    const now = new Date()
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    })
+    const parts = formatter.formatToParts(now)
+    const currentDay = Number(parts.find((p) => p.type === "day")?.value)
+    const currentMonth = Number(parts.find((p) => p.type === "month")?.value)
+    const currentYear = Number(parts.find((p) => p.type === "year")?.value)
+
+    const months = [
+      "jan",
+      "fev",
+      "mar",
+      "abr",
+      "mai",
+      "jun",
+      "jul",
+      "ago",
+      "set",
+      "out",
+      "nov",
+      "dez",
+    ]
 
     const patients = await db.patient.findMany({
-      where: {
-        birthDate: {
-          not: null,
-        },
-      },
+      where: { birthDate: { not: null } },
       select: {
         id: true,
         name: true,
@@ -190,14 +210,27 @@ export async function getMonthBirthdayPatients(): Promise<BirthdayPatient[]> {
       .filter((patient) => {
         if (!patient.birthDate) return false
         const bdate = new Date(patient.birthDate)
-        return bdate.getMonth() === currentMonth
+        const bMonth = bdate.getUTCMonth() + 1
+        return bMonth === currentMonth
       })
       .map((patient) => {
         const bdate = new Date(patient.birthDate!)
-        const isToday =
-          bdate.getDate() === currentDay && bdate.getMonth() === currentMonth
+        const bDay = bdate.getUTCDate()
+        const bMonth = bdate.getUTCMonth() + 1
+        const bYear = bdate.getUTCFullYear()
 
-        const age = today.getFullYear() - bdate.getFullYear()
+        const isToday = bDay === currentDay && bMonth === currentMonth
+
+        let age = currentYear - bYear
+        if (
+          currentMonth < bMonth ||
+          (currentMonth === bMonth && currentDay < bDay)
+        ) {
+          age--
+        }
+
+        const formattedDay = String(bDay).padStart(2, "0")
+        const formattedMonth = months[bMonth - 1]
 
         return {
           id: patient.id,
@@ -205,6 +238,7 @@ export async function getMonthBirthdayPatients(): Promise<BirthdayPatient[]> {
           nickname: patient.nickname,
           phone: patient.phone,
           birthDate: patient.birthDate!.toISOString(),
+          dayMonth: `${formattedDay} ${formattedMonth}`, // <--- String idêntica para Server e Client!
           isToday,
           age,
         }
@@ -214,8 +248,8 @@ export async function getMonthBirthdayPatients(): Promise<BirthdayPatient[]> {
       if (a.isToday && !b.isToday) return -1
       if (!a.isToday && b.isToday) return 1
 
-      const dayA = new Date(a.birthDate).getDate()
-      const dayB = new Date(b.birthDate).getDate()
+      const dayA = new Date(a.birthDate).getUTCDate()
+      const dayB = new Date(b.birthDate).getUTCDate()
       return dayA - dayB
     })
 

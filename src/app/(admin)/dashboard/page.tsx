@@ -9,7 +9,7 @@ import {
   getRecentPatientsFromEvolutions,
 } from "@/data/get-overview-data"
 import { appointments } from "@/constants/mocks"
-import BirthdayPatients from "./components/BirthdayPatients"
+import BirthdayPatientsList from "./components/BirthdayPatientsList"
 
 export default async function DashboardPage() {
   const [metrics, evolutions, monthBirthdays] = await Promise.all([
@@ -27,7 +27,7 @@ export default async function DashboardPage() {
       <div className="space-y-6 p-8">
         <MetricsGrid metrics={metrics} />
 
-        <BirthdayPatients patients={monthBirthdays} />
+        <BirthdayPatientsList patients={monthBirthdays} />
 
         <QuickActions />
 
