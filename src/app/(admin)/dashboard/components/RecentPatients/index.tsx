@@ -35,7 +35,7 @@ const RecentPatients = ({ patients }: RecentPatientsProps) => {
               <li key={patient.id}>
                 <Link
                   href={`/dashboard/pacientes/${patient.id}?tab=evolutions`}
-                  className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-3 transition-all"
+                  className="hover:bg-muted/50 bg-background flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-all"
                 >
                   <div className="flex flex-col">
                     <span className="text-sm font-medium">{patient.name}</span>

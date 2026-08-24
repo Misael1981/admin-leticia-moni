@@ -68,12 +68,12 @@
   --beige-dark: #935332;
 
   --cream: #efe9ce;
-  --cream-light: #d0cfc6;
+  --cream-light: #f8f6ed;
   --cream-dark: #b8b195;
 
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --card: var(--color-cream-light);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);

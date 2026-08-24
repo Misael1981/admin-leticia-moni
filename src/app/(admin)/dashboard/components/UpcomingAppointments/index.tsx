@@ -29,7 +29,7 @@ const UpcomingAppointments = ({ appointments }: UpcomingAppointmentsProps) => {
             {appointments.map((appt) => (
               <li
                 key={appt.id}
-                className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-3 transition-all"
+                className="hover:bg-muted/50 bg-background flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-all"
               >
                 <div className="flex flex-col">
                   <span className="text-sm font-medium">
