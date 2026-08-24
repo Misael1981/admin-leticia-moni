@@ -1,10 +1,7 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useTransition } from "react"
-import { FormProvider, useForm } from "react-hook-form"
-
-import { zodResolver } from "@hookform/resolvers/zod"
+import { updateUserAction } from "@/app/action/users.action"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -13,31 +10,44 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import UserForm from "@/components/UserForm"
-import { Button } from "@/components/ui/button"
-import { UserPlus } from "lucide-react"
-import { uploadToCloudinaryClient } from "@/services/image-compresseion.service"
-import { createUserAction } from "@/app/action/users.action"
-import { toast } from "sonner"
+import { UserType } from "@/data/get-users-queries"
 import { userFormSchema, UserFormValues } from "@/schemas/users-schemas"
 
-const UserFormRegister = () => {
+import { uploadToCloudinaryClient } from "@/services/image-compresseion.service"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { UserPen } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useTransition } from "react"
+import { FormProvider, useForm } from "react-hook-form"
+import { toast } from "sonner"
+
+type UserFormEditProps = {
+  user: UserType | null
+}
+
+const UserFormEdit = ({ user }: UserFormEditProps) => {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   const methods = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
-      name: "",
-      phone: "",
-      email: "",
-      role: "USER",
-      image: "",
+      name: user?.name || "",
+      phone: user?.phone || "",
+      email: user?.email || "",
+      role: user?.role || "USER",
+      image: user?.image || "",
     },
   })
 
   const { handleSubmit } = methods
 
   const onSubmit = async (data: UserFormValues) => {
+    if (!user?.id) {
+      toast.error("ID do usuário não foi encontrado para atualização.")
+      return
+    }
+
     startTransition(async () => {
       try {
         let finalImageUrl = ""
@@ -51,45 +61,39 @@ const UserFormRegister = () => {
           finalImageUrl = data.image
         }
 
-        const response = await createUserAction({
+        const response = await updateUserAction(user.id, {
           ...data,
           image: finalImageUrl,
         })
 
         if (response.success) {
-          toast.success("Usuário criado com sucesso!")
+          toast.success("Usuário atualizado com sucesso!")
           router.push("/dashboard/usuarios")
         } else {
           console.error(response.error)
-          toast.error(response.error || "Erro ao criar usuário!")
+          toast.error(response.error || "Erro ao atualizar usuário!")
         }
       } catch (error) {
-        console.error("Erro ao cadastrar usuário:", error)
-        toast.error("Ocorreu um erro ao cadastrar o usuário.")
+        console.error("Erro ao atualizar usuário:", error)
+        toast.error("Ocorreu um erro ao atualizar o usuário.")
       }
     })
   }
 
-  // Recebe e exibe os erros de validação no DevTools
-  const onError = (errors: unknown) => {
-    console.log("❌ O ZOD BLOQUEOU O ENVIO NESSES CAMPOS:", errors)
-  }
-
   return (
     <FormProvider {...methods}>
-      {/* O onError DEVE estar passado como 2º argumento no handleSubmit */}
-      <form onSubmit={handleSubmit(onSubmit, onError)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Card className="w-full max-w-6xl">
           <CardHeader>
-            <CardTitle>Dados do novo usuário</CardTitle>
+            <CardTitle>Editar dados do usuário</CardTitle>
           </CardHeader>
           <CardContent>
             <UserForm />
           </CardContent>
           <CardFooter className="flex justify-end">
             <Button type="submit" disabled={isPending}>
-              <UserPlus className="mr-2 h-4 w-4" />
-              {isPending ? "Salvando..." : "Cadastrar Usuário"}
+              <UserPen />
+              {isPending ? "Salvando..." : "Editar Cadastro"}
             </Button>
           </CardFooter>
         </Card>
@@ -98,4 +102,4 @@ const UserFormRegister = () => {
   )
 }
 
-export default UserFormRegister
+export default UserFormEdit

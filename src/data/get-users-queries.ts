@@ -74,3 +74,29 @@ export async function getCountUsers({
     throw new Error("Não foi possível carregar total de usuários.")
   }
 }
+
+export async function getUserById(id: string) {
+  try {
+    const user = db.user.findUnique({
+      where: { id },
+      select: {
+        name: true,
+        id: true,
+        phone: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+        clinicId: true,
+        emailVerified: true,
+        image: true,
+        password: true,
+        role: true,
+      },
+    })
+
+    return user
+  } catch (error) {
+    console.error("Erro ao buscar usuário:", error)
+    throw new Error("Não foi possível carregar os dados do usuário.")
+  }
+}
