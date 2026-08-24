@@ -41,7 +41,7 @@ const BirthdayPatientsList = ({ patients }: BirthdayPatientsProps) => {
             {patients.map((patient) => (
               <li
                 key={patient.id}
-                className={`flex items-center justify-between rounded-lg border p-3 transition-all ${
+                className={`flex flex-col items-center justify-center gap-4 rounded-lg border p-3 transition-all md:flex-row md:justify-between ${
                   patient.isToday
                     ? "border-amber-500/50 bg-amber-500/10 shadow-sm dark:bg-amber-500/20"
                     : "hover:bg-muted/50"
@@ -60,7 +60,7 @@ const BirthdayPatientsList = ({ patients }: BirthdayPatientsProps) => {
 
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">
+                      <span className="min-w-0 truncate text-sm font-medium">
                         {patient.name}
                       </span>
                       {patient.isToday && (
@@ -79,7 +79,6 @@ const BirthdayPatientsList = ({ patients }: BirthdayPatientsProps) => {
 
                 {patient.phone && (
                   <Button
-                    size="icon"
                     variant={patient.isToday ? "default" : "ghost"}
                     className={
                       patient.isToday
@@ -91,6 +90,7 @@ const BirthdayPatientsList = ({ patients }: BirthdayPatientsProps) => {
                       handleWhatsAppClick(patient.phone, patient.name)
                     }
                   >
+                    {patient.isToday && <span>Enviar Parabéns</span>}
                     <MessageCircle size={18} />
                   </Button>
                 )}

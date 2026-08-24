@@ -24,7 +24,7 @@ export default async function DashboardPage() {
         title="Visão Geral"
         description="Resumo de pacientes, tratamentos e uma visão geral do seu estabelecimento."
       />
-      <div className="space-y-6 p-8">
+      <div className="space-y-6">
         <MetricsGrid metrics={metrics} />
 
         <BirthdayPatientsList patients={monthBirthdays} />
