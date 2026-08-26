@@ -18,6 +18,7 @@ type ProductsGroupSectionProps = {
   selectedCategoryId: string
   productGroup: ProductGroupDTO[]
   selectedGroupId: string | null
+  onSelectGroup: (id: string) => void
 }
 
 const ProductsGroupSection = ({
@@ -25,6 +26,7 @@ const ProductsGroupSection = ({
   selectedCategoryId,
   productGroup,
   selectedGroupId,
+  onSelectGroup,
 }: ProductsGroupSectionProps) => {
   const [editingGroup, setEditingGroup] = useState<ProductGroupDTO | null>(null)
 
@@ -47,6 +49,7 @@ const ProductsGroupSection = ({
                 productGroup={p}
                 isSelected={p.id === selectedGroupId}
                 onEdit={() => setEditingGroup(p)}
+                onSelect={() => onSelectGroup(p.id)}
               />
             ))}
           </div>

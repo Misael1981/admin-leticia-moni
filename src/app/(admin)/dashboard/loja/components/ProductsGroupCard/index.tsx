@@ -17,12 +17,14 @@ type ProductsGroupCardProps = {
   productGroup: ProductGroupDTO
   isSelected: boolean
   onEdit: () => void
+  onSelect: () => void
 }
 
 const ProductsGroupCard = ({
   productGroup,
   isSelected,
   onEdit,
+  onSelect,
 }: ProductsGroupCardProps) => {
   const [isOpenModalDelete, setOpenModalDelete] = useState(false)
 
@@ -49,6 +51,7 @@ const ProductsGroupCard = ({
 
   return (
     <div
+      onClick={onSelect}
       className={`group relative flex h-24 max-w-72 min-w-60 flex-1 cursor-pointer items-center justify-between gap-2 rounded-md border p-2 transition-all ${
         isSelected
           ? "border-primary/20 bg-primary/10"

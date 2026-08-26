@@ -6,7 +6,7 @@ export type AdminStoreState = {
 
 type AdminStoreAction =
   | { type: "SELECT_CATEGORY"; payload: string }
-  | { type: "SELECT_GROUP"; payload: string }
+  | { type: "SELECT_GROUP"; payload: string | null }
   | { type: "SELECT_PRODUCT"; payload: string }
 
 export const initialAdminStoreState: AdminStoreState = {

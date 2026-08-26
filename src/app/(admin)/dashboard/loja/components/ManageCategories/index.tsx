@@ -20,7 +20,18 @@ const ManageCategories = ({ categories }: ManageCategoriesProps) => {
   })
 
   const handleSelectCategory = (id: string) => {
+    const nextCategory =
+      categories.find((category) => category.id === id) ?? null
+
     dispatch({ type: "SELECT_CATEGORY", payload: id })
+    dispatch({
+      type: "SELECT_GROUP",
+      payload: nextCategory?.productsGroup[0]?.id ?? null,
+    })
+  }
+
+  const handleSelectGroup = (id: string) => {
+    dispatch({ type: "SELECT_GROUP", payload: id })
   }
 
   const selectedCategory =
@@ -44,6 +55,7 @@ const ManageCategories = ({ categories }: ManageCategoriesProps) => {
         selectedCategoryId={state.selectedCategoryId!}
         productGroup={selectedCategory?.productsGroup ?? []}
         selectedGroupId={state.selectedGroupId}
+        onSelectGroup={handleSelectGroup}
       />
 
       <SelectedCategorieName

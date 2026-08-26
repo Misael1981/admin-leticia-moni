@@ -189,7 +189,7 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
 
             {/* Como é o Tratamento */}
             <Field>
-              <FieldLabel>Como é o Tratamento</FieldLabel>
+              <FieldLabel>Como é o Atendimento</FieldLabel>
               <Textarea
                 placeholder="Ex: Cada plano é personalizado após avaliação detalhada. Os exercícios são realizados em consultório e em casa, com acompanhamento contínuo da evolução do paciente."
                 className="min-h-30 resize-none"
@@ -199,7 +199,7 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
             </Field>
 
             <Field>
-              <FieldLabel>Tags (separadas por vírgula)</FieldLabel>
+              <FieldLabel>Indicações Tags (separadas por vírgula)</FieldLabel>
               <Input
                 placeholder="Ex: Tontura, Vertigem posicional, Pós-cirúrgico"
                 {...register("benefits")}
