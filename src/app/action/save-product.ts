@@ -48,14 +48,25 @@ export async function saveProduct({ groupId, data }: SaveProductProps) {
       images,
     } = validatedFields.data
 
-    const productId = data.id
+    const productId = data.id ?? undefined
+    const resolvedGroupId = groupId ?? undefined
 
-    deleteImages(productId!)
+    if (!resolvedGroupId) {
+      return {
+        success: false,
+        error: "Grupo do produto não informado.",
+      }
+    }
+
+    if (productId) {
+      await deleteImages(productId)
+    }
+
     const isEditMode = !!productId
 
     if (isEditMode) {
       const currentDbImages = await db.productImage.findMany({
-        where: { productId: productId as string },
+        where: { productId },
         select: { url: true },
       })
 
@@ -67,6 +78,15 @@ export async function saveProduct({ groupId, data }: SaveProductProps) {
       if (urlsToDelete.length > 0) {
         await deleteImagesFromCloudinary(urlsToDelete)
       }
+    }
+
+    const group = await db.productGroup.findUnique({
+      where: { id: resolvedGroupId },
+      select: { categoryId: true },
+    })
+
+    if (!group) {
+      throw new Error("Grupo informado não foi encontrado.")
     }
 
     await db.product.upsert({
@@ -83,7 +103,8 @@ export async function saveProduct({ groupId, data }: SaveProductProps) {
         sku,
         isActive,
         isFeatured,
-        groupId: groupId,
+        groupId: resolvedGroupId,
+        categoryId: group.categoryId, // Atualiza a categoria se o grupo mudar
         images: {
           deleteMany: {},
           create: images.map((img) => ({
@@ -91,7 +112,6 @@ export async function saveProduct({ groupId, data }: SaveProductProps) {
           })),
         },
       },
-
       create: {
         name,
         description,
@@ -102,7 +122,8 @@ export async function saveProduct({ groupId, data }: SaveProductProps) {
         sku,
         isActive,
         isFeatured,
-        groupId: groupId!,
+        groupId: resolvedGroupId,
+        categoryId: group.categoryId, // Salva a categoria na criação
         clinicId: "main-clinic",
         images: {
           create: images.map((img) => ({
