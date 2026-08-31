@@ -2,6 +2,7 @@ import PageHeader from "@/components/PageHeader"
 import {
   getAllTestimonials,
   getCountTestimonials,
+  getCountTestimonialsByStatus,
 } from "@/data/get-testimonials.queries"
 import { Prisma } from "@misael1981/physio-database"
 import TestimonialsFilters from "./components/TestimonialsFilters"
@@ -10,6 +11,7 @@ import PaginationComponent from "@/components/PaginationComponent"
 import EmptyData from "@/components/EmptyData"
 import { Stethoscope } from "lucide-react"
 import TestimonialCard from "./components/TestimonialCard"
+import TestimonialsCount from "./components/TestimonialsCount"
 
 interface TestimonialsPageProps {
   searchParams: Promise<{
@@ -45,10 +47,12 @@ export default async function TestimonialsPage({
     ]
   }
 
-  const [testimonials, totalTestimonials] = await Promise.all([
-    getAllTestimonials({ whereClause, currentPage, ITEMS_PER_PAGE }),
-    getCountTestimonials({ whereClause }),
-  ])
+  const [testimonials, totalTestimonials, publishedTestimonials] =
+    await Promise.all([
+      getAllTestimonials({ whereClause, currentPage, ITEMS_PER_PAGE }),
+      getCountTestimonials({ whereClause }),
+      getCountTestimonialsByStatus({ whereClause }),
+    ])
 
   const totalPages = Math.ceil(totalTestimonials / ITEMS_PER_PAGE)
 
@@ -58,6 +62,8 @@ export default async function TestimonialsPage({
         title="Gerencie os Depoimentos"
         description="Gerencie os depoimentos compartilhados pelos pacientes, acompanhe suas experiências durante o tratamento e escolha quais relatos poderão ser publicados para inspirar e ajudar outras pessoas em suas jornadas de reabilitação."
       />
+
+      <TestimonialsCount publishedTestimonials={publishedTestimonials} />
 
       <Suspense
         fallback={

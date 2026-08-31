@@ -72,3 +72,38 @@ export async function getCountTestimonials({
     )
   }
 }
+
+interface GetCountTestimonialsByStatusProps {
+  whereClause?: Prisma.TestimonialWhereInput
+}
+
+export async function getCountTestimonialsByStatus({
+  whereClause,
+}: GetCountTestimonialsByStatusProps) {
+  try {
+    const [publishedCount, unpublishedCount] = await Promise.all([
+      db.testimonial.count({
+        where: {
+          ...whereClause,
+          isPublished: true,
+        },
+      }),
+      db.testimonial.count({
+        where: {
+          ...whereClause,
+          isPublished: false,
+        },
+      }),
+    ])
+
+    return {
+      publishedCount,
+      unpublishedCount,
+    }
+  } catch (error) {
+    console.error("Erro ao buscar contagem de depoimentos por status:", error)
+    throw new Error(
+      "Não foi possível carregar a contagem de depoimentos por status.",
+    )
+  }
+}
