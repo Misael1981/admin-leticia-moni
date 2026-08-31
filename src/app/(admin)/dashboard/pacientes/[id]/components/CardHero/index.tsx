@@ -9,16 +9,21 @@ import { PatientAuthType, PatientDetail } from "@/data/patients.queries"
 import { formatBirthDate, getPatientAge } from "@/helpers/format-birth-date"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { initialsName } from "@/helpers/initials-name"
-import { MessageCircle, Pencil, PlusCircle } from "lucide-react"
+import { MessageCircle, Pencil, PlusCircle, Stethoscope } from "lucide-react"
 import Link from "next/link"
 import ButtonAppAccess from "../ButtonAppAccess"
 
 type CardHeroProps = {
   patient: PatientDetail
   patientAuth: PatientAuthType | null
+  testimonial: {
+    id: string
+    createdAt: Date
+    isPublished: boolean
+  }
 }
 
-const CardHero = ({ patient, patientAuth }: CardHeroProps) => {
+const CardHero = ({ patient, patientAuth, testimonial }: CardHeroProps) => {
   return (
     <Card className="gap-2 p-4">
       <div className="flex flex-col-reverse justify-center gap-4 lg:flex-row lg:justify-between">
@@ -74,6 +79,16 @@ const CardHero = ({ patient, patientAuth }: CardHeroProps) => {
       </div>
 
       <div className="flex flex-col items-center justify-center gap-4 border-t pt-4 md:flex-row lg:justify-end">
+        {testimonial && !testimonial.isPublished ? (
+          <Link
+            href={`/dashboard/depoimentos/${testimonial.id}`}
+            className={`gap-2 ${buttonVariants({ variant: "outline" })} w-full border-amber-200 text-amber-600 hover:text-amber-400 md:w-fit`}
+          >
+            <Stethoscope className="h-4 w-4" />
+            Novo depoimento
+          </Link>
+        ) : null}
+
         <ButtonAppAccess patientId={patient.id} patientAuth={patientAuth} />
 
         <Link

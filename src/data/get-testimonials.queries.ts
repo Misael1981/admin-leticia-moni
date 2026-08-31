@@ -73,10 +73,6 @@ export async function getCountTestimonials({
   }
 }
 
-interface GetCountTestimonialsByStatusProps {
-  whereClause?: Prisma.TestimonialWhereInput
-}
-
 export async function getCountTestimonialsByStatus() {
   try {
     const [publishedCount, unpublishedCount] = await Promise.all([

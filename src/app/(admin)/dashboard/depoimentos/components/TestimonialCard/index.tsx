@@ -83,6 +83,7 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
 
   return (
     <Card
+      id={testimonial.id}
       className={`transition-all ${isPublished ? "bg-card border-emerald-500/30" : "border-amber-500/30 bg-amber-500/5"}`}
     >
       {/* Informações do Paciente & Status */}

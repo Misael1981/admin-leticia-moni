@@ -71,36 +71,56 @@ export async function getCountPatients({
   }
 }
 
+export const patientDetailInclude = Prisma.validator<Prisma.PatientInclude>()({
+  address: {
+    select: {
+      id: true,
+      street: true,
+      number: true,
+      complement: true,
+      district: true,
+      city: true,
+      state: true,
+      zipCode: true,
+    },
+  },
+  treatments: {
+    include: {
+      treatment: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          sessionDurationMinutes: true,
+          durationMinWeeks: true,
+          durationMaxWeeks: true,
+        },
+      },
+    },
+    orderBy: {
+      startDate: "desc",
+    },
+  },
+  testimonial: {
+    select: {
+      id: true,
+      isPublished: true,
+      createdAt: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  },
+})
+
+// 2. Extraímos o tipo automaticamente sem duplicar código
 export type PatientDetail = Prisma.PatientGetPayload<{
-  include: {
-    address: {
-      select: {
-        id: true
-        street: true
-        number: true
-        complement: true
-        district: true
-        city: true
-        state: true
-        zipCode: true
-      }
-    }
-    treatments: {
-      include: {
-        treatment: {
-          select: {
-            id: true
-            name: true
-            slug: true
-            durationMinWeeks: true
-            durationMaxWeeks: true
-            sessionDurationMinutes: true
-          }
-        }
-      }
-    }
-  }
+  include: typeof patientDetailInclude
 }>
+
+interface GetPatientByIdProps {
+  id: string
+}
 
 export async function getPatientById({
   id,
@@ -112,38 +132,7 @@ export async function getPatientById({
 
     const patient = await db.patient.findUnique({
       where: { id },
-      include: {
-        address: {
-          select: {
-            id: true,
-            street: true,
-            number: true,
-            complement: true,
-            district: true,
-            city: true,
-            state: true,
-            zipCode: true,
-          },
-        },
-
-        treatments: {
-          include: {
-            treatment: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                sessionDurationMinutes: true,
-                durationMinWeeks: true,
-                durationMaxWeeks: true,
-              },
-            },
-          },
-          orderBy: {
-            startDate: "desc",
-          },
-        },
-      },
+      include: patientDetailInclude,
     })
 
     return patient

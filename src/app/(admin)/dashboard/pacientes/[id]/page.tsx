@@ -55,7 +55,11 @@ export default async function MedicalRecordPage({
         description="Consulte todo o histórico clínico do paciente em um único lugar. Registre evoluções, tratamentos, avaliações, observações e acompanhe a evolução do atendimento de forma organizada, garantindo um acompanhamento completo durante todo o processo de reabilitação"
       />
 
-      <CardHero patient={patient} patientAuth={patientAuth} />
+      <CardHero
+        patient={patient}
+        patientAuth={patientAuth}
+        testimonial={patient.testimonial?.[0]}
+      />
 
       <WorkTabs
         patient={patient}
