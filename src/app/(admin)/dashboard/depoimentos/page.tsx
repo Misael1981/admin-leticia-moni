@@ -51,7 +51,7 @@ export default async function TestimonialsPage({
     await Promise.all([
       getAllTestimonials({ whereClause, currentPage, ITEMS_PER_PAGE }),
       getCountTestimonials({ whereClause }),
-      getCountTestimonialsByStatus({ whereClause }),
+      getCountTestimonialsByStatus(),
     ])
 
   const totalPages = Math.ceil(totalTestimonials / ITEMS_PER_PAGE)

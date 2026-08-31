@@ -10,13 +10,60 @@ import {
 } from "@/data/get-overview-data"
 import { appointments } from "@/constants/mocks"
 import BirthdayPatientsList from "./components/BirthdayPatientsList"
+import { getCountTestimonialsByStatus } from "@/data/get-testimonials.queries"
+import {
+  ClipboardPlus,
+  MessageSquarePlus,
+  UserPlus,
+  VideoIcon,
+} from "lucide-react"
+
+type Action = {
+  label: string
+  icon: React.ReactNode
+  onClick?: () => void
+  href?: string
+}
+
+const defaultActions: Action[] = [
+  {
+    label: "Cadastrar paciente",
+    icon: <UserPlus size={18} />,
+    href: "/dashboard/pacientes/cadastrar-paciente",
+  },
+  {
+    label: "Novo vídeo treino",
+    icon: <VideoIcon size={18} />,
+    href: "/dashboard/videos/new",
+  },
+  {
+    label: "Registrar novo tratamento",
+    icon: <ClipboardPlus size={18} />,
+    href: "/dashboard/tratamentos/novo",
+  },
+]
 
 export default async function DashboardPage() {
-  const [metrics, evolutions, monthBirthdays] = await Promise.all([
-    getMetricsOverview(),
-    getRecentPatientsFromEvolutions(),
-    getMonthBirthdayPatients(),
-  ])
+  const [metrics, evolutions, monthBirthdays, publishedTestimonials] =
+    await Promise.all([
+      getMetricsOverview(),
+      getRecentPatientsFromEvolutions(),
+      getMonthBirthdayPatients(),
+      getCountTestimonialsByStatus(),
+    ])
+
+  const actions = [
+    ...defaultActions,
+    ...(publishedTestimonials.unpublishedCount > 0
+      ? [
+          {
+            label: `Depoimentos pendentes (${publishedTestimonials.unpublishedCount})`,
+            icon: <MessageSquarePlus size={18} />,
+            href: "/dashboard/depoimentos",
+          },
+        ]
+      : []),
+  ]
 
   return (
     <div className="w-full space-y-6">
@@ -29,7 +76,7 @@ export default async function DashboardPage() {
 
         <BirthdayPatientsList patients={monthBirthdays} />
 
-        <QuickActions />
+        <QuickActions actions={actions} />
 
         <UpcomingAppointments appointments={appointments} />
 

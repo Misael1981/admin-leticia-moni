@@ -77,20 +77,16 @@ interface GetCountTestimonialsByStatusProps {
   whereClause?: Prisma.TestimonialWhereInput
 }
 
-export async function getCountTestimonialsByStatus({
-  whereClause,
-}: GetCountTestimonialsByStatusProps) {
+export async function getCountTestimonialsByStatus() {
   try {
     const [publishedCount, unpublishedCount] = await Promise.all([
       db.testimonial.count({
         where: {
-          ...whereClause,
           isPublished: true,
         },
       }),
       db.testimonial.count({
         where: {
-          ...whereClause,
           isPublished: false,
         },
       }),

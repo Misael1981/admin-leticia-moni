@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { UserPlus, ClipboardPlus, VideoIcon } from "lucide-react"
 
 type Action = {
   label: string
@@ -13,29 +12,10 @@ type Action = {
 }
 
 type QuickActionsProps = {
-  actions?: Action[]
+  actions: Action[]
 }
 
-// Mantenha os textos 100% iguais em acentuação
-const defaultActions: Action[] = [
-  {
-    label: "Cadastrar paciente",
-    icon: <UserPlus size={18} />,
-    href: "/dashboard/pacientes/cadastrar-paciente",
-  },
-  {
-    label: "Novo vídeo treino",
-    icon: <VideoIcon size={18} />,
-    href: "/dashboard/videos/new",
-  },
-  {
-    label: "Registrar novo tratamento",
-    icon: <ClipboardPlus size={18} />,
-    href: "/dashboard/tratamentos/novo",
-  },
-]
-
-const QuickActions = ({ actions = defaultActions }: QuickActionsProps) => {
+const QuickActions = ({ actions }: QuickActionsProps) => {
   return (
     <Card>
       <CardHeader>
