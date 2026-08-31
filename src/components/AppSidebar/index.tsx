@@ -18,6 +18,7 @@ import {
   FileUser,
   Hospital,
   LayoutDashboard,
+  Stethoscope,
   Store,
   Users,
   VideoIcon,
@@ -59,6 +60,11 @@ const pages = [
     name: "Gerenciamento da loja",
     url: "/dashboard/loja",
     icon: Store,
+  },
+  {
+    name: "Moderação de Depoimentos",
+    url: "/dashboard/depoimentos",
+    icon: Stethoscope,
   },
 ]
 
