@@ -163,6 +163,13 @@ export const exercisePrescriptionItemSchema = z.object({
   frequency: z.string().default("1x ao dia").optional(),
 })
 
+export const evolutionImageSchema = z.object({
+  imageUrl: z.string().url("A URL da imagem é inválida."),
+  name: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  fileKey: z.string().optional().nullable(),
+})
+
 export const evolutionSchema = z.object({
   sessionDate: z.date({
     message: "A data da sessão é obrigatória.",
@@ -186,6 +193,8 @@ export const evolutionSchema = z.object({
   patientStatus: z.enum(PatientStatus).default("ACTIVE"),
 
   exerciseVideos: z.array(exercisePrescriptionItemSchema).default([]),
+
+  images: z.array(evolutionImageSchema).default([]),
 })
 
 export type EvolutionFormInput = z.input<typeof evolutionSchema>
@@ -193,6 +202,7 @@ export type EvolutionFormValues = z.output<typeof evolutionSchema>
 export type ExercisePrescriptionItem = z.infer<
   typeof exercisePrescriptionItemSchema
 >
+export type EvolutionImage = z.infer<typeof evolutionImageSchema>
 
 export const patientAccessSchema = z.object({
   pin: z

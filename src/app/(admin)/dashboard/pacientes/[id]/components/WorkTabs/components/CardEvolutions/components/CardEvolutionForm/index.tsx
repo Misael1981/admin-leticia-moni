@@ -18,6 +18,7 @@ import SessionWorkoutSelector from "../SessionWorkoutSelector"
 import { VideoType } from "@/modules/videos/queries/get-videos.queries"
 import { createEvolutionAction } from "@/app/action/create-evolution.action"
 import { toast } from "sonner"
+import OptionalImageSession from "../OptionalImageSession"
 
 type CardEvolutionFormProps = {
   patientId: string
@@ -45,6 +46,7 @@ const CardEvolutionForm = ({
       patientStatus: currentPatientStatus ?? PatientStatus.ACTIVE,
 
       exerciseVideos: [],
+      images: [],
     },
   })
 
@@ -56,7 +58,6 @@ const CardEvolutionForm = ({
   const onSubmit = async (data: EvolutionFormValues) => {
     startTransition(async () => {
       try {
-        console.log(data, patientId)
         const response = await createEvolutionAction({
           patientId,
           nextSessionNumber,
@@ -94,6 +95,8 @@ const CardEvolutionForm = ({
           <SessionEvolutionData />
 
           <SessionWorkoutSelector videos={videos} />
+
+          <OptionalImageSession />
 
           <SessionNotes />
         </div>
