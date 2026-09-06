@@ -6,6 +6,7 @@ import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { getPainDescription } from "@/helpers/get-pain-description"
 import { EvolutionType } from "@/data/patients.queries"
+import CardImage from "../CardImage"
 
 type EvolutionTimelineCardProps = {
   evolution: EvolutionType
@@ -166,7 +167,18 @@ const EvolutionTimelineCard = ({ evolution }: EvolutionTimelineCardProps) => {
         )}
       </div>
 
-      {/* Bloco 3: Notas (estilo igual SessionNotes só que visualização) */}
+      {/* Bloco 3: Imagens */}
+      <div>
+        {evolution.images && (
+          <div className="flex flex-wrap justify-center gap-4">
+            {evolution.images.map((image) => (
+              <CardImage key={image.id} image={image} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Bloco 4: Notas (estilo igual SessionNotes só que visualização) */}
       <div>
         <div className="text-muted-foreground mb-1.5 text-sm font-medium">
           Notas da Sessão

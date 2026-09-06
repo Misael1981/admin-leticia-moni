@@ -206,6 +206,7 @@ export type EvolutionType = NonNullable<
       painScore: true
       createdAt: true
       updatedAt: true
+
       prescriptions: {
         select: {
           id: true
@@ -223,6 +224,16 @@ export type EvolutionType = NonNullable<
           }
         }
       }
+
+      images: {
+        select: {
+          id: true
+          name: true
+          description: true
+          imageUrl: true
+          fileKey: true
+        }
+      }
     }
   }>
 >
@@ -238,6 +249,15 @@ export async function getEvolutionsByPatientId(patientId: string) {
         prescriptions: {
           include: {
             video: true,
+          },
+        },
+        images: {
+          select: {
+            id: true,
+            imageUrl: true,
+            fileKey: true,
+            name: true,
+            description: true,
           },
         },
       },
