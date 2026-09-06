@@ -9,6 +9,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { EvolutionFormInput } from "@/schemas/patients-schemas"
 import { ImagePlus, PlusCircle, Trash2 } from "lucide-react"
 import { useFieldArray, useFormContext } from "react-hook-form"
@@ -28,7 +29,7 @@ const OptionalImageSession = () => {
 
   return (
     <div className="bg-card space-y-4 rounded-xl border p-4 shadow-sm">
-      <div className="flex items-center justify-between border-b pb-3">
+      <div className="flex flex-col items-center justify-center gap-2 border-b pb-3 md:flex-row md:justify-between">
         <div className="flex items-center gap-2">
           <ImagePlus className="text-primary h-5 w-5" />
           <h3 className="font-heading text-foreground text-lg font-semibold">
@@ -84,7 +85,8 @@ const OptionalImageSession = () => {
 
               <Field>
                 <FieldLabel>Descrição</FieldLabel>
-                <Input
+                <Textarea
+                  className="min-h-24 resize-y"
                   placeholder="Descrição da imagem ou observação..."
                   {...register(`images.${index}.description`)}
                 />
@@ -92,7 +94,7 @@ const OptionalImageSession = () => {
               </Field>
 
               <Field className="w-full max-w-xl">
-                <FieldLabel>Foto do Paciente</FieldLabel>
+                <FieldLabel>Imagem à ser enviada</FieldLabel>
                 <ImageUpload
                   form={methods}
                   name={`images.${index}.imageUrl`}

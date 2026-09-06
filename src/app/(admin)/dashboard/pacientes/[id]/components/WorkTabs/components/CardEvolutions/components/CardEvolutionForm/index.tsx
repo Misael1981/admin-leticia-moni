@@ -2,7 +2,9 @@
 
 import {
   EvolutionFormInput,
+  evolutionFormSchema,
   EvolutionFormValues,
+  EvolutionImage,
   evolutionSchema,
 } from "@/schemas/patients-schemas"
 import { Button } from "@/components/ui/button"
@@ -19,6 +21,7 @@ import { VideoType } from "@/modules/videos/queries/get-videos.queries"
 import { createEvolutionAction } from "@/app/action/create-evolution.action"
 import { toast } from "sonner"
 import OptionalImageSession from "../OptionalImageSession"
+import { uploadMultipleImages } from "@/services/image-compresseion.service"
 
 type CardEvolutionFormProps = {
   patientId: string
@@ -37,14 +40,12 @@ const CardEvolutionForm = ({
   const nextSessionNumber = lastSessionNumber + 1
 
   const methods = useForm<EvolutionFormInput, unknown, EvolutionFormValues>({
-    resolver: zodResolver(evolutionSchema),
+    resolver: zodResolver(evolutionFormSchema), // <- antes era evolutionSchema
     defaultValues: {
       sessionDate: new Date(),
       painScore: undefined,
       notes: "",
-
       patientStatus: currentPatientStatus ?? PatientStatus.ACTIVE,
-
       exerciseVideos: [],
       images: [],
     },
@@ -58,11 +59,65 @@ const CardEvolutionForm = ({
   const onSubmit = async (data: EvolutionFormValues) => {
     startTransition(async () => {
       try {
+        const imagesToUpload = data.images.filter(
+          (img) =>
+            (img.imageUrl as unknown) instanceof File ||
+            (typeof img.imageUrl === "object" && img.imageUrl !== null),
+        )
+
+        let uploadedImagesData: EvolutionImage[] = data.images.map((img) => ({
+          name: img.name,
+          description: img.description,
+          imageUrl: typeof img.imageUrl === "string" ? img.imageUrl : "",
+          fileKey: img.fileKey ?? null,
+        }))
+
+        if (imagesToUpload.length > 0) {
+          const files = imagesToUpload.map(
+            (img) => img.imageUrl as unknown as File,
+          )
+
+          const uploadResults = await uploadMultipleImages(files)
+          let newIndex = 0
+
+          uploadedImagesData = data.images.map((img) => {
+            const isFile =
+              (img.imageUrl as unknown) instanceof File ||
+              (typeof img.imageUrl === "object" && img.imageUrl !== null)
+
+            if (isFile) {
+              const url = uploadResults.urls[newIndex]
+              const publicId = uploadResults.publicIds[newIndex]
+              newIndex++
+
+              return {
+                name: img.name,
+                description: img.description,
+                imageUrl: url,
+                fileKey: publicId,
+              }
+            }
+
+            return {
+              name: img.name,
+              description: img.description,
+              imageUrl: img.imageUrl as string,
+              fileKey: img.fileKey ?? null,
+            }
+          })
+        }
+
+        const payload = evolutionSchema.parse({
+          ...data,
+          images: uploadedImagesData,
+        })
+
         const response = await createEvolutionAction({
           patientId,
           nextSessionNumber,
-          data,
+          data: payload,
         })
+
         if (response.success) {
           toast.success(response.message)
           methods.reset()
@@ -71,6 +126,7 @@ const CardEvolutionForm = ({
         }
       } catch (error) {
         console.error("Erro ao criar sessão:", error)
+        toast.error("Ocorreu um erro ao salvar a evolução.")
       }
     })
   }

@@ -163,6 +163,17 @@ export const exercisePrescriptionItemSchema = z.object({
   frequency: z.string().default("1x ao dia").optional(),
 })
 
+export const evolutionImageFormSchema = z.object({
+  imageUrl: z.union([
+    z.instanceof(File, { message: "Selecione um arquivo de imagem válido." }),
+    z.string().url("A URL da imagem é inválida."),
+    z.literal(""),
+  ]),
+  name: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  fileKey: z.string().optional().nullable(),
+})
+
 export const evolutionImageSchema = z.object({
   imageUrl: z.string().url("A URL da imagem é inválida."),
   name: z.string().optional().nullable(),
@@ -197,8 +208,16 @@ export const evolutionSchema = z.object({
   images: z.array(evolutionImageSchema).default([]),
 })
 
-export type EvolutionFormInput = z.input<typeof evolutionSchema>
-export type EvolutionFormValues = z.output<typeof evolutionSchema>
+// Schema usado pelo RHF (aceita File nas imagens)
+export const evolutionFormSchema = evolutionSchema.extend({
+  images: z.array(evolutionImageFormSchema),
+})
+
+export type EvolutionFormInput = z.input<typeof evolutionFormSchema>
+export type EvolutionFormValues = z.output<typeof evolutionFormSchema>
+
+// Tipo do payload final, pós-upload (o que realmente vai pro backend)
+export type EvolutionSubmitPayload = z.output<typeof evolutionSchema>
 export type ExercisePrescriptionItem = z.infer<
   typeof exercisePrescriptionItemSchema
 >

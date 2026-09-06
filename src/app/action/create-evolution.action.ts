@@ -22,7 +22,6 @@ export async function createEvolutionAction({
     const validatedData = evolutionSchema.parse(data)
 
     const result = await db.$transaction(async (tx) => {
-      // 1. Atualiza status do paciente
       if (validatedData.patientStatus) {
         await tx.patient.update({
           where: { id: patientId },
@@ -30,13 +29,11 @@ export async function createEvolutionAction({
         })
       }
 
-      // (Opcional) Desativa prescrições ativas anteriores se esta sessão for a nova referência
       await tx.videoPrescription.updateMany({
         where: { patientId, isActive: true },
         data: { isActive: false },
       })
 
-      // 2. Cria a Evolução + Vídeos da Sessão juntos!
       const newEvolution = await tx.evolution.create({
         data: {
           patientId,
@@ -44,8 +41,6 @@ export async function createEvolutionAction({
           sessionDate: validatedData.sessionDate,
           painScore: validatedData.painScore,
           notes: validatedData.notes,
-
-          // 🎯 O Prisma já injeta o ID da nova evolução automaticamente em cada prescrição!
           prescriptions: {
             create: validatedData.exerciseVideos.map((exercise, index) => ({
               patientId,
@@ -57,6 +52,16 @@ export async function createEvolutionAction({
               frequency: exercise.frequency,
               isActive: true,
             })),
+          },
+          images: {
+            createMany: {
+              data: validatedData.images.map((img) => ({
+                imageUrl: img.imageUrl,
+                name: img.name,
+                description: img.description,
+                fileKey: img.fileKey,
+              })),
+            },
           },
         },
       })

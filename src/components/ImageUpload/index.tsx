@@ -1,7 +1,6 @@
 "use client"
 
 import { ImageUp, X } from "lucide-react"
-import Image from "next/image"
 import { useState } from "react"
 import { UseFormReturn, FieldValues, Path, PathValue } from "react-hook-form"
 
@@ -13,7 +12,19 @@ type ImageUploadForm<TFormValues extends FieldValues> = Pick<
 interface ImageUploadProps<TFormValues extends FieldValues> {
   form: ImageUploadForm<TFormValues>
   name: Path<TFormValues>
-  initialUrl?: string | null
+  initialUrl?: string | File | null
+}
+
+// Deriva a URL de preview a partir do valor inicial, que pode ser:
+// - uma string vazia (nenhuma imagem ainda) -> null
+// - uma URL já existente (edição) -> ela mesma
+// - um File pendente de upload (form ainda não submetido) -> object URL
+const resolveInitialPreview = (
+  value: string | File | null | undefined,
+): string | null => {
+  if (!value) return null
+  if (value instanceof File) return URL.createObjectURL(value)
+  return value
 }
 
 const ImageUpload = <TFormValues extends FieldValues>({
@@ -21,7 +32,9 @@ const ImageUpload = <TFormValues extends FieldValues>({
   name,
   initialUrl = null,
 }: ImageUploadProps<TFormValues>) => {
-  const [preview, setPreview] = useState<string | null>(initialUrl)
+  const [preview, setPreview] = useState<string | null>(() =>
+    resolveInitialPreview(initialUrl),
+  )
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -76,12 +89,13 @@ const ImageUpload = <TFormValues extends FieldValues>({
         >
           {preview ? (
             <div className="relative flex min-h-40 items-center justify-center">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={preview}
                 alt="Preview"
                 width={128}
                 height={128}
-                className="object-contain"
+                className="max-h-40 w-auto object-contain"
               />
             </div>
           ) : (

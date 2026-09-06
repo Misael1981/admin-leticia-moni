@@ -60,7 +60,7 @@ const SessionWorkoutSelector = ({ videos }: SessionWorkoutSelectorProps) => {
   return (
     <div className="bg-card space-y-4 rounded-xl border p-4 shadow-sm">
       {/* Cabeçalho do Bloco */}
-      <div className="flex items-center justify-between border-b pb-3">
+      <div className="flex flex-col items-center justify-center gap-2 border-b pb-3 md:flex-row md:justify-between">
         <div className="flex items-center gap-2">
           <Dumbbell className="text-primary h-5 w-5" />
           <h3 className="font-heading text-foreground text-lg font-semibold">
