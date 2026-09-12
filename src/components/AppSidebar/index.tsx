@@ -15,6 +15,7 @@ import Image from "next/image"
 import LogoutButton from "../LogoutButton"
 import {
   Activity,
+  Calendar,
   FileUser,
   Hospital,
   LayoutDashboard,
@@ -30,6 +31,11 @@ const pages = [
     name: "Visão Geral",
     url: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    name: "Gerenciamento de Agenda",
+    url: "/dashboard/agenda",
+    icon: Calendar,
   },
   {
     name: "Informações Gerais da Clínica",
