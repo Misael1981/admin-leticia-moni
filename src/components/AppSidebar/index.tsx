@@ -25,6 +25,7 @@ import {
   VideoIcon,
 } from "lucide-react"
 import Link from "next/link"
+import { RiTeamLine } from "react-icons/ri"
 
 const pages = [
   {
@@ -41,6 +42,11 @@ const pages = [
     name: "Informações Gerais da Clínica",
     url: "/dashboard/info-clinica",
     icon: Hospital,
+  },
+  {
+    name: "Gerenciamento do time de profissionais",
+    url: "/dashboard/profissionais",
+    icon: RiTeamLine,
   },
   {
     name: "Gerenciamento dos Vídeos de Treinos",
