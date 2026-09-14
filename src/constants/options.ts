@@ -1,4 +1,5 @@
 import {
+  AppointmentStatus,
   BiologicalSex,
   EducationLevel,
   MaritalStatus,
@@ -8,6 +9,7 @@ import {
   UserRole,
 } from "./enums"
 import {
+  APPOINTMENT_STATUS_LABELS,
   BIOLOGICAL_SEX_LABELS,
   EDUCATION_LEVEL_LABELS,
   MARITAL_STATUS_LABELS,
@@ -214,5 +216,32 @@ export const PATIENT_TREATMENT_STATUS_OPTIONS = [
   {
     value: PatientTreatmentStatus.DISCONTINUED,
     label: PATIENT_TREATMENT_STATUS_LABELS[PatientTreatmentStatus.DISCONTINUED],
+  },
+]
+
+export const APPOINTMENT_STATUS_OPTIONS = [
+  {
+    value: "SCHEDULED",
+    label: APPOINTMENT_STATUS_LABELS[AppointmentStatus.SCHEDULED],
+  },
+  {
+    value: "CONFIRMED",
+    label: APPOINTMENT_STATUS_LABELS[AppointmentStatus.CONFIRMED],
+  },
+  {
+    value: "IN_PROGRESS",
+    label: APPOINTMENT_STATUS_LABELS[AppointmentStatus.IN_PROGRESS],
+  },
+  {
+    value: "COMPLETED",
+    label: APPOINTMENT_STATUS_LABELS[AppointmentStatus.COMPLETED],
+  },
+  {
+    value: "CANCELED",
+    label: APPOINTMENT_STATUS_LABELS[AppointmentStatus.CANCELED],
+  },
+  {
+    value: "NO_SHOW",
+    label: APPOINTMENT_STATUS_LABELS[AppointmentStatus.NO_SHOW],
   },
 ]

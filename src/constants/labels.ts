@@ -1,4 +1,5 @@
 import {
+  AppointmentStatus,
   BiologicalSex,
   EducationLevel,
   MaritalStatus,
@@ -77,4 +78,13 @@ export const PATIENT_TREATMENT_STATUS_LABELS: Record<
   COMPLETED: "Concluído",
   PAUSED: "Pausado",
   DISCONTINUED: "Descontinuado",
+}
+
+export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
+  SCHEDULED: "Agendado",
+  CONFIRMED: "Confirmado",
+  IN_PROGRESS: "Em Andamento",
+  COMPLETED: "Concluído",
+  CANCELED: "Cancelado",
+  NO_SHOW: "Ausente",
 }

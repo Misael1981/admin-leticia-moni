@@ -79,3 +79,15 @@ export const PatientTreatmentStatus = {
 
 export type PatientTreatmentStatus =
   (typeof PatientTreatmentStatus)[keyof typeof PatientTreatmentStatus]
+
+export const AppointmentStatus = {
+  SCHEDULED: "SCHEDULED",
+  CONFIRMED: "CONFIRMED",
+  IN_PROGRESS: "IN_PROGRESS",
+  COMPLETED: "COMPLETED",
+  CANCELED: "CANCELED",
+  NO_SHOW: "NO_SHOW",
+} as const
+
+export type AppointmentStatus =
+  (typeof AppointmentStatus)[keyof typeof AppointmentStatus]

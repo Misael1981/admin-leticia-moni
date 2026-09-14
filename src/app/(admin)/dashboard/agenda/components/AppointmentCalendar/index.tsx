@@ -4,9 +4,16 @@ import { useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
+import NewAppointmentSheet from "../NewAppointmentSheet"
 
 export default function AppointmentCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
+  const [isOpenNewAppointmentSheet, setIsOpenNewAppointmentSheet] =
+    useState(false)
+
+  const handleOpenNewAppointmentSheet = () => {
+    setIsOpenNewAppointmentSheet(true)
+  }
 
   // TODO: Buscar agendamentos do backend com base na `selectedDate`
 
@@ -41,7 +48,7 @@ export default function AppointmentCalendar() {
             </p>
           </div>
 
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={handleOpenNewAppointmentSheet}>
             <Plus className="h-4 w-4" />
             Novo Agendamento
           </Button>
@@ -81,6 +88,34 @@ export default function AppointmentCalendar() {
           </div>
         </div>
       </div>
+
+      <NewAppointmentSheet
+        open={isOpenNewAppointmentSheet}
+        onOpenChange={setIsOpenNewAppointmentSheet}
+        selectedDate={selectedDate}
+        patients={[
+          { id: "patient-1", name: "Maria Silva" },
+          { id: "patient-2", name: "João Pereira" },
+          { id: "patient-3", name: "Ana Souza" },
+        ]}
+        physiotherapists={[
+          { id: "physio-1", name: "Letícia" },
+          { id: "physio-2", name: "Carlos Mendes" },
+        ]}
+        treatments={[
+          {
+            id: "treatment-1",
+            name: "Acupuntura",
+            defaultDurationMinutes: 60,
+          },
+          {
+            id: "treatment-2",
+            name: "Fisioterapia Motora",
+            defaultDurationMinutes: 45,
+          },
+        ]}
+        clinicId="clinic-1"
+      />
     </div>
   )
 }
