@@ -19,7 +19,11 @@ type TreatmentFieldProps = {
     options?: { shouldValidate?: boolean },
   ) => void
   getValues: (name: "startTime") => Date | null | undefined
-  treatments: { id: string; name: string; defaultDurationMinutes: number }[]
+  treatments: {
+    id: string
+    name: string
+    sessionDurationMinutes: number | null
+  }[]
   error?: string
 }
 
@@ -39,9 +43,11 @@ const TreatmentField = ({
     const currentStart = getValues("startTime") as Date | null | undefined
     if (!currentStart) return
 
+    if (selectedTreatment.sessionDurationMinutes === null) return
+
     const newEnd = new Date(
       new Date(currentStart).getTime() +
-        selectedTreatment.defaultDurationMinutes * 60000,
+        selectedTreatment.sessionDurationMinutes * 60000,
     )
 
     setValue("endTime", newEnd)
@@ -72,7 +78,7 @@ const TreatmentField = ({
             <SelectContent>
               {treatments.map((t) => (
                 <SelectItem key={t.id} value={t.id}>
-                  {t.name} ({t.defaultDurationMinutes} min)
+                  {t.name} ({t.sessionDurationMinutes} min)
                 </SelectItem>
               ))}
             </SelectContent>

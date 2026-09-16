@@ -38,8 +38,8 @@ const ScheduleField = ({ control, error }: ScheduleFieldProps) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3">
-      <Field>
+    <div className="flex flex-col items-center gap-3 md:flex-row">
+      <Field className="w-fit">
         <FieldLabel>Início</FieldLabel>
         <Controller
           name="startTime"
@@ -57,7 +57,7 @@ const ScheduleField = ({ control, error }: ScheduleFieldProps) => {
         {error && <span className="text-destructive text-xs">{error}</span>}
       </Field>
 
-      <Field>
+      <Field className="w-fit">
         <FieldLabel>Término</FieldLabel>
         <Controller
           name="endTime"

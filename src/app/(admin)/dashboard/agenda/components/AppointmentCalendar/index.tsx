@@ -6,7 +6,38 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import NewAppointmentSheet from "../NewAppointmentSheet"
 
-export default function AppointmentCalendar() {
+type AppointmentCalendarProps = {
+  clinicData: {
+    patients: {
+      id: string
+      name: string
+      evolution: {
+        sessionNumber: number
+      }[]
+      treatments: {
+        treatment: {
+          id: string
+          name: string
+          sessionDurationMinutes: number | null
+        }
+      }[]
+    }[]
+    physiotherapists: {
+      id: string
+      name: string
+    }[]
+    treatments: {
+      id: string
+      name: string
+      sessionDurationMinutes: number | null
+    }[]
+    id: string
+  }
+}
+
+export default function AppointmentCalendar({
+  clinicData,
+}: AppointmentCalendarProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [isOpenNewAppointmentSheet, setIsOpenNewAppointmentSheet] =
     useState(false)
@@ -93,28 +124,7 @@ export default function AppointmentCalendar() {
         open={isOpenNewAppointmentSheet}
         onOpenChange={setIsOpenNewAppointmentSheet}
         selectedDate={selectedDate}
-        patients={[
-          { id: "patient-1", name: "Maria Silva" },
-          { id: "patient-2", name: "João Pereira" },
-          { id: "patient-3", name: "Ana Souza" },
-        ]}
-        physiotherapists={[
-          { id: "physio-1", name: "Letícia" },
-          { id: "physio-2", name: "Carlos Mendes" },
-        ]}
-        treatments={[
-          {
-            id: "treatment-1",
-            name: "Acupuntura",
-            defaultDurationMinutes: 60,
-          },
-          {
-            id: "treatment-2",
-            name: "Fisioterapia Motora",
-            defaultDurationMinutes: 45,
-          },
-        ]}
-        clinicId="clinic-1"
+        clinicData={clinicData}
       />
     </div>
   )

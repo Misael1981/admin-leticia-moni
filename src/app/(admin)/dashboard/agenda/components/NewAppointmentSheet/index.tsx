@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { useEffect, useTransition } from "react"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus } from "lucide-react"
 
@@ -25,34 +25,64 @@ import ProfessionalField from "./components/ProfessionalField"
 import ScheduleField from "./components/ScheduleField"
 import SessionNumberField from "./components/SessionNumberField"
 import NotesField from "./components/NotesField"
+import { createAppointmentAction } from "@/app/action/create-appointment"
+import { toast } from "sonner"
 
 interface NewAppointmentSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   selectedDate?: Date
-  patients: { id: string; name: string }[]
-  physiotherapists: { id: string; name: string }[]
-  treatments: { id: string; name: string; defaultDurationMinutes: number }[]
-  clinicId: string
   onSubmitSuccess?: (data: CreateAppointmentInput) => void
+  clinicData: {
+    patients: {
+      id: string
+      name: string
+      evolution: {
+        sessionNumber: number
+      }[]
+      treatments: {
+        treatment: {
+          id: string
+          name: string
+          sessionDurationMinutes: number | null
+        }
+      }[]
+    }[]
+    physiotherapists: {
+      id: string
+      name: string
+    }[]
+    treatments: {
+      id: string
+      name: string
+      sessionDurationMinutes: number | null
+    }[]
+    id: string
+  }
 }
 
 export default function NewAppointmentSheet({
   open,
   onOpenChange,
   selectedDate = new Date(),
-  patients,
-  physiotherapists,
-  treatments,
-  clinicId,
+  clinicData,
   onSubmitSuccess,
 }: NewAppointmentSheetProps) {
+  const [isPending, startTransition] = useTransition()
+
+  const clinicId = clinicData.id
+  const defaultPhysiotherapist =
+    clinicData.physiotherapists.find((p) => p.name.includes("Leticia Moni"))
+      ?.id ??
+    clinicData.physiotherapists[0]?.id ??
+    ""
+
   const methods = useForm<CreateAppointmentInput>({
     resolver: zodResolver(createAppointmentSchema),
     defaultValues: {
       clinicId,
       patientId: "",
-      physiotherapistId: "",
+      physiotherapistId: defaultPhysiotherapist,
       treatmentId: "",
       startTime: new Date(new Date(selectedDate).setHours(9, 0, 0, 0)),
       endTime: new Date(new Date(selectedDate).setHours(9, 50, 0, 0)),
@@ -71,7 +101,44 @@ export default function NewAppointmentSheet({
     formState: { errors },
   } = methods
 
-  // Sincroniza o horário
+  const selectedPatientId = useWatch({
+    control,
+    name: "patientId",
+  })
+
+  useEffect(() => {
+    if (!selectedPatientId) {
+      setValue("sessionNumber", undefined)
+      setValue("treatmentId", "")
+      return
+    }
+
+    const selectedPatient = clinicData.patients.find(
+      (p) => p.id === selectedPatientId,
+    )
+
+    const totalEvolutions = selectedPatient?.evolution?.length ?? 0
+    const nextSession = totalEvolutions + 1
+    setValue("sessionNumber", nextSession, { shouldValidate: true })
+
+    const firstActiveTreatment = selectedPatient?.treatments?.[0]?.treatment
+
+    if (firstActiveTreatment?.id) {
+      setValue("treatmentId", firstActiveTreatment.id, { shouldValidate: true })
+
+      if (firstActiveTreatment.sessionDurationMinutes) {
+        const currentStart = getValues("startTime") as Date | null | undefined
+        if (currentStart) {
+          const newEnd = new Date(
+            new Date(currentStart).getTime() +
+              firstActiveTreatment.sessionDurationMinutes * 60000,
+          )
+          setValue("endTime", newEnd)
+        }
+      }
+    }
+  }, [selectedPatientId, clinicData.patients, setValue, getValues])
+
   useEffect(() => {
     if (open) {
       const baseStart = new Date(selectedDate)
@@ -85,19 +152,30 @@ export default function NewAppointmentSheet({
   }, [open, selectedDate, setValue])
 
   async function onSubmit(data: CreateAppointmentInput) {
-    try {
-      console.log("Novo Agendamento enviado:", data)
-      onSubmitSuccess?.(data)
-      onOpenChange(false)
-      reset()
-    } catch (error) {
-      console.error("Erro ao agendar:", error)
-    }
+    startTransition(async () => {
+      try {
+        const result = await createAppointmentAction(data)
+
+        if (!result.success) {
+          toast.error(result.error)
+          console.log(result.error)
+          return
+        }
+
+        toast.success("Consulta agendada com sucesso")
+        onSubmitSuccess?.(data)
+        onOpenChange(false)
+        reset()
+      } catch (error) {
+        toast.error("Erro ao agendar consulta!")
+        console.error("Erro ao agendar:", error)
+      }
+    })
   }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="overflow-y-auto sm:max-w-md">
+      <SheetContent className="w-full overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Novo Agendamento</SheetTitle>
           <SheetDescription>
@@ -111,7 +189,7 @@ export default function NewAppointmentSheet({
             <PatientField
               control={control}
               error={errors.patientId?.message}
-              patients={patients}
+              patients={clinicData.patients}
               setValue={setValue}
             />
 
@@ -120,7 +198,7 @@ export default function NewAppointmentSheet({
               control={control}
               setValue={setValue}
               getValues={getValues}
-              treatments={treatments}
+              treatments={clinicData.treatments}
               error={errors.treatmentId?.message}
             />
 
@@ -128,7 +206,7 @@ export default function NewAppointmentSheet({
             <ProfessionalField
               control={control}
               setValue={setValue}
-              physiotherapists={physiotherapists}
+              physiotherapists={clinicData.physiotherapists}
               error={errors.physiotherapistId?.message}
             />
 
@@ -149,9 +227,9 @@ export default function NewAppointmentSheet({
           </FieldGroup>
 
           <SheetFooter className="pt-4">
-            <Button type="submit" className="w-full gap-2">
+            <Button type="submit" className="w-full gap-2" disabled={isPending}>
               <Plus className="h-4 w-4" />
-              Confirmar Agendamento
+              {isPending ? "Salvando..." : "Confirmar Agendamento"}
             </Button>
           </SheetFooter>
         </form>
