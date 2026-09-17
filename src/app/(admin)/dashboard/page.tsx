@@ -8,7 +8,6 @@ import {
   getMonthBirthdayPatients,
   getRecentPatientsFromEvolutions,
 } from "@/data/get-overview-data"
-import { appointments } from "@/constants/mocks"
 import BirthdayPatientsList from "./components/BirthdayPatientsList"
 import { getCountTestimonialsByStatus } from "@/data/get-testimonials.queries"
 import {
@@ -17,6 +16,10 @@ import {
   UserPlus,
   VideoIcon,
 } from "lucide-react"
+import {
+  getUpcomingAppointments,
+  type UpcomingAppointment,
+} from "@/app/action/get-upcoming-appointments"
 
 type Action = {
   label: string
@@ -51,6 +54,11 @@ export default async function DashboardPage() {
       getMonthBirthdayPatients(),
       getCountTestimonialsByStatus(),
     ])
+
+  const upcomingAppointmentsResult = await getUpcomingAppointments()
+  const appointments: UpcomingAppointment[] = upcomingAppointmentsResult.success
+    ? upcomingAppointmentsResult.data
+    : []
 
   const actions = [
     ...defaultActions,

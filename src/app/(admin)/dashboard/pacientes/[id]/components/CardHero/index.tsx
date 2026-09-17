@@ -9,7 +9,13 @@ import { PatientAuthType, PatientDetail } from "@/data/patients.queries"
 import { formatBirthDate, getPatientAge } from "@/helpers/format-birth-date"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { initialsName } from "@/helpers/initials-name"
-import { MessageCircle, Pencil, PlusCircle, Stethoscope } from "lucide-react"
+import {
+  Calendar,
+  MessageCircle,
+  Pencil,
+  PlusCircle,
+  Stethoscope,
+} from "lucide-react"
 import Link from "next/link"
 import ButtonAppAccess from "../ButtonAppAccess"
 
@@ -88,6 +94,14 @@ const CardHero = ({ patient, patientAuth, testimonial }: CardHeroProps) => {
             Novo depoimento
           </Link>
         ) : null}
+
+        <Link
+          href="/dashboard/agenda"
+          className={`${buttonVariants({ variant: "outline" })} w-full md:w-fit`}
+        >
+          <Calendar className="h-4 w-4" />
+          Agendar Consulta
+        </Link>
 
         <ButtonAppAccess patientId={patient.id} patientAuth={patientAuth} />
 
