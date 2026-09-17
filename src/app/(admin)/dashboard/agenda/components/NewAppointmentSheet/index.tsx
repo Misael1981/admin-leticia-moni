@@ -214,6 +214,7 @@ export default function NewAppointmentSheet({
             <ScheduleField
               control={control}
               error={errors.startTime?.message || errors.endTime?.message}
+              setValue={setValue}
             />
 
             {/* 5. NÚMERO DA SESSÃO */}

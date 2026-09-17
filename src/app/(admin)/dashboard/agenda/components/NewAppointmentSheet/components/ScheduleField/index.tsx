@@ -8,9 +8,14 @@ import { Control, Controller } from "react-hook-form"
 type ScheduleFieldProps = {
   control: Control<CreateAppointmentInput>
   error?: string
+  setValue: (
+    name: "startTime" | "endTime",
+    value: Date | Date,
+    options?: { shouldValidate?: boolean },
+  ) => void
 }
 
-const ScheduleField = ({ control, error }: ScheduleFieldProps) => {
+const ScheduleField = ({ control, error, setValue }: ScheduleFieldProps) => {
   const formatDateTimeLocalValue = (date: Date | null | undefined) => {
     if (!date || Number.isNaN(date.getTime())) return ""
     const year = date.getFullYear()
@@ -21,7 +26,6 @@ const ScheduleField = ({ control, error }: ScheduleFieldProps) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`
   }
 
-  // Converte a string do input datetime-local de volta para Date local seguro
   const parseDateTimeLocalString = (value: string): Date | null => {
     if (!value) return null
     const [datePart, timePart] = value.split("T")
@@ -48,9 +52,31 @@ const ScheduleField = ({ control, error }: ScheduleFieldProps) => {
             <Input
               type="datetime-local"
               value={formatDateTimeLocalValue(getDateFieldValue(field.value))}
-              onChange={(e) =>
-                field.onChange(parseDateTimeLocalString(e.target.value))
-              }
+              onChange={(e) => {
+                const newStart = parseDateTimeLocalString(e.target.value)
+                field.onChange(newStart)
+
+                if (!newStart) return
+
+                const currentEnd = getDateFieldValue(
+                  control._formValues.endTime,
+                )
+
+                if (!currentEnd || Number.isNaN(currentEnd.getTime())) {
+                  setValue("endTime", newStart, { shouldValidate: true })
+                  return
+                }
+
+                const syncedEnd = new Date(
+                  newStart.getFullYear(),
+                  newStart.getMonth(),
+                  newStart.getDate(),
+                  currentEnd.getHours(),
+                  currentEnd.getMinutes(),
+                )
+
+                setValue("endTime", syncedEnd, { shouldValidate: true })
+              }}
             />
           )}
         />
