@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/consolidate-appointments",
+      "schedule": "59 23 * * *"
+    }
+  ]
+}

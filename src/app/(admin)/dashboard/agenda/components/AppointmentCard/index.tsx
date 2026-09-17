@@ -1,9 +1,9 @@
 "use client"
 
 import { getAppointmentBySelectedDate } from "@/app/action/get-appointments"
-import { APPOINTMENT_STATUS_CONFIG } from "@/constants/config"
 import { useState } from "react"
 import DialogStatusAppointment from "../DialogStatusAppointment"
+import { getDerivedStatusConfig } from "@/utils/appointment-status"
 
 type AppointmentItem = NonNullable<
   Awaited<ReturnType<typeof getAppointmentBySelectedDate>>["data"]
@@ -32,7 +32,7 @@ const AppointmentCard = ({ appointment }: AppointmentCardProps) => {
     },
   )
 
-  const statusInfo = APPOINTMENT_STATUS_CONFIG[appointment.status]
+  const statusInfo = getDerivedStatusConfig(appointment)
 
   return (
     <>
