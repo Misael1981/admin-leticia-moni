@@ -1,10 +1,18 @@
 "use client"
 
-import { useState } from "react"
-import { Calendar } from "@/components/ui/calendar"
+import { useEffect, useState, useTransition } from "react"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { CalendarDays, Plus } from "lucide-react"
 import NewAppointmentSheet from "../NewAppointmentSheet"
+import { getAppointmentBySelectedDate } from "@/app/action/get-appointments"
+import AppointmentCard from "../AppointmentCard"
+import EmptyData from "@/components/EmptyData"
+import { Calendar } from "@/components/ui/calendar"
+import { Skeleton } from "@/components/ui/skeleton"
+
+type AppointmentWithRelations = NonNullable<
+  Awaited<ReturnType<typeof getAppointmentBySelectedDate>>["data"]
+>[number]
 
 type AppointmentCalendarProps = {
   clinicData: {
@@ -41,12 +49,26 @@ export default function AppointmentCalendar({
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [isOpenNewAppointmentSheet, setIsOpenNewAppointmentSheet] =
     useState(false)
+  const [appointments, setAppointments] = useState<AppointmentWithRelations[]>(
+    [],
+  )
+  const [isPending, startTransition] = useTransition()
+
+  // useEffect de mudança de data:
+  useEffect(() => {
+    if (!selectedDate) return
+
+    startTransition(async () => {
+      const response = await getAppointmentBySelectedDate(selectedDate)
+      if (response.success && response.data) {
+        setAppointments(response.data)
+      }
+    })
+  }, [selectedDate])
 
   const handleOpenNewAppointmentSheet = () => {
     setIsOpenNewAppointmentSheet(true)
   }
-
-  // TODO: Buscar agendamentos do backend com base na `selectedDate`
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
@@ -85,39 +107,24 @@ export default function AppointmentCalendar({
           </Button>
         </div>
 
-        {/* 3. Lista de Horários do Dia ( Timeline ) */}
-        <div className="space-y-3 pt-2">
-          {/* Exemplo visual de um item da lista */}
-          <div className="flex cursor-pointer items-center gap-4 rounded-lg border border-l-4 border-l-emerald-500 bg-emerald-500/5 p-3 transition-colors hover:bg-emerald-500/10">
-            <div className="text-muted-foreground w-16 text-sm font-bold">
-              14:00
-            </div>
-            <div className="flex-1">
-              <p className="text-foreground font-semibold">Maria Silva</p>
-              <p className="text-muted-foreground text-xs">
-                Acupuntura • Sessão 2 de 10
-              </p>
-            </div>
-            <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-medium text-emerald-700">
-              Confirmado
-            </span>
+        {isPending ? (
+          <div className="space-y-3 pt-2">
+            <Skeleton className="h-18 w-full rounded-lg" />
+            <Skeleton className="h-18 w-full rounded-lg" />
+            <Skeleton className="h-18 w-full rounded-lg" />
           </div>
-
-          <div className="flex cursor-pointer items-center gap-4 rounded-lg border border-l-4 border-l-blue-500 bg-blue-500/5 p-3 transition-colors hover:bg-blue-500/10">
-            <div className="text-muted-foreground w-16 text-sm font-bold">
-              15:30
-            </div>
-            <div className="flex-1">
-              <p className="text-foreground font-semibold">João Pereira</p>
-              <p className="text-muted-foreground text-xs">
-                Fisioterapia Motora • Sessão 5 de 10
-              </p>
-            </div>
-            <span className="rounded-full bg-blue-500/20 px-2.5 py-1 text-xs font-medium text-blue-700">
-              Agendado
-            </span>
+        ) : appointments.length === 0 ? (
+          <EmptyData
+            icon={CalendarDays}
+            title="Nenhuma Consulta Agendada Hoje"
+          />
+        ) : (
+          <div className="space-y-3 pt-2">
+            {appointments.map((appointment) => (
+              <AppointmentCard key={appointment.id} appointment={appointment} />
+            ))}
           </div>
-        </div>
+        )}
       </div>
 
       <NewAppointmentSheet

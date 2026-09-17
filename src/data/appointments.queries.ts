@@ -21,7 +21,6 @@ export async function getClinicData() {
           },
         },
 
-        // Traz apenas os fisioterapeutas com ID e Nome
         physiotherapists: {
           select: {
             id: true,
@@ -32,7 +31,6 @@ export async function getClinicData() {
           },
         },
 
-        // Traz apenas os pacientes com ID e Nome
         patients: {
           select: {
             id: true,
