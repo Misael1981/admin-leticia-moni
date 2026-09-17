@@ -86,5 +86,5 @@ export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
   IN_PROGRESS: "Em Andamento",
   COMPLETED: "Concluído",
   CANCELED: "Cancelado",
-  NO_SHOW: "Ausente",
+  NO_SHOW: "Faltou",
 }
