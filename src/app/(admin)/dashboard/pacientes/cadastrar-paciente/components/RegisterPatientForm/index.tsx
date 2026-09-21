@@ -1,6 +1,6 @@
 "use client"
 
-import { PatientStatus } from "@/constants/enums"
+import { BillingMode, PatientStatus } from "@/constants/enums"
 import {
   PatientFormInput,
   PatientFormValues,
@@ -18,6 +18,7 @@ import { toast } from "sonner"
 import { uploadToCloudinaryClient } from "@/services/image-compresseion.service"
 import { createPatient } from "@/app/action/update-patient"
 import { Button } from "@/components/ui/button"
+import FinancialForm from "../FinancialForm"
 
 const RegisterPatientForm = () => {
   const router = useRouter()
@@ -62,6 +63,9 @@ const RegisterPatientForm = () => {
       patientSource: undefined,
       referralProfessional: "",
       status: PatientStatus.ACTIVE,
+
+      billingMode: BillingMode.PER_SESSION,
+      billingDay: "",
     },
 
     mode: "onChange",
@@ -119,6 +123,8 @@ const RegisterPatientForm = () => {
           <ContacdAndAddressForm />
 
           <AdministrativeInformationForm />
+
+          <FinancialForm />
 
           <div className="flex w-full justify-center">
             <Button

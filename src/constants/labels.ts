@@ -1,11 +1,14 @@
 import {
   AppointmentStatus,
+  BillingMode,
   BiologicalSex,
+  ChargeStatus,
   EducationLevel,
   MaritalStatus,
   PatientReferralSource,
   PatientStatus,
   PatientTreatmentStatus,
+  PaymentMethod,
   UserRole,
 } from "./enums"
 
@@ -87,4 +90,26 @@ export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
   COMPLETED: "Concluído",
   CANCELED: "Cancelado",
   NO_SHOW: "Faltou",
+}
+
+export const BILLING_MODE_LABELS: Record<BillingMode, string> = {
+  PER_SESSION: "Por Sessão",
+  ACCUMULATED: "Acumulado Mensal",
+}
+
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  PIX: "Pix",
+  CASH: "Dinheiro",
+  DEBIT_CARD: "Cartão de Débito",
+  CREDIT_CARD: "Cartão de Crédito",
+  BANK_TRANSFER: "Tranferência Bancária",
+  INSURANCE: "Seguro/Plano",
+  OTHER: "Outro",
+}
+//ChargeStatus
+export const CHARGE_STATUS_LABELS: Record<ChargeStatus, string> = {
+  OPEN: "Aguardando Pagamento",
+  PAID: "Paga",
+  CANCELED: "Cancelada",
+  OVERDUE: "Vencida",
 }

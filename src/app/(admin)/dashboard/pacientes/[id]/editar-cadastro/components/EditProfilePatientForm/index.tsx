@@ -19,6 +19,7 @@ import DocumentationFormCard from "../../../../cadastrar-paciente/components/Doc
 import ContacdAndAddressForm from "../../../../cadastrar-paciente/components/ContacdAndAddressForm"
 import AdministrativeInformationForm from "../../../../cadastrar-paciente/components/AdministrativeInformationForm"
 import { Button } from "@/components/ui/button"
+import FinancialForm from "../../../../cadastrar-paciente/components/FinancialForm"
 
 type EditProfilePatientFormProps = {
   initialData: PatientDetail | null
@@ -79,6 +80,9 @@ const EditProfilePatientForm = ({
     patientSource: data?.patientSource ?? undefined,
     referralProfessional: data?.referralProfessional ?? "",
     status: data?.status ?? PatientStatus.ACTIVE,
+
+    billingMode: data?.billingMode,
+    billingDay: data?.billingDay?.toString() ?? "",
   })
 
   const methods = useForm<PatientFormInput, unknown, PatientFormValues>({
@@ -140,6 +144,8 @@ const EditProfilePatientForm = ({
           <ContacdAndAddressForm />
 
           <AdministrativeInformationForm />
+
+          <FinancialForm />
 
           <div className="flex w-full justify-center">
             <Button

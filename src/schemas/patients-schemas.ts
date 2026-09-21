@@ -1,4 +1,5 @@
 import {
+  BillingMode,
   BiologicalSex,
   EducationLevel,
   MaritalStatus,
@@ -118,6 +119,17 @@ export const patientSchema = z
     hasInsurance: z.boolean(),
     insuranceName: emptyToNull,
     insuranceNumber: emptyToNull,
+
+    // --- Financeiro ---
+    billingMode: z.enum(BillingMode).default("PER_SESSION"),
+    billingDay: z
+      .string()
+      .optional()
+      .nullable()
+      .transform((v) => (v === "" || v == null ? null : Number(v)))
+      .refine((v) => v === null || (Number.isInteger(v) && v >= 1 && v <= 30), {
+        message: "O dia deve estar entre 1 e 30.",
+      }),
   })
   .superRefine((data, ctx) => {
     if (data.hasInsurance) {
@@ -134,6 +146,17 @@ export const patientSchema = z
           code: z.ZodIssueCode.custom,
           path: ["insuranceNumber"],
           message: "Informe o número da carteirinha.",
+        })
+      }
+
+      if (
+        data.billingMode === BillingMode.ACCUMULATED &&
+        data.billingDay == null
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["billingDay"],
+          message: "Informe o dia do vencimento.",
         })
       }
     }

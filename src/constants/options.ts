@@ -1,21 +1,27 @@
 import {
   AppointmentStatus,
+  BillingMode,
   BiologicalSex,
+  ChargeStatus,
   EducationLevel,
   MaritalStatus,
   PatientReferralSource,
   PatientStatus,
   PatientTreatmentStatus,
+  PaymentMethod,
   UserRole,
 } from "./enums"
 import {
   APPOINTMENT_STATUS_LABELS,
+  BILLING_MODE_LABELS,
   BIOLOGICAL_SEX_LABELS,
+  CHARGE_STATUS_LABELS,
   EDUCATION_LEVEL_LABELS,
   MARITAL_STATUS_LABELS,
   PATIENT_REFERRAL_SOURCE_LABEL,
   PATIENT_STATUS_LABELS,
   PATIENT_TREATMENT_STATUS_LABELS,
+  PAYMENT_METHOD_LABELS,
   USER_ROLE_LABELS,
 } from "./labels"
 
@@ -243,5 +249,66 @@ export const APPOINTMENT_STATUS_OPTIONS = [
   {
     value: "NO_SHOW",
     label: APPOINTMENT_STATUS_LABELS[AppointmentStatus.NO_SHOW],
+  },
+]
+
+export const BILLING_MODE_OPTIONS = [
+  {
+    value: BillingMode.PER_SESSION,
+    label: BILLING_MODE_LABELS[BillingMode.PER_SESSION],
+  },
+  {
+    value: BillingMode.ACCUMULATED,
+    label: BILLING_MODE_LABELS[BillingMode.ACCUMULATED],
+  },
+]
+
+export const PAYMENT_METHOD_OPTIONS = [
+  {
+    value: PaymentMethod.PIX,
+    label: PAYMENT_METHOD_LABELS[PaymentMethod.PIX],
+  },
+  {
+    value: PaymentMethod.CASH,
+    label: PAYMENT_METHOD_LABELS[PaymentMethod.CASH],
+  },
+  {
+    value: PaymentMethod.DEBIT_CARD,
+    label: PAYMENT_METHOD_LABELS[PaymentMethod.DEBIT_CARD],
+  },
+  {
+    value: PaymentMethod.CREDIT_CARD,
+    label: PAYMENT_METHOD_LABELS[PaymentMethod.CREDIT_CARD],
+  },
+  {
+    value: PaymentMethod.BANK_TRANSFER,
+    label: PAYMENT_METHOD_LABELS[PaymentMethod.BANK_TRANSFER],
+  },
+  {
+    value: PaymentMethod.INSURANCE,
+    label: PAYMENT_METHOD_LABELS[PaymentMethod.INSURANCE],
+  },
+  {
+    value: PaymentMethod.OTHER,
+    label: PAYMENT_METHOD_LABELS[PaymentMethod.OTHER],
+  },
+]
+
+export const CHARGE_STATUS_OPTIONS = [
+  {
+    value: ChargeStatus.OPEN,
+    label: CHARGE_STATUS_LABELS[ChargeStatus.OPEN],
+  },
+  {
+    value: ChargeStatus.PAID,
+    label: CHARGE_STATUS_LABELS[ChargeStatus.PAID],
+  },
+  {
+    value: ChargeStatus.CANCELED,
+    label: CHARGE_STATUS_LABELS[ChargeStatus.CANCELED],
+  },
+  {
+    value: ChargeStatus.OVERDUE,
+    label: CHARGE_STATUS_LABELS[ChargeStatus.OVERDUE],
   },
 ]

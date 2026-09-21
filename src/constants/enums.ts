@@ -91,3 +91,31 @@ export const AppointmentStatus = {
 
 export type AppointmentStatus =
   (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
+
+export const BillingMode = {
+  PER_SESSION: "PER_SESSION",
+  ACCUMULATED: "ACCUMULATED",
+} as const
+
+export type BillingMode = (typeof BillingMode)[keyof typeof BillingMode]
+
+export const PaymentMethod = {
+  PIX: "PIX",
+  CASH: "CASH",
+  DEBIT_CARD: "DEBIT_CARD",
+  CREDIT_CARD: "CREDIT_CARD",
+  BANK_TRANSFER: "BANK_TRANSFER",
+  INSURANCE: "INSURANCE",
+  OTHER: "OTHER",
+} as const
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
+export const ChargeStatus = {
+  OPEN: "OPEN",
+  PAID: "PAID",
+  CANCELED: "CANCELED",
+  OVERDUE: "OVERDUE",
+} as const
+
+export type ChargeStatus = (typeof ChargeStatus)[keyof typeof ChargeStatus]

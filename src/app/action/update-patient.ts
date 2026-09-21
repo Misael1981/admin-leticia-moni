@@ -50,6 +50,8 @@ export async function createPatient(formData: unknown) {
           patientSource: data.patientSource as PatientReferralSource,
           referralProfessional: data.referralProfessional,
           status: data.status,
+          billingMode: data.billingMode,
+          billingDay: data.billingDay ?? null,
           clinicId: "main-clinic",
         },
       })
@@ -142,12 +144,21 @@ export async function deletePatient(id: string) {
 
 export async function updatePatient(id: string, formData: unknown) {
   try {
-    const validatedData = patientSchema.parse(formData)
+    const result = patientSchema.safeParse(formData)
+    if (!result.success) {
+      return {
+        success: false,
+        error: "Dados inválidos.",
+        errors: result.error.flatten().fieldErrors,
+      }
+    }
+    const validatedData = result.data
 
     const { address, ...patientData } = validatedData
 
     const patientUpdateData: Prisma.PatientUpdateInput = {
       ...patientData,
+      billingDay: patientData.billingDay ?? null,
       patientSource: patientData.patientSource
         ? (patientData.patientSource as PatientReferralSource)
         : null,
