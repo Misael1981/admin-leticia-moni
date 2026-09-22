@@ -19,6 +19,7 @@ interface SaveTreatmentInput {
   sessionsPerWeekMin: number | undefined
   sessionsPerWeekMax: number | undefined
   sessionDurationMinutes: number | undefined
+  defaultPricePerSession: number | undefined
 }
 
 export async function saveTreatment(data: SaveTreatmentInput) {
@@ -43,6 +44,10 @@ export async function saveTreatment(data: SaveTreatmentInput) {
         sessionsPerWeekMin: data.sessionsPerWeekMin || null,
         sessionsPerWeekMax: data.sessionsPerWeekMax || null,
         sessionDurationMinutes: data.sessionDurationMinutes || null,
+        defaultPricePerSession:
+          data.defaultPricePerSession != null
+            ? data.defaultPricePerSession.toFixed(2)
+            : null,
       },
       create: {
         name: data.name,
@@ -58,13 +63,25 @@ export async function saveTreatment(data: SaveTreatmentInput) {
         sessionsPerWeekMin: data.sessionsPerWeekMin || null,
         sessionsPerWeekMax: data.sessionsPerWeekMax || null,
         sessionDurationMinutes: data.sessionDurationMinutes || null,
+        defaultPricePerSession:
+          data.defaultPricePerSession != null
+            ? data.defaultPricePerSession.toFixed(2)
+            : null,
       },
     })
 
     revalidatePath("/dashboard/tratamentos")
     revalidatePath("/")
 
-    return { success: true, treatment: updatedTreatment }
+    return {
+      success: true,
+      treatment: {
+        ...updatedTreatment,
+        defaultPricePerSession: updatedTreatment.defaultPricePerSession
+          ? Number(updatedTreatment.defaultPricePerSession)
+          : null,
+      },
+    }
   } catch (error) {
     console.error("Erro ao salvar tratamento:", error)
     return { success: false, error: "Falha ao salvar o tratamento no banco." }

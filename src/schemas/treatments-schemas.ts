@@ -16,6 +16,10 @@ export const treatmentSchema = z
     sessionsPerWeekMax: z.number().optional(),
     sessionDurationMinutes: z.number().optional(),
     benefits: z.string().optional(),
+    defaultPricePerSession: z
+      .number({ error: "Informe um preço válido" })
+      .nonnegative("O preço não pode ser negativo")
+      .optional(),
   })
   .refine(
     (data) => {
@@ -49,5 +53,5 @@ export const treatmentSchema = z
     },
   )
 
-export type TreatmentFormValues = z.infer<typeof treatmentSchema>
-export type TreatmentFormInputValues = z.infer<typeof treatmentSchema>
+export type TreatmentFormValues = z.output<typeof treatmentSchema>
+export type TreatmentFormInputValues = z.input<typeof treatmentSchema>

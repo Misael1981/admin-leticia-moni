@@ -21,11 +21,20 @@ export async function getTreatmentData({
         sessionsPerWeekMin: true,
         sessionsPerWeekMax: true,
         sessionDurationMinutes: true,
+        defaultPricePerSession: true,
         benefits: true,
       },
     })
 
-    return treatment
+    if (!treatment) {
+      return null
+    }
+
+    return {
+      ...treatment,
+      defaultPricePerSession:
+        treatment.defaultPricePerSession?.toNumber() ?? null,
+    }
   } catch (error) {
     console.error("Erro ao buscar o tratamento:", error)
     throw new Error("Não foi possível carregar o tratamento.")

@@ -23,9 +23,8 @@ import { uploadToCloudinaryClient } from "@/services/image-compresseion.service"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useEffect, useTransition } from "react"
-import { useForm, useWatch } from "react-hook-form"
+import { Controller, useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
-import z from "zod"
 
 type TreatmentFormProps = {
   treatment?:
@@ -42,6 +41,7 @@ type TreatmentFormProps = {
         sessionsPerWeekMin: number | null
         sessionsPerWeekMax: number | null
         sessionDurationMinutes: number | null
+        defaultPricePerSession: number | null
         benefits: string[]
       }
     | null
@@ -70,6 +70,8 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
 
       sessionDurationMinutes: treatment?.sessionDurationMinutes || undefined,
       benefits: treatment?.benefits ? treatment.benefits.join(", ") : "",
+
+      defaultPricePerSession: treatment?.defaultPricePerSession ?? 0,
     },
   })
 
@@ -92,7 +94,7 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
     methods.setValue("slug", generatedSlug, { shouldValidate: true })
   }, [name, methods])
 
-  async function onSubmit(values: z.infer<typeof treatmentSchema>) {
+  async function onSubmit(values: TreatmentFormInputValues) {
     startTransition(async () => {
       try {
         let finalImageUrl = treatment?.imageUrl || ""
@@ -124,6 +126,7 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
           sessionsPerWeekMin: values.sessionsPerWeekMin,
           sessionsPerWeekMax: values.sessionsPerWeekMax,
           sessionDurationMinutes: values.sessionDurationMinutes,
+          defaultPricePerSession: values.defaultPricePerSession,
         })
 
         if (response.success) {
@@ -206,6 +209,41 @@ const TreatmentForm = ({ treatment }: TreatmentFormProps) => {
               />
               <FieldError>{errors.benefits?.message}</FieldError>
             </Field>
+
+            {/* Preço  */}
+            <div className="max-w-sm">
+              <Controller
+                control={control}
+                name="defaultPricePerSession"
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel>Preço Padrão da Sessão</FieldLabel>
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      value={
+                        field.value != null
+                          ? field.value.toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, "")
+                        const num = digits ? Number(digits) / 100 : undefined
+                        field.onChange(num)
+                      }}
+                      onBlur={field.onBlur}
+                      placeholder="R$ 0,00 (Opcional)"
+                    />
+                    <FieldError>
+                      {errors.defaultPricePerSession?.message}
+                    </FieldError>
+                  </Field>
+                )}
+              />
+            </div>
 
             {/* Informações de Duração */}
             <div className="space-y-4">

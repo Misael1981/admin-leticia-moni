@@ -20,11 +20,19 @@ export async function getTreatments() {
         sessionsPerWeekMin: true,
         sessionsPerWeekMax: true,
         sessionDurationMinutes: true,
+        defaultPricePerSession: true,
         benefits: true,
       },
     })
 
-    return treatments
+    // Convert Decimal objects to numbers (or null) for each treatment
+    const normalized = treatments.map((treatment) => ({
+      ...treatment,
+      defaultPricePerSession:
+        treatment.defaultPricePerSession?.toNumber?.() ?? null,
+    }))
+
+    return normalized
   } catch (error) {
     console.error("Erro ao buscar os tratamentos:", error)
     throw new Error("Não foi possível carregar os tratamentos.")
