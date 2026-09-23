@@ -1,8 +1,6 @@
 "use client"
 
 import { updatePatient } from "@/app/action/update-patient"
-import { PatientStatus } from "@/constants/enums"
-import { PatientDetail } from "@/data/patients.queries"
 import {
   PatientFormInput,
   PatientFormValues,
@@ -14,15 +12,17 @@ import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import PersonalFormCard from "../../../../cadastrar-paciente/components/PersonalFormCard"
-import DocumentationFormCard from "../../../../cadastrar-paciente/components/DocumentationFormCard"
-import ContacdAndAddressForm from "../../../../cadastrar-paciente/components/ContacdAndAddressForm"
-import AdministrativeInformationForm from "../../../../cadastrar-paciente/components/AdministrativeInformationForm"
 import { Button } from "@/components/ui/button"
-import FinancialForm from "../../../../cadastrar-paciente/components/FinancialForm"
+import { PatientDetailWithNumericPrice } from "@/data/patient-by-id.queries"
+import PersonalFormCard from "@/components/PersonalFormCard"
+import DocumentationFormCard from "@/components/DocumentationFormCard"
+import ContacdAndAddressForm from "@/components/ContacdAndAddressForm"
+import AdministrativeInformationForm from "@/components/AdministrativeInformationForm"
+import FinancialForm from "@/components/FinancialForm"
+import { buildPatientDefaultValues } from "@/helpers/build-patient-default-values"
 
 type EditProfilePatientFormProps = {
-  initialData: PatientDetail | null
+  initialData: PatientDetailWithNumericPrice | null
   patientId: string
 }
 
@@ -34,60 +34,9 @@ const EditProfilePatientForm = ({
   const [isPending, startTransition] = useTransition()
   const isEditing = Boolean(initialData?.id)
 
-  const buildDefaultValues = (
-    data: PatientDetail | null,
-  ): PatientFormInput => ({
-    name: data?.name ?? "",
-    nickname: data?.nickname ?? "",
-    avatarUrl: data?.avatarUrl ?? "",
-    biologicalSex: data?.biologicalSex ?? undefined,
-    gender: data?.gender ?? "",
-    birthDate: data?.birthDate ? new Date(data.birthDate) : null,
-    nationality: data?.nationality ?? "Brasileira",
-    birthCity: data?.birthCity ?? "",
-    birthState: data?.birthState ?? "",
-    cpf: data?.cpf ?? "",
-    rg: data?.rg ?? "",
-    profession: data?.profession ?? "",
-    maritalStatus: data?.maritalStatus ?? undefined,
-    education: data?.education ?? undefined,
-    phone: data?.phone ?? "",
-    email: data?.email ?? "",
-    emergencyContactName: data?.emergencyContactName ?? "",
-    emergencyContactPhone: data?.emergencyContactPhone ?? "",
-    address: data?.address
-      ? {
-          street: data.address.street ?? "",
-          number: data.address.number ?? "",
-          complement: data.address.complement ?? "",
-          district: data.address.district ?? "",
-          city: data.address.city ?? "",
-          state: data.address.state ?? "",
-          zipCode: data.address.zipCode ?? "",
-        }
-      : {
-          street: "",
-          number: "",
-          complement: "",
-          district: "",
-          city: "",
-          state: "",
-          zipCode: "",
-        },
-    hasInsurance: data?.hasInsurance ?? false,
-    insuranceName: data?.insuranceName ?? "",
-    insuranceNumber: data?.insuranceNumber ?? "",
-    patientSource: data?.patientSource ?? undefined,
-    referralProfessional: data?.referralProfessional ?? "",
-    status: data?.status ?? PatientStatus.ACTIVE,
-
-    billingMode: data?.billingMode,
-    billingDay: data?.billingDay?.toString() ?? "",
-  })
-
   const methods = useForm<PatientFormInput, unknown, PatientFormValues>({
     resolver: zodResolver(patientSchema),
-    defaultValues: buildDefaultValues(initialData),
+    defaultValues: buildPatientDefaultValues(initialData),
     mode: "onChange",
   })
 
@@ -96,7 +45,7 @@ const EditProfilePatientForm = ({
   const onSubmit = async (data: PatientFormValues) => {
     startTransition(async () => {
       try {
-        let finalImageUrl = ""
+        let finalImageUrl: string | undefined
         const avatarValue = data.avatarUrl as unknown
 
         if (avatarValue instanceof File) {
@@ -106,9 +55,9 @@ const EditProfilePatientForm = ({
           finalImageUrl = data.avatarUrl
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { avatarUrl: _avatarUrl, ...restOfData } = data
 
-        // 🔄 Chame a Action baseada no modo (Edição vs Criação)
         const response = await updatePatient(patientId, {
           ...restOfData,
           avatarUrl: finalImageUrl,
@@ -120,6 +69,7 @@ const EditProfilePatientForm = ({
           )
           router.push(`/dashboard/pacientes/${patientId}`)
         } else {
+          console.error("❌ Resposta da action:", response)
           toast.error(response.error || "Erro ao salvar paciente!")
         }
       } catch (error) {

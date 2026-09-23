@@ -8,17 +8,17 @@ import {
 } from "@/schemas/patients-schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormProvider, useForm } from "react-hook-form"
-import PersonalFormCard from "../PersonalFormCard"
-import DocumentationFormCard from "../DocumentationFormCard"
-import ContacdAndAddressForm from "../ContacdAndAddressForm"
-import AdministrativeInformationForm from "../AdministrativeInformationForm"
 import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import { toast } from "sonner"
 import { uploadToCloudinaryClient } from "@/services/image-compresseion.service"
 import { createPatient } from "@/app/action/update-patient"
 import { Button } from "@/components/ui/button"
-import FinancialForm from "../FinancialForm"
+import PersonalFormCard from "@/components/PersonalFormCard"
+import DocumentationFormCard from "@/components/DocumentationFormCard"
+import ContacdAndAddressForm from "@/components/ContacdAndAddressForm"
+import AdministrativeInformationForm from "@/components/AdministrativeInformationForm"
+import FinancialForm from "@/components/FinancialForm"
 
 const RegisterPatientForm = () => {
   const router = useRouter()
@@ -66,6 +66,7 @@ const RegisterPatientForm = () => {
 
       billingMode: BillingMode.PER_SESSION,
       billingDay: "",
+      defaultSessionPrice: 0,
     },
 
     mode: "onChange",

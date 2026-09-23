@@ -19,10 +19,6 @@ export type PatientListItem = Prisma.PatientGetPayload<{
   }
 }>
 
-interface GetPatientByIdProps {
-  id: string
-}
-
 export async function getPatients({
   whereClause,
   currentPage,
@@ -68,77 +64,6 @@ export async function getCountPatients({
   } catch (error) {
     console.error("Erro ao buscar quantidade de pacientes:", error)
     throw new Error("Não foi possível carregar quantidade de pacientes.")
-  }
-}
-
-export const patientDetailInclude = Prisma.validator<Prisma.PatientInclude>()({
-  address: {
-    select: {
-      id: true,
-      street: true,
-      number: true,
-      complement: true,
-      district: true,
-      city: true,
-      state: true,
-      zipCode: true,
-    },
-  },
-  treatments: {
-    include: {
-      treatment: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          sessionDurationMinutes: true,
-          durationMinWeeks: true,
-          durationMaxWeeks: true,
-        },
-      },
-    },
-    orderBy: {
-      startDate: "desc",
-    },
-  },
-  testimonial: {
-    select: {
-      id: true,
-      isPublished: true,
-      createdAt: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  },
-})
-
-// 2. Extraímos o tipo automaticamente sem duplicar código
-export type PatientDetail = Prisma.PatientGetPayload<{
-  include: typeof patientDetailInclude
-}>
-
-interface GetPatientByIdProps {
-  id: string
-}
-
-export async function getPatientById({
-  id,
-}: GetPatientByIdProps): Promise<PatientDetail | null> {
-  try {
-    if (!id) {
-      throw new Error("O ID do paciente é obrigatório.")
-    }
-
-    const patient = await db.patient.findUnique({
-      where: { id },
-      include: patientDetailInclude,
-    })
-
-    return patient
-  } catch (error) {
-    console.error(`Erro ao buscar o paciente com ID ${id}:`, error)
-    throw new Error("Não foi possível carregar as informações do paciente.")
   }
 }
 

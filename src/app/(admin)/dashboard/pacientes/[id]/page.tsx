@@ -3,7 +3,6 @@ import {
   getAnamnesisByPatientId,
   getEvolutionsByPatientId,
   getPatientAuth,
-  getPatientById,
   getPhysicalAssessmentPatientId,
 } from "@/data/patients.queries"
 import { notFound } from "next/navigation"
@@ -14,6 +13,7 @@ import {
   getTreatmentForAnamnesis,
   getTreatmentsByPatientId,
 } from "@/data/get-treatments"
+import { getPatientById } from "@/data/patient-by-id.queries"
 
 interface MedicalRecordProps {
   params: Promise<{ id: string }>

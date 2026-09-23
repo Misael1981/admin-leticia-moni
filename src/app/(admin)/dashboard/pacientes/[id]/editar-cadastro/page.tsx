@@ -1,6 +1,6 @@
 import PageHeader from "@/components/PageHeader"
 import EditProfilePatientForm from "./components/EditProfilePatientForm"
-import { getPatientById } from "@/data/patients.queries"
+import { getPatientById } from "@/data/patient-by-id.queries"
 
 interface EditProfilePage {
   params: Promise<{

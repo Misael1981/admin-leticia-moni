@@ -130,6 +130,10 @@ export const patientSchema = z
       .refine((v) => v === null || (Number.isInteger(v) && v >= 1 && v <= 30), {
         message: "O dia deve estar entre 1 e 30.",
       }),
+    defaultSessionPrice: z
+      .number({ error: "Informe um preço válido" })
+      .nonnegative("O preço não pode ser negativo")
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (data.hasInsurance) {

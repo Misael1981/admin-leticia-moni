@@ -39,9 +39,9 @@ const FinancialForm = () => {
         <CardTitle>Modo/Data de como será cobrada a consulta</CardTitle>
       </CardHeader>
 
-      <CardContent className="flex justify-center">
-        <FieldGroup className="flex max-w-lg flex-col gap-4 md:flex-row">
-          <Field>
+      <CardContent>
+        <FieldGroup className="flex flex-col gap-4 lg:flex-row lg:justify-center">
+          <Field className="lg:w-1/3">
             <FieldLabel>Modo de Pagamento</FieldLabel>
             <Controller
               name="billingMode"
@@ -95,6 +95,39 @@ const FinancialForm = () => {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Preço  */}
+          <div className="lg:w-1/3">
+            <Controller
+              control={control}
+              name="defaultSessionPrice"
+              render={({ field }) => (
+                <Field>
+                  <FieldLabel>Preço Padrão da Sessão</FieldLabel>
+                  <Input
+                    type="text"
+                    inputMode="decimal"
+                    value={
+                      field.value != null
+                        ? field.value.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })
+                        : ""
+                    }
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, "")
+                      const num = digits ? Number(digits) / 100 : undefined
+                      field.onChange(num)
+                    }}
+                    onBlur={field.onBlur}
+                    placeholder="R$ 0,00 (Opcional)"
+                  />
+                  <FieldError>{errors.defaultSessionPrice?.message}</FieldError>
+                </Field>
+              )}
+            />
+          </div>
         </FieldGroup>
       </CardContent>
     </Card>

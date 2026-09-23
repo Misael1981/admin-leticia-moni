@@ -2,11 +2,12 @@
 
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/prisma"
-import { patientSchema } from "@/schemas/patients-schemas"
+import { PatientFormValues, patientSchema } from "@/schemas/patients-schemas"
 import { PatientReferralSource, Prisma } from "@misael1981/physio-database"
 import { revalidatePath } from "next/cache"
 import { getServerSession } from "next-auth"
 import bcrypt from "bcrypt"
+import { serialize } from "@/helpers/serialize"
 
 export async function createPatient(formData: unknown) {
   const result = patientSchema.safeParse(formData)
@@ -52,6 +53,7 @@ export async function createPatient(formData: unknown) {
           status: data.status,
           billingMode: data.billingMode,
           billingDay: data.billingDay ?? null,
+          defaultSessionPrice: data.defaultSessionPrice ?? null,
           clinicId: "main-clinic",
         },
       })
@@ -75,7 +77,9 @@ export async function createPatient(formData: unknown) {
         })
       }
 
-      return patient
+      const patientSeriezed = serialize(patient)
+
+      return patientSeriezed
     })
 
     revalidatePath("/dashboard/pacientes")
@@ -144,14 +148,21 @@ export async function deletePatient(id: string) {
 
 export async function updatePatient(id: string, formData: unknown) {
   try {
-    const result = patientSchema.safeParse(formData)
+    const dataToValidate = {
+      ...(formData as PatientFormValues),
+      billingDay: (formData as PatientFormValues)?.billingDay?.toString() ?? "",
+    }
+    const result = patientSchema.safeParse(dataToValidate)
+
     if (!result.success) {
+      console.error("❌ ERROS DO ZOD:", result.error.flatten().fieldErrors)
       return {
         success: false,
         error: "Dados inválidos.",
         errors: result.error.flatten().fieldErrors,
       }
     }
+
     const validatedData = result.data
 
     const { address, ...patientData } = validatedData
@@ -198,10 +209,12 @@ export async function updatePatient(id: string, formData: unknown) {
     revalidatePath(`/dashboard/pacientes`)
     revalidatePath(`/dashboard/pacientes/${id}`)
 
+    const patientSeriezed = serialize(updatedPatient)
+
     return {
       success: true,
       message: "Paciente atualizado com sucesso!",
-      data: updatedPatient,
+      data: patientSeriezed,
     }
   } catch (error) {
     console.error("Erro ao atualizar paciente:", error)
