@@ -2,11 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  AnamnesesType,
-  EvolutionType,
-  PhysicalAssessmentType,
-} from "@/data/patients.queries"
+import { AnamnesesType, PhysicalAssessmentType } from "@/data/patients.queries"
 
 import CardMedicalRecord from "./components/CardMedicalRecord"
 import CardAnamnesis from "./components/CardAnamnesis"
@@ -19,6 +15,7 @@ import {
   TreatmentForAnamnesisType,
 } from "@/data/get-treatments"
 import { PatientDetailWithNumericPrice } from "@/data/patient-by-id.queries"
+import { EvolutionType } from "@/data/evolutions.queries"
 
 type WorkTabsProps = {
   patient: PatientDetailWithNumericPrice
@@ -53,6 +50,9 @@ const WorkTabs = ({
     router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
+  const { billingDay, billingMode, defaultSessionPrice } = patient
+  const financial = { billingDay, billingMode, defaultSessionPrice }
+
   return (
     <Tabs
       value={currentTab}
@@ -86,6 +86,7 @@ const WorkTabs = ({
           patientId={patient.id}
           currentPatientStatus={currentPatientStatus}
           videos={videos}
+          financial={financial}
         />
       </TabsContent>
 

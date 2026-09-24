@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { Badge } from "@/components/ui/badge"
-import { PatientStatus } from "@/constants/enums"
+import { BillingMode, PatientStatus } from "@/constants/enums"
 import { NotebookPen } from "lucide-react"
 import SessionEvolutionData from "../SessionEvolutionData"
 import SessionNotes from "../SessionNotes"
@@ -22,12 +22,18 @@ import { createEvolutionAction } from "@/app/action/create-evolution.action"
 import { toast } from "sonner"
 import OptionalImageSession from "../OptionalImageSession"
 import { uploadMultipleImages } from "@/services/image-compresseion.service"
+import FinancialForm from "../FinancialForm"
 
 type CardEvolutionFormProps = {
   patientId: string
   lastSessionNumber: number
   currentPatientStatus: PatientStatus
   videos: VideoType[] | null
+  financial: {
+    billingDay: number | null
+    billingMode: BillingMode
+    defaultSessionPrice: number | null
+  }
 }
 
 const CardEvolutionForm = ({
@@ -35,12 +41,13 @@ const CardEvolutionForm = ({
   lastSessionNumber,
   currentPatientStatus,
   videos,
+  financial,
 }: CardEvolutionFormProps) => {
   const [isPending, startTransition] = useTransition()
   const nextSessionNumber = lastSessionNumber + 1
 
   const methods = useForm<EvolutionFormInput, unknown, EvolutionFormValues>({
-    resolver: zodResolver(evolutionFormSchema), // <- antes era evolutionSchema
+    resolver: zodResolver(evolutionFormSchema),
     defaultValues: {
       sessionDate: new Date(),
       painScore: undefined,
@@ -48,6 +55,7 @@ const CardEvolutionForm = ({
       patientStatus: currentPatientStatus ?? PatientStatus.ACTIVE,
       exerciseVideos: [],
       images: [],
+      pricePerSession: financial.defaultSessionPrice ?? 0,
     },
   })
 
@@ -153,6 +161,8 @@ const CardEvolutionForm = ({
           <SessionWorkoutSelector videos={videos} />
 
           <OptionalImageSession />
+
+          <FinancialForm financial={financial} />
 
           <SessionNotes />
         </div>

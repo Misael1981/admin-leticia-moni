@@ -233,6 +233,10 @@ export const evolutionSchema = z.object({
   exerciseVideos: z.array(exercisePrescriptionItemSchema).default([]),
 
   images: z.array(evolutionImageSchema).default([]),
+
+  pricePerSession: z
+    .number({ error: "Informe o preço da sessão." })
+    .nonnegative("O preço não pode ser negativo"),
 })
 
 // Schema usado pelo RHF (aceita File nas imagens)

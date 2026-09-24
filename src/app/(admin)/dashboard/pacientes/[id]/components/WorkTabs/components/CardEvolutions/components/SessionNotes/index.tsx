@@ -24,12 +24,11 @@ const SessionNotes = () => {
         name="notes"
         control={control}
         render={({ field }) => (
-          <div className="overflow-hidden rounded-lg border">
+          <div className="overflow-hidden rounded-lg border [&_.ql-editor]:max-h-125 [&_.ql-editor]:min-h-62 [&_.ql-editor]:overflow-y-auto">
             <ReactQuill
               theme="snow"
               value={field.value}
               onChange={field.onChange}
-              className="min-h-60"
             />
           </div>
         )}

@@ -8,7 +8,7 @@ import {
 import { EvolutionType } from "@/data/patients.queries"
 import CardEvolutionForm from "./components/CardEvolutionForm"
 import EvolutionTimelineCard from "./components/EvolutionTimelineCard"
-import { PatientStatus } from "@/constants/enums"
+import { BillingMode, PatientStatus } from "@/constants/enums"
 import { VideoType } from "@/modules/videos/queries/get-videos.queries"
 import {
   Accordion,
@@ -22,6 +22,11 @@ type CardEvolutionsProps = {
   evolutions: EvolutionType[] | null
   currentPatientStatus: PatientStatus
   videos: VideoType[] | null
+  financial: {
+    billingDay: number | null
+    billingMode: BillingMode
+    defaultSessionPrice: number | null
+  }
 }
 
 const CardEvolutions = ({
@@ -29,6 +34,7 @@ const CardEvolutions = ({
   evolutions,
   currentPatientStatus,
   videos,
+  financial,
 }: CardEvolutionsProps) => {
   const lastSessionNumber = evolutions?.[0]?.sessionNumber ?? 0
 
@@ -50,6 +56,7 @@ const CardEvolutions = ({
             lastSessionNumber={lastSessionNumber}
             currentPatientStatus={currentPatientStatus}
             videos={videos}
+            financial={financial}
           />
         </CardContent>
       </Card>

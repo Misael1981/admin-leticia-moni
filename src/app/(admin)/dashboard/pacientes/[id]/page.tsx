@@ -1,7 +1,6 @@
 import PageHeader from "@/components/PageHeader"
 import {
   getAnamnesisByPatientId,
-  getEvolutionsByPatientId,
   getPatientAuth,
   getPhysicalAssessmentPatientId,
 } from "@/data/patients.queries"
@@ -14,6 +13,7 @@ import {
   getTreatmentsByPatientId,
 } from "@/data/get-treatments"
 import { getPatientById } from "@/data/patient-by-id.queries"
+import { getEvolutionsByPatientId } from "@/data/evolutions.queries"
 
 interface MedicalRecordProps {
   params: Promise<{ id: string }>
