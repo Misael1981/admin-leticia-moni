@@ -3,7 +3,6 @@ import { PatientTreatmentType } from "@/data/get-treatments"
 import {
   AnamnesesType,
   EvolutionType,
-  PatientDetail,
   PhysicalAssessmentType,
 } from "@/data/patients.queries"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
@@ -13,6 +12,7 @@ import {
   BIOLOGICAL_SEX_LABELS,
   EDUCATION_LEVEL_LABELS,
 } from "@/constants/labels"
+import { PatientDetailWithNumericPrice } from "@/data/patient-by-id.queries"
 
 type PrintableRecordProps = {
   status?: PatientStatus
@@ -20,7 +20,7 @@ type PrintableRecordProps = {
   anamnesis: AnamnesesType | null
   patientTreatments: PatientTreatmentType[] | null
   physicalAssessment: PhysicalAssessmentType | null
-  patient: PatientDetail
+  patient: PatientDetailWithNumericPrice
 }
 
 // Seção padrão pra blocos de HTML rico (Quill), evita repetição

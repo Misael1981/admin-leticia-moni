@@ -206,13 +206,28 @@ export type PatientAuthType = Prisma.PatientAuthGetPayload<{
     lockedUntil: true
     lastLoginAt: true
     createdBy: true
+    tokenVersion: true
   }
 }>
 
-export async function getPatientAuth(patientId: string) {
+export async function getPatientAuth(
+  patientId: string,
+): Promise<PatientAuthType | null> {
   try {
-    const patientAuth = db.patientAuth.findUnique({
+    const patientAuth = await db.patientAuth.findUnique({
       where: { patientId },
+      select: {
+        id: true,
+        createdAt: true,
+        patientId: true,
+        pinHash: true,
+        mustChangePin: true,
+        failedAttempts: true,
+        lockedUntil: true,
+        lastLoginAt: true,
+        createdBy: true,
+        tokenVersion: true,
+      },
     })
 
     return patientAuth

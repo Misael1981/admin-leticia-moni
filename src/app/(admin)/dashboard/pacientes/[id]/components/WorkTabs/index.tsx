@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   AnamnesesType,
   EvolutionType,
-  PatientDetail,
   PhysicalAssessmentType,
 } from "@/data/patients.queries"
 
@@ -19,9 +18,10 @@ import {
   PatientTreatmentType,
   TreatmentForAnamnesisType,
 } from "@/data/get-treatments"
+import { PatientDetailWithNumericPrice } from "@/data/patient-by-id.queries"
 
 type WorkTabsProps = {
-  patient: PatientDetail
+  patient: PatientDetailWithNumericPrice
   anamnesis: AnamnesesType | null
   physicalAssessment: PhysicalAssessmentType | null
   evolutions: EvolutionType[] | null

@@ -25,7 +25,6 @@ import { PATIENT_STATUS_LABELS } from "@/constants/labels"
 import {
   AnamnesesType,
   EvolutionType,
-  PatientDetail,
   PhysicalAssessmentType,
 } from "@/data/patients.queries"
 import { formatDate } from "@/helpers/format-date"
@@ -37,6 +36,7 @@ import ExamRecordCard from "./components/ExamRecordCard"
 import PrintButton from "./components/PrintButton"
 import { useRef } from "react"
 import PrintableRecord from "./components/PrintableRecord"
+import { PatientDetailWithNumericPrice } from "@/data/patient-by-id.queries"
 
 type CardMedicalRecordProps = {
   status: PatientStatus
@@ -44,7 +44,7 @@ type CardMedicalRecordProps = {
   anamnesis: AnamnesesType | null
   patientTreatments: PatientTreatmentType[] | null
   physicalAssessment: PhysicalAssessmentType | null
-  patient: PatientDetail
+  patient: PatientDetailWithNumericPrice
 }
 
 const CardMedicalRecord = ({

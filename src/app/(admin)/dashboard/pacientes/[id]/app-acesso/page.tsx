@@ -1,7 +1,8 @@
 import PageHeader from "@/components/PageHeader"
-import { getPatientAuth, getPatientById } from "@/data/patients.queries"
+import { getPatientAuth } from "@/data/patients.queries"
 import { notFound } from "next/navigation"
 import PatientAccessForm from "./components/PatientAccessForm"
+import { getPatientById } from "@/data/patient-by-id.queries"
 
 interface AppAccessPageProps {
   params: Promise<{ id: string }>

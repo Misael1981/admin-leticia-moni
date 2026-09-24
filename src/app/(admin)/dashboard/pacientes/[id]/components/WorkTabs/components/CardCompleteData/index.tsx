@@ -7,11 +7,11 @@ import {
   MARITAL_STATUS_LABELS,
   PATIENT_REFERRAL_SOURCE_LABEL,
 } from "@/constants/labels"
-import { PatientDetail } from "@/data/patients.queries"
 import { formatBirthDate, getPatientAge } from "@/helpers/format-birth-date"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { initialsName } from "@/helpers/initials-name"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { PatientDetailWithNumericPrice } from "@/data/patient-by-id.queries"
 
 type InfoItemProps = {
   label: string
@@ -42,7 +42,7 @@ const Section = ({ title, children }: SectionProps) => (
 )
 
 type CardCompleteDataProps = {
-  patient: PatientDetail
+  patient: PatientDetailWithNumericPrice
 }
 
 const CardCompleteData = ({ patient }: CardCompleteDataProps) => {

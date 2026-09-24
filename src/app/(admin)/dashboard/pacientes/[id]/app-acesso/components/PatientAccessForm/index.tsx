@@ -17,7 +17,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { PatientAuthType, PatientDetail } from "@/data/patients.queries"
+import { PatientDetailWithNumericPrice } from "@/data/patient-by-id.queries"
+import { PatientAuthType } from "@/data/patients.queries"
 import { maskCPF } from "@/helpers/personal-documents"
 import {
   PatientAccessInput,
@@ -31,7 +32,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 type PatientAccessFormProps = {
-  patient: PatientDetail
+  patient: PatientDetailWithNumericPrice
   patientAuth: PatientAuthType | null
 }
 

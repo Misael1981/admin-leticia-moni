@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { buttonVariants } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { BIOLOGICAL_SEX_LABELS } from "@/constants/labels"
-import { PatientAuthType, PatientDetail } from "@/data/patients.queries"
+import { PatientAuthType } from "@/data/patients.queries"
 import { formatBirthDate, getPatientAge } from "@/helpers/format-birth-date"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { initialsName } from "@/helpers/initials-name"
@@ -18,9 +18,10 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import ButtonAppAccess from "../ButtonAppAccess"
+import { PatientDetailWithNumericPrice } from "@/data/patient-by-id.queries"
 
 type CardHeroProps = {
-  patient: PatientDetail
+  patient: PatientDetailWithNumericPrice
   patientAuth: PatientAuthType | null
   testimonial: {
     id: string
