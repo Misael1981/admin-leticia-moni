@@ -5,7 +5,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { EvolutionType } from "@/data/patients.queries"
 import CardEvolutionForm from "./components/CardEvolutionForm"
 import EvolutionTimelineCard from "./components/EvolutionTimelineCard"
 import { BillingMode, PatientStatus } from "@/constants/enums"
@@ -16,6 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { EvolutionType } from "@/data/evolutions.queries"
 
 type CardEvolutionsProps = {
   patientId: string

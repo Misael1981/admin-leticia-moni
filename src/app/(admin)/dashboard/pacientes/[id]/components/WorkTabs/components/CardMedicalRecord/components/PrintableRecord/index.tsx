@@ -1,10 +1,6 @@
 import { PatientStatus } from "@/constants/enums"
 import { PatientTreatmentType } from "@/data/get-treatments"
-import {
-  AnamnesesType,
-  EvolutionType,
-  PhysicalAssessmentType,
-} from "@/data/patients.queries"
+import { AnamnesesType, PhysicalAssessmentType } from "@/data/patients.queries"
 import { formatPhoneNumber } from "@/helpers/format-phone-number"
 import { formatBirthDate } from "@/helpers/format-birth-date"
 import { maskCPF } from "@/helpers/personal-documents"
@@ -13,6 +9,7 @@ import {
   EDUCATION_LEVEL_LABELS,
 } from "@/constants/labels"
 import { PatientDetailWithNumericPrice } from "@/data/patient-by-id.queries"
+import { EvolutionType } from "@/data/evolutions.queries"
 
 type PrintableRecordProps = {
   status?: PatientStatus

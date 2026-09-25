@@ -22,11 +22,7 @@ import {
 import MetricCard from "./components/MetricCard"
 import { PatientStatus } from "@/constants/enums"
 import { PATIENT_STATUS_LABELS } from "@/constants/labels"
-import {
-  AnamnesesType,
-  EvolutionType,
-  PhysicalAssessmentType,
-} from "@/data/patients.queries"
+import { AnamnesesType, PhysicalAssessmentType } from "@/data/patients.queries"
 import { formatDate } from "@/helpers/format-date"
 import MedicalRecordCard from "./components/MedicalRecordCard"
 import ListCard from "./components/ListCard"
@@ -37,6 +33,7 @@ import PrintButton from "./components/PrintButton"
 import { useRef } from "react"
 import PrintableRecord from "./components/PrintableRecord"
 import { PatientDetailWithNumericPrice } from "@/data/patient-by-id.queries"
+import { EvolutionType } from "@/data/evolutions.queries"
 
 type CardMedicalRecordProps = {
   status: PatientStatus

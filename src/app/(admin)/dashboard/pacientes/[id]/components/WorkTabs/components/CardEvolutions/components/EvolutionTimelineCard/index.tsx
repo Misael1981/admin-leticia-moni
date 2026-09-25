@@ -5,8 +5,8 @@ import { NotebookPen, Calendar1Icon, Dumbbell, Info } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { getPainDescription } from "@/helpers/get-pain-description"
-import { EvolutionType } from "@/data/patients.queries"
 import CardImage from "../CardImage"
+import { EvolutionType } from "@/data/evolutions.queries"
 
 type EvolutionTimelineCardProps = {
   evolution: EvolutionType
