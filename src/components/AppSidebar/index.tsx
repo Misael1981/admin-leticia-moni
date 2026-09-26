@@ -16,6 +16,7 @@ import LogoutButton from "../LogoutButton"
 import {
   Activity,
   Calendar,
+  ChartNoAxesCombined,
   FileUser,
   Hospital,
   LayoutDashboard,
@@ -32,6 +33,11 @@ const pages = [
     name: "Visão Geral",
     url: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    name: "Dashboard Financeiro",
+    url: "/dashboard/financeiro",
+    icon: ChartNoAxesCombined,
   },
   {
     name: "Gerenciamento de Agenda",

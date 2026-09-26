@@ -1,6 +1,5 @@
 import { Prisma } from "@misael1981/physio-database"
 
-// Tipo utilitário: converte Decimal → number, Date → string, recursivamente
 export type Serialized<T> = T extends Prisma.Decimal
   ? number
   : T extends Date
@@ -11,7 +10,6 @@ export type Serialized<T> = T extends Prisma.Decimal
         ? { [K in keyof T]: Serialized<T[K]> }
         : T
 
-// Função que você já tem
 export function serialize<T>(data: T): Serialized<T> {
   if (data === null || data === undefined) return data as Serialized<T>
 

@@ -29,7 +29,6 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
 
   const whereClause: Prisma.UserWhereInput = {}
 
-  // Ajustado para bater com o "TODOS" em caixa alta do UserFilters
   if (currentRole && currentRole.toUpperCase() !== "TODOS") {
     whereClause.role = currentRole as UserRole
   }
