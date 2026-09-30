@@ -1,11 +1,11 @@
-import { AppointmentStatus } from "./enums"
+import { AppointmentStatus, ChargeStatus } from "./enums"
 
 export interface StatusConfig {
   label: string
-  variant: string
-  badgeStyle: string
-  borderStyle: string
-  bgStyle: string
+  variant?: string
+  badgeStyle?: string
+  borderStyle?: string
+  bgStyle?: string
 }
 
 export const APPOINTMENT_STATUS_CONFIG: Record<
@@ -59,5 +59,39 @@ export const APPOINTMENT_STATUS_CONFIG: Record<
       "bg-purple-500/15 text-purple-700 dark:text-purple-400 border-purple-200",
     borderStyle: "border-l-purple-500",
     bgStyle: "bg-purple-500/5 hover:bg-purple-500/10",
+  },
+}
+
+export const CHARGE_STATUS_CONFIG: Record<ChargeStatus, StatusConfig> = {
+  OPEN: {
+    label: "Aguardando Pagamento",
+    variant: "secondary",
+    badgeStyle:
+      "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-200 animate-pulse",
+    borderStyle: "border-l-amber-500",
+    bgStyle: "bg-amber-500/5 hover:bg-amber-500/10",
+  },
+  PAID: {
+    label: "Pago",
+    variant: "default",
+    badgeStyle:
+      "bg-green-500/15 text-green-700 dark:text-green-400 border-green-200",
+    borderStyle: "border-l-green-500",
+    bgStyle: "bg-green-500/5 hover:bg-green-500/10 opacity-75",
+  },
+  CANCELED: {
+    label: "Cancelado",
+    variant: "destructive",
+    badgeStyle:
+      "bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-200",
+    borderStyle: "border-l-rose-500",
+    bgStyle: "bg-rose-500/5 hover:bg-rose-500/10 opacity-75",
+  },
+  OVERDUE: {
+    label: "Atrasado",
+    variant: "outline",
+    badgeStyle: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-200",
+    borderStyle: "border-l-red-500",
+    bgStyle: "bg-red-500/5 hover:bg-red-500/10 opacity-75",
   },
 }
