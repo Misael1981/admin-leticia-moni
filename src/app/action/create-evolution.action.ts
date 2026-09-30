@@ -42,8 +42,11 @@ export async function createEvolutionAction({
       // 1. Atualiza status do paciente SE mudou
       const currentPatient = await tx.patient.findUnique({
         where: { id: patientId },
-        select: { status: true },
+        select: { status: true, clinicId: true },
       })
+
+      const clinicId = currentPatient?.clinicId ?? "main-clinic"
+
       if (currentPatient?.status !== validatedData.patientStatus) {
         await tx.patient.update({
           where: { id: patientId },
@@ -64,7 +67,9 @@ export async function createEvolutionAction({
           sessionNumber: nextSessionNumber,
           sessionDate: validatedData.sessionDate,
           painScore: validatedData.painScore,
-          pricePerSession: validatedData.pricePerSession.toFixed(2),
+          pricePerSession: validatedData.isReturn
+            ? 0
+            : validatedData.pricePerSession,
           notes: validatedData.notes,
           createdById: session.user.id,
 
@@ -92,17 +97,45 @@ export async function createEvolutionAction({
             },
           },
 
-          // ⭐ AQUI: ChargeItem nasce junto
+          // ChargeItem criado junto da Evolution
           chargeItem: {
             create: {
-              amount: validatedData.pricePerSession.toFixed(2),
+              amount: validatedData.isReturn
+                ? 0
+                : validatedData.pricePerSession,
               description: `Consulta - ${validatedData.sessionDate.toLocaleDateString("pt-BR")}`,
+              isReturn: validatedData.isReturn,
               patientId,
-              clinicId: "main-clinic",
+              clinicId,
             },
           },
         },
+        include: {
+          chargeItem: true, // Inclui para pegar o ID do ChargeItem gerado
+        },
       })
+
+      // 4. ⭐ CONDICIONAL FINANCEIRA: Se NÃO for retorno, gera/associa a Charge
+      if (!validatedData.isReturn && evolution.chargeItem) {
+        const amount = Number(validatedData.pricePerSession)
+
+        // Exemplo para Cobrança por Sessão (PER_SESSION)
+        await tx.charge.create({
+          data: {
+            patientId,
+            clinicId,
+            createdById: session.user.id,
+            subtotal: amount,
+            total: amount,
+            paidAmount: 0,
+            status: "OPEN",
+            dueDate: validatedData.sessionDate,
+            items: {
+              connect: { id: evolution.chargeItem.id },
+            },
+          },
+        })
+      }
 
       return evolution
     })

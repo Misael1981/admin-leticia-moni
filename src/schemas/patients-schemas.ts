@@ -234,6 +234,8 @@ export const evolutionSchema = z.object({
 
   images: z.array(evolutionImageSchema).default([]),
 
+  isReturn: z.boolean().default(false),
+
   pricePerSession: z
     .number({ error: "Informe o preço da sessão." })
     .nonnegative("O preço não pode ser negativo"),

@@ -56,6 +56,7 @@ const CardEvolutionForm = ({
       exerciseVideos: [],
       images: [],
       pricePerSession: financial.defaultSessionPrice ?? 0,
+      isReturn: false,
     },
   })
 
