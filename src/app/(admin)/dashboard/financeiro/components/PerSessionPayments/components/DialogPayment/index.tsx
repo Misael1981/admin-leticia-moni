@@ -16,8 +16,6 @@ import { Controller, FormProvider, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ChargeFormInput, chargeFormSchema } from "@/schemas/payment.schemas"
 import { toast } from "sonner"
-import { Badge } from "@/components/ui/badge"
-import { CHARGE_STATUS_CONFIG } from "@/constants/config"
 import {
   Field,
   FieldError,
@@ -25,7 +23,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { CurrencyInput } from "@/components/CurrencyInput"
-import { DatePickerInput } from "@/components/DatePickerInput"
 import {
   Select,
   SelectContent,
@@ -33,8 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { PAYMENT_METHOD_OPTIONS } from "@/constants/options"
+import {
+  CHARGE_STATUS_OPTIONS,
+  PAYMENT_METHOD_OPTIONS,
+} from "@/constants/options"
 import { Textarea } from "@/components/ui/textarea"
+import { formatDate } from "@/helpers/format-date"
 
 type DialogPaymentProps = {
   isOpen: boolean
@@ -63,7 +64,7 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
   const methods = useForm<ChargeFormInput>({
     resolver: zodResolver(chargeFormSchema),
     defaultValues: {
-      status: charge?.status || "OPEN",
+      status: chargeStatus || "OPEN",
       subtotal: initialSubtotal,
       discount: initialDiscount,
       paidAmount: initialPaidAmount,
@@ -73,7 +74,7 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
       paidAt: charge?.paidAt ? new Date(charge.paidAt) : undefined,
       canceledAt: charge?.canceledAt ? new Date(charge.canceledAt) : undefined,
 
-      paymentMethod: charge?.paymentMethod || "PIX",
+      paymentMethod: charge?.paymentMethod ?? undefined,
       notes: charge?.notes || "",
     },
   })
@@ -136,37 +137,32 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[95vh] overflow-hidden">
-        <DialogHeader>
-          <DialogTitle>Gerenciar Boleto</DialogTitle>
-          <DialogDescription>
-            Valor a ser pago{" "}
-            <strong className="text-green-600">
-              {formatCurrency(session.amount)}
-            </strong>
-          </DialogDescription>
+        <DialogHeader className="space-y-4">
+          <div className="space-y-1">
+            <DialogTitle>Gerenciar Boleto</DialogTitle>
+            <DialogDescription>
+              Confira os dados e registre o pagamento
+            </DialogDescription>
+          </div>
         </DialogHeader>
+        <div className="bg-muted/40 grid grid-cols-2 gap-4 rounded-lg border p-4">
+          <div className="space-y-1">
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Valor a pagar
+            </p>
+            <p className="text-lg font-semibold text-green-600">
+              {formatCurrency(initialSubtotal)}
+            </p>
+          </div>
 
-        <div className="flex justify-end">
-          {session.isReturn ? (
-            <Badge className="border border-blue-200 bg-blue-500/10 font-medium text-blue-600">
-              Retorno
-            </Badge>
-          ) : chargeStatus ? (
-            (() => {
-              const statusConfig = CHARGE_STATUS_CONFIG[chargeStatus]
-              return (
-                <Badge
-                  className={`border font-medium ${statusConfig.badgeStyle}`}
-                >
-                  {statusConfig.label}
-                </Badge>
-              )
-            })()
-          ) : (
-            <Badge className="border border-slate-200 bg-slate-500/10 font-medium text-slate-600">
-              A faturar
-            </Badge>
-          )}
+          <div className="space-y-1">
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Vencimento
+            </p>
+            <p className="text-lg font-semibold">
+              {charge?.dueDate ? formatDate(charge.dueDate) : "—"}
+            </p>
+          </div>
         </div>
 
         <FormProvider {...methods}>
@@ -174,20 +170,13 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
             onSubmit={handleSubmit(onSubmit, onError)}
             className="space-y-4"
           >
-            <FieldGroup className="custom-scroll max-h-[calc(95vh-220px)] overflow-y-auto pr-1 pb-4">
-              <div className="grid grid-cols-2 gap-4">
-                <CurrencyInput name="subtotal" label="Subtotal" />
+            <FieldGroup className="custom-scroll max-h-[calc(95vh-300px)] overflow-y-auto pr-1 pb-4">
+              <div className="flex gap-2">
                 <CurrencyInput name="discount" label="Desconto" />
                 <CurrencyInput name="paidAmount" label="Pagamento Parcial" />
-                <CurrencyInput name="total" label="Total" />
               </div>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <DatePickerInput name="dueDate" label="Vencimento" />
-                <DatePickerInput name="paidAt" label="Data do Pagamento" />
-              </div>
-
-              <div className="flex justify-center">
+              <div className="flex flex-col gap-4 md:flex-row">
                 <Field className="w-full max-w-lg">
                   <FieldLabel>Modo de Pagamento</FieldLabel>
                   <Controller
@@ -212,6 +201,32 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
                     )}
                   />
                   <FieldError>{errors.paymentMethod?.message}</FieldError>
+                </Field>
+
+                <Field className="w-full max-w-lg">
+                  <FieldLabel>Status do Pagamento</FieldLabel>
+                  <Controller
+                    name="status"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value ?? ""}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione o status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CHARGE_STATUS_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <FieldError>{errors.status?.message}</FieldError>
                 </Field>
               </div>
 
