@@ -111,11 +111,11 @@ export async function createEvolutionAction({
           },
         },
         include: {
-          chargeItem: true, // Inclui para pegar o ID do ChargeItem gerado
+          chargeItem: true,
         },
       })
 
-      // 4. ⭐ CONDICIONAL FINANCEIRA: Se NÃO for retorno, gera/associa a Charge
+      // 4. CONDICIONAL FINANCEIRA: Se NÃO for retorno, gera/associa a Charge
       if (!validatedData.isReturn && evolution.chargeItem) {
         const amount = Number(validatedData.pricePerSession)
 

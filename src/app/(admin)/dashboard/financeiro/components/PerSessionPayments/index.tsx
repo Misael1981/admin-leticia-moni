@@ -10,6 +10,8 @@ import Link from "next/link"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { MessageCircle } from "lucide-react"
 import DialogPayment from "./components/DialogPayment"
+import { CHARGE_STATUS_CONFIG } from "@/constants/config"
+import { Badge } from "@/components/ui/badge"
 
 export type UnpaidSessionType = {
   id: string
@@ -22,12 +24,14 @@ export type UnpaidSessionType = {
     total: number
     dueDate: string | null
     paidAt: string | null
+    paidAmount: number
     canceledAt: string | null
     paymentMethod: PaymentMethod | null
     notes: string | null
   } | null
 
   amount: number
+  isReturn: boolean
 
   patient: {
     name: string
@@ -62,13 +66,39 @@ const PerSessionPayments = ({ unpaidSessions }: PerSessionPaymentsProps) => {
         {unpaidSessions.map((p) => (
           <SubCard key={p.id}>
             <div className="space-y-4">
+              {/* Se for retorno */}
+              <div className="flex justify-end">
+                {p.isReturn ? (
+                  <Badge className="border border-blue-200 bg-blue-500/10 font-medium text-blue-600">
+                    Retorno
+                  </Badge>
+                ) : p.charge?.status ? (
+                  /* Se tiver uma charge vinculada */
+                  (() => {
+                    const statusConfig = CHARGE_STATUS_CONFIG[p.charge.status]
+                    return (
+                      <Badge
+                        className={`border font-medium ${statusConfig.badgeStyle}`}
+                      >
+                        {statusConfig.label}
+                      </Badge>
+                    )
+                  })()
+                ) : (
+                  /* Se não for retorno e ainda não tiver charge */
+                  <Badge className="border border-slate-200 bg-slate-500/10 font-medium text-slate-600">
+                    A faturar
+                  </Badge>
+                )}
+              </div>
+
               <div className="flex items-center justify-between gap-4 border-b pb-4">
                 <div className="min-w-0">
                   <h4 className="truncate font-medium">{p.patient.name}</h4>
-                  <span className="text-muted-foreground text-sm">
-                    <strong>Data da consulta: </strong>
-                    {formatDate(p.evolution.sessionDate)}
-                  </span>
+                  <p className="text-muted-foreground flex flex-col gap-0 text-sm leading-relaxed sm:flex-row sm:items-center">
+                    <strong className="">Data da consulta:</strong>
+                    <span>{formatDate(p.evolution.sessionDate)}</span>
+                  </p>
                 </div>
                 <span className="shrink-0 text-lg font-semibold text-green-600">
                   {formatCurrency(p.amount)}

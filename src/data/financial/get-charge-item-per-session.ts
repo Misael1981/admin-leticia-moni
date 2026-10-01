@@ -6,7 +6,6 @@ export async function getChargeItemPerSession() {
   try {
     const chargeItemPerSession = await db.chargeItem.findMany({
       where: {
-        chargeId: null, // só o que tá em aberto
         patient: {
           billingMode: BillingMode.PER_SESSION,
         },
@@ -14,6 +13,7 @@ export async function getChargeItemPerSession() {
       select: {
         id: true,
         amount: true,
+        isReturn: true,
         evolution: {
           select: {
             id: true,
@@ -36,6 +36,7 @@ export async function getChargeItemPerSession() {
             total: true,
             dueDate: true,
             paidAt: true,
+            paidAmount: true,
             canceledAt: true,
             paymentMethod: true,
             notes: true,
