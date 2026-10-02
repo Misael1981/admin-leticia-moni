@@ -50,10 +50,11 @@ type PerSessionPaymentsProps = {
 }
 
 const PerSessionPayments = ({ unpaidSessions }: PerSessionPaymentsProps) => {
-  const [isDialogPayment, setDialogPayment] = useState(false)
+  const [selectedSession, setSelectedSession] =
+    useState<UnpaidSessionType | null>(null)
 
-  const handleDialog = () => {
-    setDialogPayment(true)
+  const handleDialog = (session: UnpaidSessionType) => {
+    setSelectedSession(session)
   }
 
   return (
@@ -62,6 +63,12 @@ const PerSessionPayments = ({ unpaidSessions }: PerSessionPaymentsProps) => {
         <h3 className="font-heading text-lg leading-normal font-medium group-data-[size=sm]/card:text-sm">
           Pagamentos por Consulta
         </h3>
+
+        {unpaidSessions.length === 0 && (
+          <p className="text-muted-foreground mt-4 text-center text-sm">
+            Nenhuma consulta pendente de pagamento.
+          </p>
+        )}
 
         {unpaidSessions.map((p) => (
           <SubCard key={p.id}>
@@ -117,15 +124,19 @@ const PerSessionPayments = ({ unpaidSessions }: PerSessionPaymentsProps) => {
                   <MessageCircle className="h-4 w-4" />
                   Enviar Mensagem
                 </Link>
-                <Button onClick={handleDialog}>Registrar pagamento</Button>
+                <Button onClick={() => handleDialog(p)}>
+                  Registrar pagamento
+                </Button>
               </div>
             </div>
 
-            <DialogPayment
-              isOpen={isDialogPayment}
-              onClose={() => setDialogPayment(false)}
-              session={p}
-            />
+            {selectedSession && (
+              <DialogPayment
+                isOpen={!!selectedSession}
+                onClose={() => setSelectedSession(null)}
+                session={selectedSession}
+              />
+            )}
           </SubCard>
         ))}
       </Card>

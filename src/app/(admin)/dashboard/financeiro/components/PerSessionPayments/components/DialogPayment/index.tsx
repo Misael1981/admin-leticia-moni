@@ -33,6 +33,8 @@ import {
 import { PAYMENT_METHOD_OPTIONS } from "@/constants/options"
 import { Textarea } from "@/components/ui/textarea"
 import { formatDate } from "@/helpers/format-date"
+import { manageChargeAction } from "@/app/action/financial/manage-charge.action"
+import { useRouter } from "next/navigation"
 
 type DialogPaymentProps = {
   isOpen: boolean
@@ -42,6 +44,7 @@ type DialogPaymentProps = {
 
 const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   const { charge } = session
 
@@ -96,13 +99,24 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
   const total = initialSubtotal - Number(discount ?? 0)
 
   const onSubmit = async (data: ChargeFormInput) => {
+    console.log("📦 DADOS DO FORM:", data)
     startTransition(async () => {
       try {
-        console.log("Dados recebidos para envio:", data)
-        onClose()
+        const response = await manageChargeAction({
+          chargeItemId: session.id,
+          data,
+        })
+
+        if (response.success) {
+          toast.success(response.message ?? "Pagamento registrado!")
+          router.refresh()
+          onClose()
+        } else {
+          toast.error(response.error ?? "Erro ao registrar pagamento.")
+        }
       } catch (error) {
-        console.error("Erro ao alterar status de pagamento:", error)
-        toast.error("Ocorreu um erro ao alterar status de pagamento.")
+        console.error("Erro ao registrar pagamento:", error)
+        toast.error("Ocorreu um erro ao registrar o pagamento.")
       }
     })
   }
