@@ -12,7 +12,7 @@ import { UnpaidSessionType } from "../.."
 import { formatCurrency } from "@/helpers/format-currency"
 import { Button } from "@/components/ui/button"
 import { useEffect, useTransition } from "react"
-import { Controller, FormProvider, useForm } from "react-hook-form"
+import { Controller, FormProvider, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ChargeFormInput, chargeFormSchema } from "@/schemas/payment.schemas"
 import { toast } from "sonner"
@@ -30,10 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  CHARGE_STATUS_OPTIONS,
-  PAYMENT_METHOD_OPTIONS,
-} from "@/constants/options"
+import { PAYMENT_METHOD_OPTIONS } from "@/constants/options"
 import { Textarea } from "@/components/ui/textarea"
 import { formatDate } from "@/helpers/format-date"
 
@@ -47,7 +44,6 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
   const [isPending, startTransition] = useTransition()
 
   const { charge } = session
-  const chargeStatus = charge?.status
 
   const initialSubtotal =
     charge?.subtotal != null
@@ -56,23 +52,12 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
   const initialDiscount = charge?.discount != null ? Number(charge.discount) : 0
   const initialPaidAmount =
     charge?.paidAmount != null ? Number(charge.paidAmount) : 0
-  const initialTotal =
-    charge?.total != null
-      ? Number(charge.total)
-      : initialSubtotal - initialDiscount
 
   const methods = useForm<ChargeFormInput>({
     resolver: zodResolver(chargeFormSchema),
     defaultValues: {
-      status: chargeStatus || "OPEN",
-      subtotal: initialSubtotal,
       discount: initialDiscount,
       paidAmount: initialPaidAmount,
-      total: initialTotal,
-
-      dueDate: charge?.dueDate ? new Date(charge.dueDate) : new Date(),
-      paidAt: charge?.paidAt ? new Date(charge.paidAt) : undefined,
-      canceledAt: charge?.canceledAt ? new Date(charge.canceledAt) : undefined,
 
       paymentMethod: charge?.paymentMethod ?? undefined,
       notes: charge?.notes || "",
@@ -87,36 +72,28 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
     formState: { errors },
   } = methods
 
+  const discount = useWatch({
+    control,
+    name: "discount",
+  })
+
   useEffect(() => {
     if (isOpen) {
-      const subtotalVal =
-        charge?.subtotal != null
-          ? Number(charge.subtotal)
-          : Number(session.amount ?? 0)
       const discountVal = charge?.discount != null ? Number(charge.discount) : 0
       const paidAmountVal =
         charge?.paidAmount != null ? Number(charge.paidAmount) : 0
-      const totalVal =
-        charge?.total != null ? Number(charge.total) : subtotalVal - discountVal
 
       reset({
-        status: charge?.status || "OPEN",
-        subtotal: subtotalVal,
         discount: discountVal,
         paidAmount: paidAmountVal,
-        total: totalVal,
 
-        dueDate: charge?.dueDate ? new Date(charge.dueDate) : new Date(),
-        paidAt: charge?.paidAt ? new Date(charge.paidAt) : undefined,
-        canceledAt: charge?.canceledAt
-          ? new Date(charge.canceledAt)
-          : undefined,
-
-        paymentMethod: charge?.paymentMethod || "PIX",
+        paymentMethod: charge?.paymentMethod || undefined,
         notes: charge?.notes || "",
       })
     }
-  }, [isOpen, session, charge, reset])
+  }, [isOpen, session.id, charge, reset])
+
+  const total = initialSubtotal - Number(discount ?? 0)
 
   const onSubmit = async (data: ChargeFormInput) => {
     startTransition(async () => {
@@ -145,23 +122,34 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
             </DialogDescription>
           </div>
         </DialogHeader>
-        <div className="bg-muted/40 grid grid-cols-2 gap-4 rounded-lg border p-4">
-          <div className="space-y-1">
-            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-              Valor a pagar
-            </p>
-            <p className="text-lg font-semibold text-green-600">
-              {formatCurrency(initialSubtotal)}
-            </p>
+
+        <div className="bg-muted/40 space-y-4 rounded-lg border p-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                Valor inicial
+              </p>
+              <p className="text-lg font-semibold text-green-600">
+                {formatCurrency(initialSubtotal)}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                Vencimento
+              </p>
+              <p className="text-lg font-semibold">
+                {charge?.dueDate ? formatDate(charge.dueDate) : "—"}
+              </p>
+            </div>
           </div>
 
-          <div className="space-y-1">
-            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-              Vencimento
-            </p>
-            <p className="text-lg font-semibold">
-              {charge?.dueDate ? formatDate(charge.dueDate) : "—"}
-            </p>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground text-sm font-medium tracking-wide uppercase">
+              Total a pagar
+            </span>
+            <span className="text-xl font-bold text-green-600">
+              {formatCurrency(total)}
+            </span>
           </div>
         </div>
 
@@ -171,7 +159,7 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
             className="space-y-4"
           >
             <FieldGroup className="custom-scroll max-h-[calc(95vh-300px)] overflow-y-auto pr-1 pb-4">
-              <div className="flex gap-2">
+              <div className="flex gap-4">
                 <CurrencyInput name="discount" label="Desconto" />
                 <CurrencyInput name="paidAmount" label="Pagamento Parcial" />
               </div>
@@ -201,32 +189,6 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
                     )}
                   />
                   <FieldError>{errors.paymentMethod?.message}</FieldError>
-                </Field>
-
-                <Field className="w-full max-w-lg">
-                  <FieldLabel>Status do Pagamento</FieldLabel>
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value ?? ""}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione o status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {CHARGE_STATUS_OPTIONS.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  <FieldError>{errors.status?.message}</FieldError>
                 </Field>
               </div>
 

@@ -1,9 +1,13 @@
+import { deriveChargeStatus } from "@/helpers/charge-helpers"
 import { serialize } from "@/helpers/serialize"
 import { db } from "@/lib/prisma"
 import { BillingMode } from "@misael1981/physio-database"
 
 export async function getChargeItemPerSession() {
   try {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
     const chargeItemPerSession = await db.chargeItem.findMany({
       where: {
         patient: {
@@ -45,7 +49,21 @@ export async function getChargeItemPerSession() {
       },
     })
 
-    return serialize(chargeItemPerSession)
+    const itemsWithStatus = chargeItemPerSession.map((item) => {
+      const charge = item.charge
+      if (!charge) return item
+
+      const status = deriveChargeStatus({
+        status: charge.status,
+        paidAmount: Number(charge.paidAmount),
+        total: Number(charge.total),
+        dueDate: charge.dueDate,
+      })
+
+      return { ...item, charge: { ...charge, status } }
+    })
+
+    return serialize(itemsWithStatus)
   } catch (error) {
     console.error("Erro ao buscar consultas por sessão:", error)
     throw error

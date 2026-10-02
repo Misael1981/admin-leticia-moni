@@ -106,6 +106,8 @@ const PerSessionPayments = ({ unpaidSessions }: PerSessionPaymentsProps) => {
               </div>
 
               <div className="flex flex-col justify-end gap-4 md:flex-row">
+                <Button variant="destructive">Cancelar Cobrança</Button>
+
                 <Link
                   href={`https://wa.me/${p.patient.phone?.replace(/\D/g, "")}`}
                   target="_blank"
@@ -115,7 +117,6 @@ const PerSessionPayments = ({ unpaidSessions }: PerSessionPaymentsProps) => {
                   <MessageCircle className="h-4 w-4" />
                   Enviar Mensagem
                 </Link>
-
                 <Button onClick={handleDialog}>Registrar pagamento</Button>
               </div>
             </div>
