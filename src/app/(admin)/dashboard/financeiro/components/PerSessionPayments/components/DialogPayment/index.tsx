@@ -99,7 +99,6 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
   const total = initialSubtotal - Number(discount ?? 0)
 
   const onSubmit = async (data: ChargeFormInput) => {
-    console.log("📦 DADOS DO FORM:", data)
     startTransition(async () => {
       try {
         const response = await manageChargeAction({

@@ -26,3 +26,21 @@ export function deriveChargeStatus({
 
   return "OPEN"
 }
+
+export type AccumulatedOpenStatus = Extract<ChargeStatus, "OPEN" | "OVERDUE">
+
+/**
+ * Deriva o status visual de um conjunto de ChargeItems órfãos (ACCUMULATED).
+ * NÃO persiste no banco — é cálculo de UI.
+ *
+ * - billingDay null → nunca atrasa (paciente sem dia definido)
+ * - billingDay < hoje → OVERDUE (o admin tá devendo fechar/cobrar)
+ * - billingDay >= hoje → OPEN (dentro do prazo)
+ */
+export function deriveAccumulatedOpenStatus(
+  billingDay: number | null,
+  today: Date = new Date(),
+): AccumulatedOpenStatus {
+  if (billingDay === null) return "OPEN"
+  return billingDay < today.getDate() ? "OVERDUE" : "OPEN"
+}

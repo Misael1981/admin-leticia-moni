@@ -95,3 +95,22 @@ export const CHARGE_STATUS_CONFIG: Record<ChargeStatus, StatusConfig> = {
     bgStyle: "bg-red-500/5 hover:bg-red-500/10 opacity-75",
   },
 }
+
+export type AccumulatedOpenStatusConfig = Record<
+  "OPEN" | "OVERDUE",
+  StatusConfig
+>
+
+export const ACCUMULATED_OPEN_STATUS_CONFIG: AccumulatedOpenStatusConfig = {
+  OPEN: {
+    label: "Em aberto",
+    variant: "secondary",
+    badgeStyle:
+      "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-200",
+  },
+  OVERDUE: {
+    label: "Atrasado",
+    variant: "outline",
+    badgeStyle: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-200",
+  },
+}

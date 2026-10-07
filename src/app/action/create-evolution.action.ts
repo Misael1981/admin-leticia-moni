@@ -42,12 +42,15 @@ export async function createEvolutionAction({
       // 1. Atualiza status do paciente SE mudou
       const currentPatient = await tx.patient.findUnique({
         where: { id: patientId },
-        select: { status: true, clinicId: true },
+        select: { status: true, clinicId: true, billingMode: true },
       })
 
-      const clinicId = currentPatient?.clinicId ?? "main-clinic"
+      if (!currentPatient) {
+        throw new Error("PATIENT_NOT_FOUND")
+      }
+      const clinicId = currentPatient.clinicId
 
-      if (currentPatient?.status !== validatedData.patientStatus) {
+      if (currentPatient.status !== validatedData.patientStatus) {
         await tx.patient.update({
           where: { id: patientId },
           data: { status: validatedData.patientStatus },
@@ -116,7 +119,11 @@ export async function createEvolutionAction({
       })
 
       // 4. CONDICIONAL FINANCEIRA: Se NÃO for retorno, gera/associa a Charge
-      if (!validatedData.isReturn && evolution.chargeItem) {
+      if (
+        !validatedData.isReturn &&
+        evolution.chargeItem &&
+        currentPatient?.billingMode === "PER_SESSION"
+      ) {
         const amount = Number(validatedData.pricePerSession)
 
         // Exemplo para Cobrança por Sessão (PER_SESSION)
@@ -137,6 +144,17 @@ export async function createEvolutionAction({
         })
       }
 
+      if (
+        currentPatient.billingMode === "ACCUMULATED" &&
+        !validatedData.isReturn
+      ) {
+        if (process.env.NODE_ENV !== "production") {
+          console.log(
+            `📦 ChargeItem órfão criado (ACCUMULATED): paciente ${patientId}`,
+          )
+        }
+      }
+
       return evolution
     })
 
@@ -150,6 +168,10 @@ export async function createEvolutionAction({
     }
   } catch (error) {
     console.error("❌ Erro ao salvar evolução:", error)
+
+    if (error instanceof Error && error.message === "PATIENT_NOT_FOUND") {
+      return { success: false, error: "Paciente não encontrado." }
+    }
 
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&

@@ -113,8 +113,6 @@ const PerSessionPayments = ({ unpaidSessions }: PerSessionPaymentsProps) => {
               </div>
 
               <div className="flex flex-col justify-end gap-4 md:flex-row">
-                <Button variant="destructive">Cancelar Cobrança</Button>
-
                 <Link
                   href={`https://wa.me/${p.patient.phone?.replace(/\D/g, "")}`}
                   target="_blank"
