@@ -93,13 +93,17 @@ const RegisterPatientForm = () => {
         const response = await createPatient({
           ...restOfData,
           avatarUrl: finalImageUrl,
+          billingDay: String(data.billingDay),
         })
 
         if (response.success) {
           toast.success("Paciente cadastrado com sucesso!")
           router.push("/dashboard/pacientes")
         } else {
-          console.error(response.error)
+          console.error(
+            "ERRO COMPLETO DA ACTION:",
+            JSON.stringify(response, null, 2),
+          )
           toast.error("Erro ao cadastrar paciente!")
         }
       } catch (error) {

@@ -1,5 +1,6 @@
 "use client"
 
+import { closeAccumulatedChargeAction } from "@/app/action/financial/close-accumulated-charge-action"
 import { CurrencyInput } from "@/components/CurrencyInput"
 import { Button } from "@/components/ui/button"
 import {
@@ -29,6 +30,7 @@ import { formatCurrency } from "@/helpers/format-currency"
 import { AccumulatedPatientGroup } from "@/helpers/group-accumulated-items"
 import { ChargeFormInput, chargeFormSchema } from "@/schemas/payment.schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useRouter } from "next/navigation"
 import { useEffect, useTransition } from "react"
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
@@ -45,6 +47,7 @@ const DialogPaymentAccumulated = ({
   group,
 }: DialogPaymentAccumulatedProps) => {
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   const methods = useForm<ChargeFormInput>({
     resolver: zodResolver(chargeFormSchema),
@@ -81,11 +84,23 @@ const DialogPaymentAccumulated = ({
 
   const onSubmit = async (data: ChargeFormInput) => {
     startTransition(async () => {
-      try {
-        console.log("📦 DADOS DO FORM:", data)
-      } catch (error) {
-        console.error("Erro ao registrar pagamento:", error)
-        toast.error("Ocorreu um erro ao registrar o pagamento.")
+      if (!group) return
+
+      const response = await closeAccumulatedChargeAction({
+        chargeItemIds: group.items.map((i) => i.id),
+        data: {
+          ...data,
+          discount: data.discount ?? 0,
+          paidAmount: data.paidAmount ?? 0,
+        },
+      })
+
+      if (response.success) {
+        toast.success(response.message ?? "Fatura fechada com sucesso!")
+        router.refresh()
+        onClose()
+      } else {
+        toast.error(response.error ?? "Erro ao fechar fatura.")
       }
     })
   }
