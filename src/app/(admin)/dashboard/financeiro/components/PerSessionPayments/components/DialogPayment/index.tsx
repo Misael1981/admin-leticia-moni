@@ -11,7 +11,7 @@ import {
 import { UnpaidSessionType } from "../.."
 import { formatCurrency } from "@/helpers/format-currency"
 import { Button } from "@/components/ui/button"
-import { useEffect, useTransition } from "react"
+import { useTransition } from "react"
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ChargeFormInput, chargeFormSchema } from "@/schemas/payment.schemas"
@@ -71,32 +71,15 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
     handleSubmit,
     control,
     register,
-    reset,
+    setValue,
     formState: { errors },
   } = methods
 
-  const discount = useWatch({
-    control,
-    name: "discount",
-  })
-
-  useEffect(() => {
-    if (isOpen) {
-      const discountVal = charge?.discount != null ? Number(charge.discount) : 0
-      const paidAmountVal =
-        charge?.paidAmount != null ? Number(charge.paidAmount) : 0
-
-      reset({
-        discount: discountVal,
-        paidAmount: paidAmountVal,
-
-        paymentMethod: charge?.paymentMethod || undefined,
-        notes: charge?.notes || "",
-      })
-    }
-  }, [isOpen, session.id, charge, reset])
+  const discount = useWatch({ control, name: "discount" })
+  const paidAmount = useWatch({ control, name: "paidAmount" })
 
   const total = initialSubtotal - Number(discount ?? 0)
+  const remaining = Math.max(total - Number(paidAmount ?? 0), 0)
 
   const onSubmit = async (data: ChargeFormInput) => {
     startTransition(async () => {
@@ -125,7 +108,7 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-h-[95vh] overflow-hidden">
         <DialogHeader className="space-y-4">
           <div className="space-y-1">
@@ -175,6 +158,28 @@ const DialogPayment = ({ isOpen, onClose, session }: DialogPaymentProps) => {
               <div className="flex gap-4">
                 <CurrencyInput name="discount" label="Desconto" />
                 <CurrencyInput name="paidAmount" label="Pagamento Parcial" />
+              </div>
+
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-muted-foreground text-sm">
+                  Restante:{" "}
+                  <strong className="text-green-600">
+                    {formatCurrency(remaining)}
+                  </strong>
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setValue("paidAmount", total, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    })
+                  }
+                >
+                  Quitar total
+                </Button>
               </div>
 
               <div className="flex flex-col gap-4 md:flex-row">

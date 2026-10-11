@@ -127,17 +127,18 @@ const PerSessionPayments = ({ unpaidSessions }: PerSessionPaymentsProps) => {
                 </Button>
               </div>
             </div>
-
-            {selectedSession && (
-              <DialogPayment
-                isOpen={!!selectedSession}
-                onClose={() => setSelectedSession(null)}
-                session={selectedSession}
-              />
-            )}
           </SubCard>
         ))}
       </Card>
+
+      {selectedSession && (
+        <DialogPayment
+          key={selectedSession.id}
+          isOpen={!!selectedSession}
+          onClose={() => setSelectedSession(null)}
+          session={selectedSession}
+        />
+      )}
     </section>
   )
 }

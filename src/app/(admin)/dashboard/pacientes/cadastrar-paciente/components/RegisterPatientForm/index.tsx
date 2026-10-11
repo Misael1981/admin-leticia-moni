@@ -88,6 +88,7 @@ const RegisterPatientForm = () => {
           finalImageUrl = data.avatarUrl
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { avatarUrl: _avatarUrl, ...restOfData } = data
 
         const response = await createPatient({
