@@ -35,7 +35,7 @@ export const BIOLOGICAL_SEX_LABELS: Record<BiologicalSex, string> = {
 
 export const MARITAL_STATUS_LABELS: Record<MaritalStatus, string> = {
   SINGLE: "Solteiro(a)",
-  MARRIED: "Casado",
+  MARRIED: "Casado(a)",
   DIVORCED: "Divorciado(a)",
   WIDOWED: "Viúvo(a)",
   STABLE_UNION: "União Estável",

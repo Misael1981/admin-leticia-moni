@@ -75,11 +75,10 @@ export const patientSchema = z
       .min(1, "O telefone é obrigatório para contato")
       .transform((val) => val.replace(/\D/g, "")),
 
-    email: z
-      .string()
-      .email("Insira um e-mail válido")
-      .or(z.literal(""))
-      .transform((val) => (val === "" ? null : val)),
+    email: z.preprocess(
+      (val) => (val === "" ? null : val), // Transforma string vazia em null antes de validar
+      z.string().email("Insira um e-mail válido").nullable().optional(), // Aceita nulo ou opcional
+    ),
 
     emergencyContactName: emptyToNull,
     emergencyContactPhone: z
@@ -126,7 +125,9 @@ export const patientSchema = z
       .string()
       .optional()
       .nullable()
-      .transform((v) => (v === "" || v == null ? null : Number(v)))
+      .transform((v) =>
+        v === "" || v == null || v === "null" ? null : Number(v),
+      )
       .refine((v) => v === null || (Number.isInteger(v) && v >= 1 && v <= 30), {
         message: "O dia deve estar entre 1 e 30.",
       }),
@@ -152,17 +153,18 @@ export const patientSchema = z
           message: "Informe o número da carteirinha.",
         })
       }
+    }
 
-      if (
-        data.billingMode === BillingMode.ACCUMULATED &&
-        data.billingDay == null
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["billingDay"],
-          message: "Informe o dia do vencimento.",
-        })
-      }
+    // Validação independente do convênio para o modo ACCUMULATED
+    if (
+      data.billingMode === BillingMode.ACCUMULATED &&
+      (data.billingDay == null || data.billingDay === undefined)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["billingDay"],
+        message: "Informe o dia do vencimento.",
+      })
     }
   })
 
