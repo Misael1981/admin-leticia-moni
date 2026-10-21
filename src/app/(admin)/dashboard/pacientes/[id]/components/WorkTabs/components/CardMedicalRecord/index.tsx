@@ -141,98 +141,111 @@ const CardMedicalRecord = ({
             />
           </div>
 
-          {/* 2. Grid Clínico: Diagnóstico, Objetivos, Plano & Alertas */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* Diagnóstico & Plano */}
-            <div className="space-y-6">
-              <MedicalRecordCard
-                title="Diagnóstico Cinesiuncional (Médico)"
-                icon={<FileText className="h-4 w-4 text-blue-600" />}
-                content={anamnesis?.medicalDiagnosis || "Não informado"}
-              />
-
-              <ListCard
-                title="Plano de Tratamento Ativo"
-                icon={<Activity className="h-4 w-4 text-amber-600" />}
-                list={patientTreatments?.map((t) => t.treatment.name) || []}
-                iconItem={
-                  <Dot className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-                }
-              />
-
-              <MedicalRecordCard
-                title="Avaliação Física"
-                icon={<SportShoe className="h-4 w-4 text-emerald-500" />}
-                content={physicalAssessment?.content || "Não informado"}
-              />
+          {evolutions?.length === 0 ? (
+            <div className="rounded-xl border p-8 shadow-sm">
+              <p className="text-center text-lg">
+                Paciente ainda não iniciou tratamento
+              </p>
             </div>
+          ) : (
+            <>
+              {/* 2. Grid Clínico: Diagnóstico, Objetivos, Plano & Alertas */}
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {/* Diagnóstico & Plano */}
+                <div className="space-y-6">
+                  <MedicalRecordCard
+                    title="Diagnóstico Cinesiuncional (Médico)"
+                    icon={<FileText className="h-4 w-4 text-blue-600" />}
+                    content={anamnesis?.medicalDiagnosis || "Não informado"}
+                  />
 
-            {/* Objetivos & Alertas */}
-            <div className="space-y-6">
-              <MedicalRecordCard
-                title="Queixa principal (HMA)"
-                icon={<Target className="h-4 w-4 text-emerald-600" />}
-                content={anamnesis?.hma || "Não informado"}
-              />
+                  <ListCard
+                    title="Plano de Tratamento Ativo"
+                    icon={<Activity className="h-4 w-4 text-amber-600" />}
+                    list={patientTreatments?.map((t) => t.treatment.name) || []}
+                    iconItem={
+                      <Dot className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                    }
+                  />
 
-              <ListCard
-                title=" Alertas & Cuidados"
-                icon={<AlertTriangle className="h-4 w-4 text-amber-600" />}
-                list={alertsList}
-                iconItem={
-                  <Dot className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-                }
-                className="rounded-md border border-amber-200/50 bg-amber-100/60 px-3 py-1.5 text-xs font-medium text-amber-800"
-              />
-            </div>
-          </div>
-
-          {/* 3. Última Evolução Registrar */}
-          <MedicalRecordCard
-            title="Última Evolução Clínica"
-            icon={<FileText className="h-4 w-4 text-blue-600" />}
-            content={evolutions?.[0]?.notes || "Não há notas registradas"}
-            description={
-              <span className="text-muted-foreground text-xs">
-                {formatDate(evolutions?.[0]?.createdAt) || "N/A"} • Dra Letícia
-              </span>
-            }
-          />
-
-          {/* 4. Grid Inferior: Vídeos Prescritos & Arquivos Anexos */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* Vídeos Prescritos */}
-            <ActionCard
-              title="Exercícios / Vídeos Prescritos"
-              icon={<Video className="h-4 w-4 text-purple-600" />}
-              items={evolutions?.[0]?.prescriptions || []}
-              renderItem={(pres) => (
-                <div
-                  key={pres.id}
-                  className="flex items-center justify-between"
-                >
-                  <div>
-                    <p className="text-xs font-semibold">{pres.video.name}</p>
-
-                    <p className="text-muted-foreground text-[11px]">
-                      {pres.reps} • {pres.sets} • {pres.frequency} •{" "}
-                      {pres.holdTimeSec}
-                    </p>
-                  </div>
-
-                  <span className="px-2 py-1 text-xs font-medium text-purple-700">
-                    Prescrito
-                  </span>
+                  <MedicalRecordCard
+                    title="Avaliação Física"
+                    icon={<SportShoe className="h-4 w-4 text-emerald-500" />}
+                    content={physicalAssessment?.content || "Não informado"}
+                  />
                 </div>
-              )}
-            />
 
-            {/* Arquivos & Exames */}
-            <ExamRecordCard
-              complementaryExams={anamnesis?.complementaryExams}
-              examUrls={anamnesis?.examUrls}
-            />
-          </div>
+                {/* Objetivos & Alertas */}
+                <div className="space-y-6">
+                  <MedicalRecordCard
+                    title="Queixa principal (HMA)"
+                    icon={<Target className="h-4 w-4 text-emerald-600" />}
+                    content={anamnesis?.hma || "Não informado"}
+                  />
+
+                  <ListCard
+                    title=" Alertas & Cuidados"
+                    icon={<AlertTriangle className="h-4 w-4 text-amber-600" />}
+                    list={alertsList}
+                    iconItem={
+                      <Dot className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                    }
+                    className="rounded-md border border-amber-200/50 bg-amber-100/60 px-3 py-1.5 text-xs font-medium text-amber-800"
+                  />
+                </div>
+              </div>
+
+              {/* 3. Última Evolução Registrar */}
+              <MedicalRecordCard
+                title="Última Evolução Clínica"
+                icon={<FileText className="h-4 w-4 text-blue-600" />}
+                content={evolutions?.[0]?.notes || "Não há notas registradas"}
+                description={
+                  <span className="text-muted-foreground text-xs">
+                    {formatDate(evolutions?.[0]?.createdAt) || "N/A"} • Dra
+                    Letícia
+                  </span>
+                }
+              />
+
+              {/* 4. Grid Inferior: Vídeos Prescritos & Arquivos Anexos */}
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {/* Vídeos Prescritos */}
+                <ActionCard
+                  title="Exercícios / Vídeos Prescritos"
+                  icon={<Video className="h-4 w-4 text-purple-600" />}
+                  items={evolutions?.[0]?.prescriptions || []}
+                  renderItem={(pres) => (
+                    <div
+                      key={pres.id}
+                      className="flex items-center justify-between"
+                    >
+                      <div>
+                        <p className="text-xs font-semibold">
+                          {pres.video.name}
+                        </p>
+
+                        <p className="text-muted-foreground text-[11px]">
+                          {pres.reps} • {pres.sets} • {pres.frequency} •{" "}
+                          {pres.holdTimeSec}
+                        </p>
+                      </div>
+
+                      <span className="px-2 py-1 text-xs font-medium text-purple-700">
+                        Prescrito
+                      </span>
+                    </div>
+                  )}
+                />
+
+                {/* Arquivos & Exames */}
+                <ExamRecordCard
+                  complementaryExams={anamnesis?.complementaryExams}
+                  examUrls={anamnesis?.examUrls}
+                />
+              </div>
+            </>
+          )}
         </div>
       </CardContent>
       <CardFooter className="flex justify-end">
