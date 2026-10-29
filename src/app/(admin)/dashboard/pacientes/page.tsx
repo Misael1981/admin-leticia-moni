@@ -71,7 +71,6 @@ export default async function PatientsPage({
           Mostrando {patients.length} de {totalPatients} pacientes encontrados.
         </p>
 
-        {/* Loop temporário apenas para ver os dados chegando na tela */}
         <ul className="flex w-full flex-col items-center justify-center gap-4 divide-y">
           {patients.map((patient) => (
             <li key={patient.id} className="w-full max-w-4xl">
