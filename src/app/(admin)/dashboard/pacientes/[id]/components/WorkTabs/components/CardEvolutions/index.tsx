@@ -84,7 +84,7 @@ const CardEvolutions = ({
                     Sessão {item.sessionNumber}
                   </AccordionTrigger>
 
-                  <AccordionContent>
+                  <AccordionContent className="border-0">
                     <EvolutionTimelineCard evolution={item} />
                   </AccordionContent>
                 </AccordionItem>

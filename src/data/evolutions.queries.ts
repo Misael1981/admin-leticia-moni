@@ -28,7 +28,7 @@ export async function getEvolutionsByPatientId(patientId: string) {
     const evolutions = await db.evolution.findMany({
       where: { patientId },
       orderBy: { sessionNumber: "desc" },
-      include: evolutionInclude, // <- reusa
+      include: evolutionInclude,
     })
 
     return evolutions.map(serialize) as EvolutionType[]
