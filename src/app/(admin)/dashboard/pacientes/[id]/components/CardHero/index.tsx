@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Pencil,
   PlusCircle,
+  Smartphone,
   Stethoscope,
 } from "lucide-react"
 import Link from "next/link"
@@ -31,6 +32,12 @@ type CardHeroProps = {
 }
 
 const CardHero = ({ patient, patientAuth, testimonial }: CardHeroProps) => {
+  const appUrl = "https://moni-fisio-app-paciente.vercel.app"
+
+  const message = encodeURIComponent(
+    `Olá! Aqui está o link para acessar o aplicativo Moni Fisio:\n\n${appUrl}`,
+  )
+
   return (
     <Card className="gap-2 p-4">
       <div className="flex flex-col-reverse justify-center gap-4 lg:flex-row lg:justify-between">
@@ -85,7 +92,7 @@ const CardHero = ({ patient, patientAuth, testimonial }: CardHeroProps) => {
         <div className="flex justify-end">{GetStatusBadge(patient.status)}</div>
       </div>
 
-      <div className="flex flex-col items-center justify-center gap-4 border-t pt-4 md:flex-row lg:justify-end">
+      <div className="flex flex-col items-center justify-center gap-4 border-t pt-4 md:flex-row md:flex-wrap">
         {testimonial && !testimonial.isPublished ? (
           <Link
             href={`/dashboard/depoimentos/${testimonial.id}`}
@@ -105,6 +112,16 @@ const CardHero = ({ patient, patientAuth, testimonial }: CardHeroProps) => {
         </Link>
 
         <ButtonAppAccess patientId={patient.id} patientAuth={patientAuth} />
+
+        <Link
+          href={`https://wa.me/${patient.phone?.replace(/\D/g, "")}?text=${message}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`w-full gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 md:w-fit ${buttonVariants({ variant: "outline" })}`}
+        >
+          <Smartphone className="h-4 w-4" />
+          Enviar acesso ao App
+        </Link>
 
         <Link
           href={`https://wa.me/${patient.phone?.replace(/\D/g, "")}`}

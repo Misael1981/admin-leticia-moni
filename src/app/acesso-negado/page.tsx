@@ -1,6 +1,5 @@
 import Link from "next/link"
 
-// app/acesso-negado/page.tsx
 export default function AcessoNegadoPage() {
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-2">
